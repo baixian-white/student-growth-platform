@@ -1,0 +1,28 @@
+# Student Growth Platform
+
+# 前端忽略
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+
+# 后端忽略
+backend/target/
+backend/*.iml
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# 日志
+*.log
+
+# 临时文件
+*.tmp
+*.temp
