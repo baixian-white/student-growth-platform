@@ -24,19 +24,19 @@ const coursesData = [
     { id: 6, title: '生物细胞结构图解', type: 'document', category: '生物', size: '18 MB', uploadDate: '2024-01-28', downloads: 76, thumbnail: '🧬' },
 ];
 
-const scoreDistribution = [
-    { name: '90-100分', value: 2, fill: '#10B981' },
-    { name: '80-89分', value: 2, fill: '#3B82F6' },
-    { name: '70-79分', value: 1, fill: '#F59E0B' },
-    { name: '60-69分', value: 1, fill: '#EF4444' },
+const subjectComparisonData = [
+    { name: '数学', score: 92, avg: 78, fill: '#4f46e5' },
+    { name: '语文', score: 88, avg: 82, fill: '#6366f1' },
+    { name: '英语', score: 95, avg: 85, fill: '#f59e0b' },
+    { name: '理综', score: 265, avg: 240, fill: '#10b981' },
 ];
 
-const monthlyTrend = [
-    { month: '9月', avg: 78 },
-    { month: '10月', avg: 82 },
-    { month: '11月', avg: 80 },
-    { month: '12月', avg: 85 },
-    { month: '1月', avg: 88 },
+const personalTrend = [
+    { month: '9月', score: 78 },
+    { month: '10月', score: 82 },
+    { month: '11月', score: 80 },
+    { month: '12月', score: 85 },
+    { month: '1月', score: 88 },
 ];
 
 const subjectAvg = [
@@ -45,6 +45,14 @@ const subjectAvg = [
     { subject: '英语', score: 81 },
     { subject: '理综', score: 82 },
 ];
+
+const weaknessesData = [
+    { id: 1, subject: '数学', point: '导数与极值综合题', degree: '高危', color: 'text-rose-600', bgColor: 'bg-rose-50', advice: '导数在大题中容易在分类讨论环节丢分，建议加强对“含参分类”逻辑的梳理。' },
+    { id: 2, subject: '数学', point: '数列求和典型模版', degree: '预警', color: 'text-amber-600', bgColor: 'bg-amber-50', advice: '“错位相减法”计算准确率偏低，需强化基础运算的熟练度。' },
+    { id: 3, subject: '语文', point: '现代文“作用题”', degree: '预警', color: 'text-amber-600', bgColor: 'bg-amber-50', advice: '需整理答题套路并背诵常考关键词，如“承上启下”、“铺垫”等。' },
+    { id: 4, subject: '英语', point: '长对话细节捕捉', degree: '待提升', color: 'text-blue-600', bgColor: 'bg-blue-50', advice: '坚持每日精听 1 篇 BBC 6 Minute English，重点关注转折词后的信息。' },
+];
+
 
 // --- 子组件 ---
 const StatCard = ({ title, value, icon: Icon, color, trend }) => (
@@ -68,10 +76,62 @@ const StatCard = ({ title, value, icon: Icon, color, trend }) => (
 
 export default function Analytics() {
     const [activeTab, setActiveTab] = useState('dashboard');
+    const [selectedSubject, setSelectedSubject] = useState('all'); // 'all', 'math', 'chinese', etc.
+    const [dashboardTrendSubject, setDashboardTrendSubject] = useState('all'); // 看板趋势科目
+    const [showWeaknessDetail, setShowWeaknessDetail] = useState(false); // 是否展开弱项详情
     const [searchTerm, setSearchTerm] = useState('');
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // --- 各学科深度数据 ---
+    const subjectDetails = {
+        math: {
+            title: '数学深度分析',
+            trend: [
+                { month: '9月', score: 75 }, { month: '10月', score: 82 },
+                { month: '11月', score: 78 }, { month: '12月', score: 88 },
+                { month: '1月', score: 92 }
+            ],
+            mastery: [
+                { name: '函数与导数', value: 95, color: '#4f46e5' },
+                { name: '数列综合', value: 85, color: '#6366f1' },
+                { name: '概率统计', value: 90, color: '#10b981' },
+                { name: '压轴大题练习', value: 65, color: '#ef4444' },
+            ],
+            advice: '导数与不等式综合题是目前的薄弱环节，主要集中在含参分类讨论的严密性。建议加强逻辑闭环记录。'
+        },
+        chinese: {
+            title: '语文深度分析',
+            trend: [
+                { month: '9月', score: 85 }, { month: '10月', score: 84 },
+                { month: '11月', score: 82 }, { month: '12月', score: 88 },
+                { month: '1月', score: 88 }
+            ],
+            mastery: [
+                { name: '古诗词鉴赏', value: 92, color: '#4f46e5' },
+                { name: '文言文阅读', value: 88, color: '#6366f1' },
+                { name: '现代文阅读', value: 80, color: '#f59e0b' },
+                { name: '作文表达', value: 85, color: '#10b981' },
+            ],
+            advice: '文言文断句和实词掌握较好，现代文阅读中“作用题”得分率偏低，建议总结答题模板。'
+        },
+        english: {
+            title: '英语深度分析',
+            trend: [
+                { month: '9月', score: 82 }, { month: '10月', score: 85 },
+                { month: '11月', score: 88 }, { month: '12月', score: 92 },
+                { month: '1月', score: 95 }
+            ],
+            mastery: [
+                { name: '词汇语法', value: 98, color: '#4f46e5' },
+                { name: '听力理解', value: 82, color: '#f59e0b' },
+                { name: '阅读写作', value: 92, color: '#6366f1' },
+                { name: '口语表达', value: 88, color: '#10b981' },
+            ],
+            advice: '听力失分多为长对话细节捕捉，建议每日坚持 15 分钟新闻听写训练。'
+        }
+    };
 
     // 加载学生数据
     useEffect(() => {
@@ -96,6 +156,12 @@ export default function Analytics() {
         return students.filter(s => s.name && s.name.includes(searchTerm));
     }, [students, searchTerm]);
 
+    // 动态看板趋势数据
+    const currentTrendData = useMemo(() => {
+        if (dashboardTrendSubject === 'all') return personalTrend;
+        return subjectDetails[dashboardTrendSubject]?.trend || personalTrend;
+    }, [dashboardTrendSubject]);
+
     return (
         <div className="flex h-screen bg-gray-50 text-gray-900 font-sans">
             {/* 侧边栏 */}
@@ -109,11 +175,10 @@ export default function Analytics() {
 
                 <nav className="flex-1 px-4 space-y-1">
                     {[
-                        { id: 'dashboard', icon: LayoutDashboard, label: '概览看板' },
-                        { id: 'students', icon: Users, label: '学生名单' },
-                        { id: 'analysis', icon: BarChart3, label: '深度分析' },
-                        { id: 'courses', icon: BookOpen, label: '课程资源' },
-                        { id: 'settings', icon: Settings, label: '系统设置' },
+                        { id: 'dashboard', icon: LayoutDashboard, label: '我的学情看板' },
+                        { id: 'analysis', icon: BarChart3, label: '成长路径分析' },
+                        { id: 'courses', icon: BookOpen, label: '我的学习资源' },
+                        { id: 'settings', icon: Settings, label: '个人中心' },
                     ].map(item => (
                         <button
                             key={item.id}
@@ -131,8 +196,8 @@ export default function Analytics() {
 
                 <div className="p-4 border-t border-gray-100">
                     <div className="bg-indigo-900 rounded-2xl p-4 text-white">
-                        <p className="text-xs text-indigo-200 mb-1">当前教师</p>
-                        <p className="font-medium">陈老师 (高三一班)</p>
+                        <p className="text-xs text-indigo-200 mb-1">当前身份</p>
+                        <p className="font-medium">张同学 (高三一班)</p>
                     </div>
                 </div>
             </aside>
@@ -145,7 +210,7 @@ export default function Analytics() {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                         <input
                             type="text"
-                            placeholder="搜索学生姓名或学号..."
+                            placeholder="搜索我的成绩或资源..."
                             className="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -160,7 +225,7 @@ export default function Analytics() {
                             <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
                         </button>
                         <div className="w-10 h-10 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-700 font-bold">
-                            陈
+                            张
                         </div>
                     </div>
                 </header>
@@ -170,71 +235,151 @@ export default function Analytics() {
                         <div className="space-y-8">
                             {/* 统计卡片 */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <StatCard title="班级总人数" value="45" icon={Users} color="bg-blue-500" />
-                                <StatCard title="平均成绩" value="82.4" icon={TrendingUp} color="bg-indigo-500" trend={3.2} />
-                                <StatCard title="平均出勤率" value="96.5%" icon={BookOpen} color="bg-emerald-500" />
-                                <StatCard title="待关注学生" value="3" icon={AlertCircle} color="bg-rose-500" />
+                                <StatCard title="全校综合排名" value="15" icon={Users} color="bg-blue-500" trend={-2} />
+                                <StatCard title="个人总平均分" value="88.5" icon={TrendingUp} color="bg-indigo-500" trend={4.2} />
+                                <StatCard title="出勤状态" value="100%" icon={BookOpen} color="bg-emerald-500" />
+                                <div
+                                    onClick={() => setShowWeaknessDetail(!showWeaknessDetail)}
+                                    className={`cursor-pointer transition-all duration-300 hover:scale-105 ${showWeaknessDetail ? 'ring-2 ring-rose-500 ring-offset-2' : ''}`}
+                                >
+                                    <StatCard
+                                        title="待突破弱项 (点击详情)"
+                                        value="4个核心考点"
+                                        icon={AlertCircle}
+                                        color="bg-rose-500"
+                                    />
+                                </div>
                             </div>
+
+                            {/* 弱项详情展开面板 */}
+                            {showWeaknessDetail && (
+                                <div className="bg-white rounded-2xl shadow-lg border border-rose-100 p-8 animate-in slide-in-from-top-4 duration-500">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-2 bg-rose-100 text-rose-600 rounded-lg">
+                                                <TrendingUp size={20} />
+                                            </div>
+                                            <h4 className="font-bold text-gray-900 text-lg">全科薄弱知识点诊断</h4>
+                                        </div>
+                                        <button
+                                            onClick={() => setShowWeaknessDetail(false)}
+                                            className="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors"
+                                        >
+                                            <X size={20} />
+                                        </button>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {weaknessesData.map(item => (
+                                            <div key={item.id} className={`p-5 rounded-2xl border border-transparent ${item.bgColor} hover:border-gray-200 transition-all group`}>
+                                                <div className="flex justify-between items-start mb-3">
+                                                    <div>
+                                                        <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-md ${item.color} bg-white shadow-sm mb-2 inline-block`}>
+                                                            {item.subject}
+                                                        </span>
+                                                        <h5 className="font-bold text-gray-900">{item.point}</h5>
+                                                    </div>
+                                                    <span className={`text-xs font-bold px-2 py-1 rounded-full bg-white ${item.color} shadow-sm border border-gray-50`}>
+                                                        {item.degree}
+                                                    </span>
+                                                </div>
+                                                <p className="text-xs text-gray-600 leading-relaxed mb-4">
+                                                    {item.advice}
+                                                </p>
+                                                <button className="text-xs font-semibold text-gray-400 group-hover:text-indigo-600 flex items-center gap-1 transition-colors">
+                                                    去复习相关资源 <TrendingUp size={12} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
                             {/* 图表区域 */}
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                 {/* 成绩趋势线图 */}
                                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                                     <div className="flex justify-between items-center mb-6">
-                                        <h4 className="font-bold text-gray-800">班级成绩波动趋势</h4>
-                                        <select className="text-xs bg-gray-50 border-gray-200 rounded-lg">
-                                            <option>本学期</option>
-                                            <option>全年</option>
-                                        </select>
+                                        <h4 className="font-bold text-gray-800">
+                                            我的成绩演变路径
+                                            <span className="ml-2 text-xs font-normal text-gray-400">
+                                                ({dashboardTrendSubject === 'all' ? '总分' : subjectDetails[dashboardTrendSubject].title})
+                                            </span>
+                                        </h4>
+                                        <div className="flex gap-2">
+                                            <select
+                                                className="text-xs bg-gray-50 border-gray-200 rounded-lg px-2 py-1 outline-none ring-1 ring-gray-200"
+                                                value={dashboardTrendSubject}
+                                                onChange={(e) => setDashboardTrendSubject(e.target.value)}
+                                            >
+                                                <option value="all">总分趋势</option>
+                                                <option value="math">数学</option>
+                                                <option value="chinese">语文</option>
+                                                <option value="english">英语</option>
+                                            </select>
+                                            <select className="text-xs bg-gray-50 border-gray-200 rounded-lg px-2 py-1 outline-none ring-1 ring-gray-200">
+                                                <option>最近5个月</option>
+                                                <option>全年</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div className="h-64">
                                         <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart data={monthlyTrend}>
+                                            <LineChart data={currentTrendData}>
                                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                                                 <XAxis dataKey="month" axisLine={false} tickLine={false} />
-                                                <YAxis hide />
-                                                <Tooltip />
+                                                <YAxis
+                                                    axisLine={false}
+                                                    tickLine={false}
+                                                    tick={{ fontSize: 12, fill: '#94a3b8' }}
+                                                    domain={dashboardTrendSubject === 'all' ? [0, 100] : ['dataMin - 5', 'dataMax + 5']}
+                                                />
+                                                <Tooltip
+                                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                                    formatter={(value) => [`${value} 分`, dashboardTrendSubject === 'all' ? '总分' : '单科得分']}
+                                                />
                                                 <Line
                                                     type="monotone"
-                                                    dataKey="avg"
+                                                    dataKey="score"
+                                                    name="得分"
                                                     stroke="#4f46e5"
                                                     strokeWidth={3}
-                                                    dot={{ r: 4, fill: '#4f46e5' }}
-                                                    activeDot={{ r: 6 }}
+                                                    dot={{ r: 4, fill: '#4f46e5', strokeWidth: 2, stroke: '#fff' }}
+                                                    activeDot={{ r: 6, strokeWidth: 0 }}
                                                 />
                                             </LineChart>
                                         </ResponsiveContainer>
                                     </div>
                                 </div>
 
-                                {/* 成绩分布饼图 */}
+                                {/* 成绩对比柱状图 */}
                                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                                    <h4 className="font-bold text-gray-800 mb-6">成绩段分布情况</h4>
-                                    <div className="h-64 flex">
-                                        <ResponsiveContainer width="60%" height="100%">
-                                            <PieChart>
-                                                <Pie
-                                                    data={scoreDistribution}
-                                                    innerRadius={60}
-                                                    outerRadius={80}
-                                                    paddingAngle={5}
-                                                    dataKey="value"
-                                                >
-                                                    {scoreDistribution.map((entry, index) => (
-                                                        <Cell key={`cell-${index}`} fill={entry.fill} />
-                                                    ))}
-                                                </Pie>
-                                                <Tooltip />
-                                            </PieChart>
-                                        </ResponsiveContainer>
-                                        <div className="flex flex-col justify-center gap-3 w-40">
-                                            {scoreDistribution.map((item) => (
-                                                <div key={item.name} className="flex items-center gap-2">
-                                                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.fill }}></div>
-                                                    <span className="text-xs text-gray-500">{item.name}</span>
-                                                </div>
-                                            ))}
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h4 className="font-bold text-gray-800">各科成绩表现对比</h4>
+                                        <div className="flex items-center gap-4 text-xs">
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-2.5 h-2.5 rounded-full bg-indigo-600"></div>
+                                                <span className="text-gray-500">我的得分</span>
+                                            </div>
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-2.5 h-2.5 rounded-full bg-amber-300"></div>
+                                                <span className="text-gray-500">班级平均</span>
+                                            </div>
                                         </div>
+                                    </div>
+                                    <div className="h-64">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart data={subjectComparisonData} barGap={8}>
+                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
+                                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
+                                                <Tooltip
+                                                    cursor={{ fill: '#f8fafc' }}
+                                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                                />
+                                                <Bar dataKey="score" name="我的得分" fill="#4f46e5" radius={[4, 4, 0, 0]} barSize={24} />
+                                                <Bar dataKey="avg" name="班级平均" fill="#fcd34d" radius={[4, 4, 0, 0]} barSize={24} />
+                                            </BarChart>
+                                        </ResponsiveContainer>
                                     </div>
                                 </div>
                             </div>
@@ -242,7 +387,7 @@ export default function Analytics() {
                             {/* 学生成绩快速预览表格 */}
                             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                                 <div className="p-6 border-b border-gray-50 flex justify-between items-center">
-                                    <h4 className="font-bold text-gray-800">近期测验表现</h4>
+                                    <h4 className="font-bold text-gray-800">我的近期考试记录单</h4>
                                     <button className="text-indigo-600 text-sm font-medium hover:underline flex items-center gap-1">
                                         导出数据
                                         <Download size={14} />
@@ -252,44 +397,35 @@ export default function Analytics() {
                                     <table className="w-full text-left">
                                         <thead className="bg-gray-50 text-gray-500 text-xs font-semibold uppercase tracking-wider">
                                             <tr>
-                                                <th className="px-6 py-4">姓名</th>
+                                                <th className="px-6 py-4">考试名称</th>
                                                 <th className="px-6 py-4 text-center">数学</th>
                                                 <th className="px-6 py-4 text-center">语文</th>
                                                 <th className="px-6 py-4 text-center">英语</th>
-                                                <th className="px-6 py-4 text-center">出勤率</th>
-                                                <th className="px-6 py-4">状态</th>
-                                                <th className="px-6 py-4">操作</th>
+                                                <th className="px-6 py-4 text-center">理综</th>
+                                                <th className="px-6 py-4">总分排名</th>
+                                                <th className="px-6 py-4">报告</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-100">
-                                            {filteredStudents.map((student) => (
-                                                <tr key={student.id} className="hover:bg-gray-50 transition-colors">
-                                                    <td className="px-6 py-4 font-medium">{student.name}</td>
-                                                    <td className="px-6 py-4 text-center">
-                                                        <span className={student.math < 70 ? 'text-red-500 font-bold' : ''}>
-                                                            {student.math}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4 text-center">{student.chinese}</td>
-                                                    <td className="px-6 py-4 text-center">{student.english}</td>
-                                                    <td className="px-6 py-4 text-center text-gray-500">{student.attendance}</td>
+                                            {[
+                                                { id: 1, name: '期末模拟考', math: 92, chinese: 88, english: 95, science: 265, rank: '5/45', status: '优秀' },
+                                                { id: 2, name: '12月月考', math: 85, chinese: 82, english: 90, science: 240, rank: '12/45', status: '良好' },
+                                                { id: 3, name: '11月月考', math: 78, chinese: 85, english: 88, science: 235, rank: '18/45', status: '待提升' },
+                                                { id: 4, name: '期中考试', math: 95, chinese: 80, english: 92, science: 270, rank: '3/45', status: '优秀' },
+                                            ].map((record) => (
+                                                <tr key={record.id} className="hover:bg-gray-50 transition-colors">
+                                                    <td className="px-6 py-4 font-medium">{record.name}</td>
+                                                    <td className="px-6 py-4 text-center">{record.math}</td>
+                                                    <td className="px-6 py-4 text-center">{record.chinese}</td>
+                                                    <td className="px-6 py-4 text-center">{record.english}</td>
+                                                    <td className="px-6 py-4 text-center">{record.science}</td>
                                                     <td className="px-6 py-4">
-                                                        <span
-                                                            className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${student.status === '优秀'
-                                                                ? 'bg-emerald-100 text-emerald-700'
-                                                                : student.status === '预警'
-                                                                    ? 'bg-rose-100 text-rose-700'
-                                                                    : student.status === '待提升'
-                                                                        ? 'bg-amber-100 text-amber-700'
-                                                                        : 'bg-blue-100 text-blue-700'
-                                                                }`}
-                                                        >
-                                                            {student.status}
-                                                        </span>
+                                                        <span className="font-semibold text-indigo-600">{record.rank}</span>
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        <button className="p-1 hover:bg-gray-200 rounded text-gray-400">
-                                                            <MoreVertical size={16} />
+                                                        <button className="text-indigo-600 hover:underline flex items-center gap-1 text-sm">
+                                                            查看诊断
+                                                            <FileText size={14} />
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -303,168 +439,156 @@ export default function Analytics() {
 
                     {activeTab === 'analysis' && (
                         <div className="space-y-8">
-                            <div className="flex justify-between items-end">
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                                 <div>
-                                    <h2 className="text-2xl font-bold">学科能力模型</h2>
-                                    <p className="text-gray-500 mt-1">基于全班平均分的综合能力评估</p>
+                                    <h2 className="text-2xl font-bold">个人学情深度分析</h2>
+                                    <p className="text-gray-500 mt-1">支持整体概览与单科专项维度切换</p>
+                                </div>
+                                <div className="flex bg-white p-1 rounded-xl shadow-sm border border-gray-100">
+                                    {[
+                                        { id: 'all', label: '整体概览' },
+                                        { id: 'math', label: '数学' },
+                                        { id: 'chinese', label: '语文' },
+                                        { id: 'english', label: '英语' },
+                                    ].map(sub => (
+                                        <button
+                                            key={sub.id}
+                                            onClick={() => setSelectedSubject(sub.id)}
+                                            className={`px-4 py-1.5 rounded-lg text-sm transition-all ${selectedSubject === sub.id
+                                                ? 'bg-indigo-600 text-white shadow-md'
+                                                : 'text-gray-500 hover:bg-gray-50'
+                                                }`}
+                                        >
+                                            {sub.label}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center">
-                                    <h4 className="font-bold text-gray-800 self-start mb-6">各科平均分分布</h4>
-                                    <div className="h-80 w-full">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <BarChart data={subjectAvg}>
-                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                                <XAxis dataKey="subject" axisLine={false} tickLine={false} />
-                                                <YAxis />
-                                                <Tooltip cursor={{ fill: '#f5f7ff' }} />
-                                                <Bar dataKey="score" fill="#4f46e5" radius={[6, 6, 0, 0]} barSize={40} />
-                                            </BarChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                </div>
+                            {selectedSubject === 'all' ? (
+                                <>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center">
+                                            <h4 className="font-bold text-gray-800 self-start mb-6">各科加权分对比</h4>
+                                            <div className="h-80 w-full">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart data={subjectAvg}>
+                                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                                                        <XAxis dataKey="subject" axisLine={false} tickLine={false} />
+                                                        <YAxis />
+                                                        <Tooltip cursor={{ fill: '#f5f7ff' }} />
+                                                        <Bar dataKey="score" fill="#4f46e5" radius={[6, 6, 0, 0]} barSize={40} />
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </div>
 
-                                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center">
-                                    <h4 className="font-bold text-gray-800 self-start mb-6">班级核心素养雷达图</h4>
-                                    <div className="h-80 w-full">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <RadarChart
-                                                cx="50%"
-                                                cy="50%"
-                                                outerRadius="80%"
-                                                data={[
-                                                    { subject: '逻辑思维', A: 85 },
-                                                    { subject: '语言表达', A: 70 },
-                                                    { subject: '外语素养', A: 90 },
-                                                    { subject: '科学探究', A: 65 },
-                                                    { subject: '计算能力', A: 80 },
-                                                    { subject: '阅读理解', A: 75 },
-                                                ]}
-                                            >
-                                                <PolarGrid stroke="#e2e8f0" />
-                                                <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 12 }} />
-                                                <PolarRadiusAxis angle={30} domain={[0, 100]} />
-                                                <Radar name="能力值" dataKey="A" stroke="#4f46e5" fill="#4f46e5" fillOpacity={0.6} />
-                                            </RadarChart>
-                                        </ResponsiveContainer>
+                                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center">
+                                            <h4 className="font-bold text-gray-800 self-start mb-6">个人实力素养雷达</h4>
+                                            <div className="h-80 w-full">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <RadarChart cx="50%" cy="50%" outerRadius="80%" data={[
+                                                        { subject: '逻辑思维', A: 85 },
+                                                        { subject: '语言表达', A: 70 },
+                                                        { subject: '外语素养', A: 90 },
+                                                        { subject: '科学探究', A: 65 },
+                                                        { subject: '计算能力', A: 80 },
+                                                        { subject: '阅读理解', A: 75 },
+                                                    ]}>
+                                                        <PolarGrid stroke="#e2e8f0" />
+                                                        <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 12 }} />
+                                                        <PolarRadiusAxis angle={30} domain={[0, 100]} />
+                                                        <Radar name="能力值" dataKey="A" stroke="#4f46e5" fill="#4f46e5" fillOpacity={0.6} />
+                                                    </RadarChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
+                                    <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="p-2 bg-indigo-600 text-white rounded-lg"><TrendingUp size={20} /></div>
+                                            <h4 className="font-bold text-indigo-900">AI 综合学情诊断</h4>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-indigo-800">
+                                            <div className="bg-white bg-opacity-60 p-4 rounded-xl">
+                                                <p className="font-bold mb-1">各科均衡性</p>
+                                                <p>目前呈现“理强文稳”趋势,数学表现一直维持在年级前 5%,语文阅读部分还有进一步挖掘潜力。</p>
+                                            </div>
+                                            <div className="bg-white bg-opacity-60 p-4 rounded-xl">
+                                                <p className="font-bold mb-1">学习稳定性</p>
+                                                <p>近三次大考总分标准差较小,说明学习节奏稳定,建议保持现有的错题复盘机制。</p>
+                                            </div>
+                                            <div className="bg-white bg-opacity-60 p-4 rounded-xl">
+                                                <p className="font-bold mb-1">潜力学科</p>
+                                                <p>英语在该生所有科目中提升斜率最陡,预计在下一次模考中排名有望进入全校前三。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                        {/* 单科趋势 */}
+                                        <div className="md:col-span-2 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                                            <h4 className="font-bold text-gray-800 mb-6">{subjectDetails[selectedSubject].title} - 成绩走势</h4>
+                                            <div className="h-64">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <LineChart data={subjectDetails[selectedSubject].trend}>
+                                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                                                        <XAxis dataKey="month" axisLine={false} tickLine={false} />
+                                                        <YAxis domain={['dataMin - 5', 'dataMax + 5']} />
+                                                        <Tooltip />
+                                                        <Line type="monotone" dataKey="score" stroke="#4f46e5" strokeWidth={3} dot={{ r: 5, fill: '#4f46e5' }} />
+                                                    </LineChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </div>
+                                        {/* 提分建议 */}
+                                        <div className="bg-indigo-600 rounded-2xl p-8 text-white flex flex-col justify-center shadow-lg shadow-indigo-200">
+                                            <div className="p-3 bg-white bg-opacity-20 rounded-xl w-fit mb-6">
+                                                <Presentation size={24} />
+                                            </div>
+                                            <h4 className="text-xl font-bold mb-3">AI 提分锦囊</h4>
+                                            <p className="text-indigo-100 text-sm leading-relaxed">
+                                                {subjectDetails[selectedSubject].advice}
+                                            </p>
+                                        </div>
+                                    </div>
 
-                            {/* AI 分析建议 */}
-                            <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="p-2 bg-indigo-600 text-white rounded-lg">
-                                        <TrendingUp size={20} />
-                                    </div>
-                                    <h4 className="font-bold text-indigo-900">AI 学情深度诊断</h4>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-indigo-800">
-                                    <div className="bg-white bg-opacity-60 p-4 rounded-xl">
-                                        <p className="font-bold mb-1">重点发现</p>
-                                        <p>数学平均分连续两月呈下降趋势,建议本周增加对"圆锥曲线"章节的专项复习课。</p>
-                                    </div>
-                                    <div className="bg-white bg-opacity-60 p-4 rounded-xl">
-                                        <p className="font-bold mb-1">培优建议</p>
-                                        <p>李芳、赵静等同学英语表现卓越,可推荐参加下月的全国青少年口语竞赛。</p>
-                                    </div>
-                                    <div className="bg-white bg-opacity-60 p-4 rounded-xl">
-                                        <p className="font-bold mb-1">补差方案</p>
-                                        <p>王勇、陈强出勤率偏低且成绩波动较大,建议进行一次线上家访了解其家庭学习环境。</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 学生名单页面 */}
-                    {activeTab === 'students' && (
-                        <div className="space-y-6">
-                            <div className="flex justify-between items-center">
-                                <div>
-                                    <h2 className="text-2xl font-bold">学生名单</h2>
-                                    <p className="text-gray-500 mt-1">管理班级学生信息</p>
-                                </div>
-                                <div className="flex gap-3">
-                                    <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2">
-                                        <Upload size={18} />
-                                        批量导入
-                                    </button>
-                                    <button className="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors flex items-center gap-2">
-                                        <Plus size={18} />
-                                        添加学生
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left">
-                                        <thead className="bg-gray-50 text-gray-500 text-xs font-semibold uppercase tracking-wider">
-                                            <tr>
-                                                <th className="px-6 py-4">学号</th>
-                                                <th className="px-6 py-4">姓名</th>
-                                                <th className="px-6 py-4">联系电话</th>
-                                                <th className="px-6 py-4">邮箱</th>
-                                                <th className="px-6 py-4">家长姓名</th>
-                                                <th className="px-6 py-4">家长电话</th>
-                                                <th className="px-6 py-4">入学日期</th>
-                                                <th className="px-6 py-4">状态</th>
-                                                <th className="px-6 py-4">操作</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-gray-100">
-                                            {studentsData.map((student) => (
-                                                <tr key={student.id} className="hover:bg-gray-50 transition-colors">
-                                                    <td className="px-6 py-4 font-mono text-sm">{student.studentId}</td>
-                                                    <td className="px-6 py-4 font-medium">{student.name}</td>
-                                                    <td className="px-6 py-4 text-gray-600">{student.phone}</td>
-                                                    <td className="px-6 py-4 text-gray-600 text-sm">{student.email}</td>
-                                                    <td className="px-6 py-4">{student.parentName}</td>
-                                                    <td className="px-6 py-4 text-gray-600">{student.parentPhone}</td>
-                                                    <td className="px-6 py-4 text-gray-600">{student.enrollDate}</td>
-                                                    <td className="px-6 py-4">
-                                                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${student.status === '优秀' ? 'bg-emerald-100 text-emerald-700' :
-                                                            student.status === '预警' ? 'bg-rose-100 text-rose-700' :
-                                                                student.status === '待提升' ? 'bg-amber-100 text-amber-700' :
-                                                                    'bg-blue-100 text-blue-700'
-                                                            }`}>
-                                                            {student.status}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex gap-2">
-                                                            <button className="p-1.5 hover:bg-indigo-50 rounded text-indigo-600" title="编辑">
-                                                                <Edit size={16} />
-                                                            </button>
-                                                            <button className="p-1.5 hover:bg-red-50 rounded text-red-600" title="删除">
-                                                                <Trash2 size={16} />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                    {/* 知识点掌握度 */}
+                                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                                        <h4 className="font-bold text-gray-800 mb-8">知识点专项掌握进度</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                            {subjectDetails[selectedSubject].mastery.map(item => (
+                                                <div key={item.name} className="space-y-3">
+                                                    <div className="flex justify-between items-end">
+                                                        <span className="text-sm font-medium text-gray-600">{item.name}</span>
+                                                        <span className="text-xs font-bold text-gray-400">{item.value}%</span>
+                                                    </div>
+                                                    <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                                                        <div
+                                                            className="h-full rounded-full transition-all duration-1000"
+                                                            style={{ width: `${item.value}%`, backgroundColor: item.color }}
+                                                        ></div>
+                                                    </div>
+                                                </div>
                                             ))}
-                                        </tbody>
-                                    </table>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     )}
+
 
                     {/* 课程资源页面 */}
                     {activeTab === 'courses' && (
                         <div className="space-y-6">
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <h2 className="text-2xl font-bold">课程资源</h2>
-                                    <p className="text-gray-500 mt-1">管理教学资源和课件</p>
+                                    <h2 className="text-2xl font-bold">学习资源中心</h2>
+                                    <p className="text-gray-500 mt-1">浏览并下载由老师分享的高质量教学资源</p>
                                 </div>
-                                <button className="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors flex items-center gap-2">
-                                    <Upload size={18} />
-                                    上传资源
-                                </button>
                             </div>
 
                             <div className="flex gap-2 flex-wrap">
@@ -511,127 +635,127 @@ export default function Analytics() {
                         </div>
                     )}
 
-                    {/* 系统设置页面 */}
-                    {activeTab === 'settings' && (
-                        <div className="space-y-6">
-                            <div>
-                                <h2 className="text-2xl font-bold">系统设置</h2>
-                                <p className="text-gray-500 mt-1">配置个人和系统偏好</p>
+                        {/* 系统设置页面 */}
+                        {activeTab === 'settings' && (
+                            <div className="space-y-6">
+                                <div>
+                                    <h2 className="text-2xl font-bold">系统设置</h2>
+                                    <p className="text-gray-500 mt-1">配置个人和系统偏好</p>
+                                </div>
+
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    {/* 个人档案 */}
+                                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                                        <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                                            <Users size={20} className="text-indigo-600" />
+                                            个人档案
+                                        </h3>
+                                        <div className="space-y-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">我的姓名</label>
+                                                <input type="text" defaultValue="张同学" className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">我的学号</label>
+                                                <input type="text" defaultValue="20240900123" className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">邮箱地址</label>
+                                                <input type="email" defaultValue="zhang@stu-highschool.edu.cn" className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* 班级信息 */}
+                                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                                        <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                                            <GraduationCap size={20} className="text-indigo-600" />
+                                            学籍信息
+                                        </h3>
+                                        <div className="space-y-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">所在班级</label>
+                                                <input type="text" defaultValue="高三一班" className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">学年</label>
+                                                <select className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                                    <option>2023-2024</option>
+                                                    <option>2024-2025</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">学期</label>
+                                                <select className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                                    <option>第一学期</option>
+                                                    <option>第二学期</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* 通知设置 */}
+                                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                                        <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                                            <Bell size={20} className="text-indigo-600" />
+                                            通知设置
+                                        </h3>
+                                        <div className="space-y-3">
+                                            <label className="flex items-center justify-between">
+                                                <span className="text-sm text-gray-700">邮件通知</span>
+                                                <input type="checkbox" defaultChecked className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
+                                            </label>
+                                            <label className="flex items-center justify-between">
+                                                <span className="text-sm text-gray-700">系统推送</span>
+                                                <input type="checkbox" defaultChecked className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
+                                            </label>
+                                            <label className="flex items-center justify-between">
+                                                <span className="text-sm text-gray-700">每周报告</span>
+                                                <input type="checkbox" className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
+                                            </label>
+                                            <label className="flex items-center justify-between">
+                                                <span className="text-sm text-gray-700">成绩预警</span>
+                                                <input type="checkbox" defaultChecked className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    {/* 数据管理 */}
+                                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                                        <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                                            <Download size={20} className="text-indigo-600" />
+                                            数据管理
+                                        </h3>
+                                        <div className="space-y-3">
+                                            <button className="w-full px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl hover:bg-indigo-100 transition-colors flex items-center justify-center gap-2">
+                                                <Download size={18} />
+                                                导出我的学情数据
+                                            </button>
+                                            <button className="w-full px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl hover:bg-indigo-100 transition-colors flex items-center justify-center gap-2">
+                                                <Download size={18} />
+                                                导出个人成绩报告
+                                            </button>
+                                            <button className="w-full px-4 py-2 bg-red-50 text-red-700 rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2">
+                                                <Trash2 size={18} />
+                                                清空缓存数据
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end gap-3">
+                                    <button className="px-6 py-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+                                        重置
+                                    </button>
+                                    <button className="px-6 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors flex items-center gap-2">
+                                        <Save size={18} />
+                                        保存设置
+                                    </button>
+                                </div>
                             </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                {/* 个人信息 */}
-                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                                    <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                                        <Users size={20} className="text-indigo-600" />
-                                        个人信息
-                                    </h3>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">教师姓名</label>
-                                            <input type="text" defaultValue="陈老师" className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">邮箱地址</label>
-                                            <input type="email" defaultValue="chen@school.edu.cn" className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">联系电话</label>
-                                            <input type="tel" defaultValue="138****9999" className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* 班级信息 */}
-                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                                    <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                                        <GraduationCap size={20} className="text-indigo-600" />
-                                        班级信息
-                                    </h3>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">班级名称</label>
-                                            <input type="text" defaultValue="高三一班" className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">学年</label>
-                                            <select className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                                                <option>2023-2024</option>
-                                                <option>2024-2025</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">学期</label>
-                                            <select className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                                                <option>第一学期</option>
-                                                <option>第二学期</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* 通知设置 */}
-                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                                    <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                                        <Bell size={20} className="text-indigo-600" />
-                                        通知设置
-                                    </h3>
-                                    <div className="space-y-3">
-                                        <label className="flex items-center justify-between">
-                                            <span className="text-sm text-gray-700">邮件通知</span>
-                                            <input type="checkbox" defaultChecked className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
-                                        </label>
-                                        <label className="flex items-center justify-between">
-                                            <span className="text-sm text-gray-700">系统推送</span>
-                                            <input type="checkbox" defaultChecked className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
-                                        </label>
-                                        <label className="flex items-center justify-between">
-                                            <span className="text-sm text-gray-700">每周报告</span>
-                                            <input type="checkbox" className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
-                                        </label>
-                                        <label className="flex items-center justify-between">
-                                            <span className="text-sm text-gray-700">成绩预警</span>
-                                            <input type="checkbox" defaultChecked className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
-                                        </label>
-                                    </div>
-                                </div>
-
-                                {/* 数据管理 */}
-                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                                    <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                                        <Download size={20} className="text-indigo-600" />
-                                        数据管理
-                                    </h3>
-                                    <div className="space-y-3">
-                                        <button className="w-full px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl hover:bg-indigo-100 transition-colors flex items-center justify-center gap-2">
-                                            <Download size={18} />
-                                            导出学生数据
-                                        </button>
-                                        <button className="w-full px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl hover:bg-indigo-100 transition-colors flex items-center justify-center gap-2">
-                                            <Download size={18} />
-                                            导出成绩报告
-                                        </button>
-                                        <button className="w-full px-4 py-2 bg-red-50 text-red-700 rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2">
-                                            <Trash2 size={18} />
-                                            清空缓存数据
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex justify-end gap-3">
-                                <button className="px-6 py-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                                    重置
-                                </button>
-                                <button className="px-6 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors flex items-center gap-2">
-                                    <Save size={18} />
-                                    保存设置
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </main>
-        </div>
+                        )}
+                    </div>
+            </main >
+        </div >
     );
 }

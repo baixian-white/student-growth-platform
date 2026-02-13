@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
     Home, Search, Trophy, FileText, GraduationCap, Building2,
     Users, Calendar, Clock, Bookmark, Share2, TrendingUp,
-    AlertCircle, Sparkles, Filter, ChevronRight, ExternalLink
+    AlertCircle, Sparkles, Filter, ChevronRight, ExternalLink, Presentation, Grid
 } from 'lucide-react';
 
 // 模拟数据
@@ -127,11 +127,36 @@ const examInfoData = [
     }
 ];
 
+const pathwayData = {
+    strongBase: {
+        title: '强基计划 (基础学科招生改革试点)',
+        universities: ['清华大学', '北京大学', '复旦大学', '南京大学', '浙江大学', '上海交通大学', '中国科学技术大学'],
+        milestones: [
+            { date: '3月底-4月', event: '各校发布简章并开启报名' },
+            { date: '6月7-8日', event: '参加全国统一高考' },
+            { date: '6月中旬', event: '确认参加学校考核' },
+            { date: '6月底-7月初', event: '学校考核、录取名单公示' }
+        ],
+        matchScore: 88,
+        potentialSubjects: ['数学', '物理'],
+        advice: '该生在逻辑思维与数学计算上具有显著优势，契合强基计划对基础科研人才的选拔标准。建议重点关注清北及复交的数理方向简章。'
+    },
+    techSpecial: {
+        title: '科技特长生计划 (科创与智赛专项)',
+        tracks: [
+            { name: '信奥专项 (C++)', level: '省级一等奖候选', target: '重点高中理科实验班' },
+            { name: '机器人/创客', level: '国家级参赛经历', target: '高校综合评价招生' },
+            { name: '科创发明', level: '获得专利保护', target: '自主招生/特长加分' }
+        ],
+        advice: '由于该生在逻辑思维雷达图表现极佳，建议在高三上学期冲刺信奥省级联赛，作为名校敲门砖。'
+    }
+};
+
 export default function ExamInfo() {
     const [activeCategory, setActiveCategory] = useState('全部');
     const [searchTerm, setSearchTerm] = useState('');
 
-    const categories = ['全部', '竞赛', '考试', '升学', '院校', '招生'];
+    const categories = ['全部', '竞赛', '考试', '升学', '升学规划', '院校', '招生'];
 
     const filteredData = examInfoData.filter(item => {
         const matchCategory = activeCategory === '全部' || item.category === activeCategory;
@@ -203,8 +228,8 @@ export default function ExamInfo() {
                                     key={cat}
                                     onClick={() => setActiveCategory(cat)}
                                     className={`px-4 py-2 rounded-xl transition-all ${activeCategory === cat
-                                            ? 'bg-blue-600 text-white shadow-md'
-                                            : 'bg-white border border-gray-200 hover:bg-gray-50'
+                                        ? 'bg-blue-600 text-white shadow-md'
+                                        : 'bg-white border border-gray-200 hover:bg-gray-50'
                                         }`}
                                 >
                                     {cat}
@@ -213,68 +238,167 @@ export default function ExamInfo() {
                         </div>
 
                         {/* 信息卡片网格 */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {filteredData.map(item => (
-                                <div key={item.id} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                                    <div className="flex items-start justify-between mb-3">
-                                        <div className="flex items-center gap-2">
-                                            <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${getCategoryColor(item.category)}`}>
-                                                {item.category}
-                                            </span>
-                                            {item.aiRecommended && (
-                                                <span className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-lg text-xs font-medium">
-                                                    <Sparkles size={12} />
-                                                    AI推荐
-                                                </span>
-                                            )}
+                        {activeCategory === '升学规划' ? (
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in duration-500">
+                                {/* 强基计划专栏 */}
+                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                    <div className="bg-indigo-600 p-6 text-white flex justify-between items-start">
+                                        <div>
+                                            <h4 className="text-xl font-bold mb-1">强基计划专栏</h4>
+                                            <p className="text-indigo-100 text-xs text-left">聚焦 39 所顶尖大学基础学科试点</p>
                                         </div>
-                                        {getImportanceIcon(item.importance)}
-                                    </div>
-
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">{item.title}</h3>
-
-                                    <p className="text-sm text-gray-600 mb-4 line-clamp-3">{item.summary}</p>
-
-                                    <div className="flex flex-wrap gap-2 mb-4">
-                                        {item.tags.map(tag => (
-                                            <span key={tag} className="px-2 py-1 bg-gray-100 text-gray-600 rounded-md text-xs">
-                                                #{tag}
-                                            </span>
-                                        ))}
-                                    </div>
-
-                                    <div className="flex items-center justify-between text-sm text-gray-500">
-                                        <div className="flex items-center gap-4">
-                                            <span className="flex items-center gap-1">
-                                                <Calendar size={14} />
-                                                {item.date}
-                                            </span>
-                                            {item.deadline && (
-                                                <span className="flex items-center gap-1 text-red-600 font-medium">
-                                                    <Clock size={14} />
-                                                    截止 {item.deadline}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors" title="收藏">
-                                                <Bookmark size={16} />
-                                            </button>
-                                            <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors" title="分享">
-                                                <Share2 size={16} />
-                                            </button>
-                                            <a href={item.link} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors" title="查看详情">
-                                                <ExternalLink size={16} />
-                                            </a>
+                                        <div className="bg-white bg-opacity-20 p-2 rounded-xl">
+                                            <GraduationCap size={24} />
                                         </div>
                                     </div>
+                                    <div className="p-6 space-y-6">
+                                        <div className="bg-indigo-50 rounded-xl p-4 flex gap-4 items-center">
+                                            <div className="w-16 h-16 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin-slow flex items-center justify-center font-bold text-indigo-600 text-xl bg-white">
+                                                {pathwayData.strongBase.matchScore}%
+                                            </div>
+                                            <div className="text-left">
+                                                <p className="text-sm font-bold text-indigo-900">综合匹配指数极高</p>
+                                                <p className="text-xs text-indigo-600">该生建议主攻: {pathwayData.strongBase.potentialSubjects.join('、')}</p>
+                                            </div>
+                                        </div>
 
-                                    <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-400">
-                                        来源: {item.source}
+                                        <div className="text-left">
+                                            <h5 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                                <Calendar size={16} className="text-indigo-600" />
+                                                政策关键节点
+                                            </h5>
+                                            <div className="space-y-3 relative pl-4 before:absolute before:left-0 before:top-2 before:bottom-2 before:w-0.5 before:bg-indigo-100">
+                                                {pathwayData.strongBase.milestones.map((ms, idx) => (
+                                                    <div key={idx} className="relative">
+                                                        <div className="absolute -left-[20px] top-1.5 w-2 h-2 rounded-full bg-indigo-600"></div>
+                                                        <p className="text-xs font-bold text-indigo-600">{ms.date}</p>
+                                                        <p className="text-xs text-gray-500">{ms.event}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-gray-100 text-left">
+                                            <h5 className="font-bold text-gray-800 mb-2">AI 规划建议</h5>
+                                            <p className="text-sm text-gray-600 leading-relaxed italic border-l-4 border-indigo-200 pl-3">
+                                                "{pathwayData.strongBase.advice}"
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
+
+                                {/* 科技特长生计划 */}
+                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                    <div className="bg-emerald-600 p-6 text-white flex justify-between items-start">
+                                        <div>
+                                            <h4 className="text-xl font-bold mb-1">科技特长生专栏</h4>
+                                            <p className="text-emerald-100 text-xs text-left">信奥/编程/创客/科创专项计划</p>
+                                        </div>
+                                        <div className="bg-white bg-opacity-20 p-2 rounded-xl">
+                                            <Presentation size={24} />
+                                        </div>
+                                    </div>
+                                    <div className="p-6 space-y-6">
+                                        <div className="text-left">
+                                            <h5 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                                <Grid size={16} className="text-emerald-600" />
+                                                专项能力档案
+                                            </h5>
+                                            <div className="space-y-3">
+                                                {pathwayData.techSpecial.tracks.map((track, idx) => (
+                                                    <div key={idx} className="p-4 rounded-xl bg-gray-50 border border-gray-100 flex justify-between items-center group hover:bg-white hover:shadow-md transition-all">
+                                                        <div className="text-left">
+                                                            <p className="text-sm font-bold text-gray-800">{track.name}</p>
+                                                            <p className="text-xs text-emerald-600 font-medium">当前能级: {track.level}</p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="text-[10px] text-gray-400 uppercase font-bold">建议目标</p>
+                                                            <p className="text-xs font-bold text-gray-700">{track.target}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-100 text-left">
+                                            <div className="flex gap-3 mb-3">
+                                                <div className="p-2 bg-white rounded-lg text-emerald-600 shadow-sm"><TrendingUp size={18} /></div>
+                                                <h5 className="font-bold text-emerald-900">专项提分路线图</h5>
+                                            </div>
+                                            <p className="text-xs text-emerald-800 leading-relaxed">
+                                                {pathwayData.techSpecial.advice}
+                                            </p>
+                                            <button className="mt-4 w-full py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-100">
+                                                咨询专业科创指导老师
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                {filteredData.map(item => (
+                                    <div key={item.id} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                                        <div className="flex items-start justify-between mb-3">
+                                            <div className="flex items-center gap-2">
+                                                <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${getCategoryColor(item.category)}`}>
+                                                    {item.category}
+                                                </span>
+                                                {item.aiRecommended && (
+                                                    <span className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-lg text-xs font-medium">
+                                                        <Sparkles size={12} />
+                                                        AI推荐
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {getImportanceIcon(item.importance)}
+                                        </div>
+
+                                        <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 text-left">{item.title}</h3>
+
+                                        <p className="text-sm text-gray-600 mb-4 line-clamp-3 text-left">{item.summary}</p>
+
+                                        <div className="flex flex-wrap gap-2 mb-4">
+                                            {item.tags.map(tag => (
+                                                <span key={tag} className="px-2 py-1 bg-gray-100 text-gray-600 rounded-md text-xs">
+                                                    #{tag}
+                                                </span>
+                                            ))}
+                                        </div>
+
+                                        <div className="flex items-center justify-between text-sm text-gray-500">
+                                            <div className="flex items-center gap-4">
+                                                <span className="flex items-center gap-1">
+                                                    <Calendar size={14} />
+                                                    {item.date}
+                                                </span>
+                                                {item.deadline && (
+                                                    <span className="flex items-center gap-1 text-red-600 font-medium">
+                                                        <Clock size={14} />
+                                                        截止 {item.deadline}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors" title="收藏">
+                                                    <Bookmark size={16} />
+                                                </button>
+                                                <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors" title="分享">
+                                                    <Share2 size={16} />
+                                                </button>
+                                                <a href={item.link} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors" title="查看详情">
+                                                    <ExternalLink size={16} />
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-400 text-left">
+                                            来源: {item.source}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
 
                         {filteredData.length === 0 && (
                             <div className="text-center py-16 text-gray-400">
