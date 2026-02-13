@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { studentAPI } from '../services/api';
 import { Link } from 'react-router-dom';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -12,15 +13,7 @@ import {
     Phone, Calendar, Save, X, Filter, Grid, List, Home
 } from 'lucide-react';
 
-// --- 模拟数据 ---
-const studentsData = [
-    { id: 1, name: '张伟', studentId: '2024001', math: 85, chinese: 92, english: 78, science: 88, status: '进步', attendance: '98%', phone: '138****1234', email: 'zhangwei@example.com', parentName: '张父', parentPhone: '139****5678', class: '高三一班', enrollDate: '2021-09-01' },
-    { id: 2, name: '李芳', studentId: '2024002', math: 92, chinese: 88, english: 95, science: 90, status: '优秀', attendance: '100%', phone: '138****2345', email: 'lifang@example.com', parentName: '李父', parentPhone: '139****6789', class: '高三一班', enrollDate: '2021-09-01' },
-    { id: 3, name: '王勇', studentId: '2024003', math: 70, chinese: 75, english: 65, science: 72, status: '待提升', attendance: '92%', phone: '138****3456', email: 'wangyong@example.com', parentName: '王父', parentPhone: '139****7890', class: '高三一班', enrollDate: '2021-09-01' },
-    { id: 4, name: '赵静', studentId: '2024004', math: 95, chinese: 96, english: 91, science: 94, status: '优秀', attendance: '99%', phone: '138****4567', email: 'zhaojing@example.com', parentName: '赵父', parentPhone: '139****8901', class: '高三一班', enrollDate: '2021-09-01' },
-    { id: 5, name: '陈强', studentId: '2024005', math: 60, chinese: 68, english: 72, science: 65, status: '预警', attendance: '85%', phone: '138****5678', email: 'chenqiang@example.com', parentName: '陈父', parentPhone: '139****9012', class: '高三一班', enrollDate: '2021-09-01' },
-    { id: 6, name: '刘洋', studentId: '2024006', math: 82, chinese: 80, english: 85, science: 81, status: '稳定', attendance: '96%', phone: '138****6789', email: 'liuyang@example.com', parentName: '刘父', parentPhone: '139****0123', class: '高三一班', enrollDate: '2021-09-01' },
-];
+// --- 模拟数据(保留用于图表等非学生数据) ---
 
 const coursesData = [
     { id: 1, title: '高等数学微积分基础', type: 'video', category: '数学', size: '256 MB', uploadDate: '2024-01-15', downloads: 128, thumbnail: '📐' },
@@ -76,10 +69,32 @@ const StatCard = ({ title, value, icon: Icon, color, trend }) => (
 export default function Analytics() {
     const [activeTab, setActiveTab] = useState('dashboard');
     const [searchTerm, setSearchTerm] = useState('');
+    const [students, setStudents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // 加载学生数据
+    useEffect(() => {
+        loadStudents();
+    }, []);
+
+    const loadStudents = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const data = await studentAPI.getAllStudents();
+            setStudents(data);
+        } catch (err) {
+            setError('加载学生数据失败');
+            console.error('加载学生数据错误:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const filteredStudents = useMemo(() => {
-        return studentsData.filter(s => s.name.includes(searchTerm));
-    }, [searchTerm]);
+        return students.filter(s => s.name && s.name.includes(searchTerm));
+    }, [students, searchTerm]);
 
     return (
         <div className="flex h-screen bg-gray-50 text-gray-900 font-sans">

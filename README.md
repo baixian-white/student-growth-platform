@@ -94,11 +94,11 @@ cd student-growth-platform
 # 进入后端目录
 cd backend
 
-# 配置数据库
-# 1. 创建数据库: CREATE DATABASE education_db;
-# 2. 修改 src/main/resources/application.yml 中的数据库配置
+### 2. 环境配置
 
-# 启动后端服务
+本项目需要配置 PostgreSQL 数据库及相关环境。**详细的连接配置和环境搭建指南，请参考：[ENVIRONMENT.md](file:///Users/baixian/Desktop/code/student-growth-platform/ENVIRONMENT.md)**
+
+### 3. 启动后端
 mvn spring-boot:run
 ```
 
