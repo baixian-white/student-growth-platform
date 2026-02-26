@@ -24,7 +24,7 @@ export default function Home() {
                                 学情分析
                             </Link>
                             <Link to="/exam-info" className="text-gray-700 hover:text-indigo-600 transition-colors font-medium">
-                                中高考信息
+                                学生升学规划平台
                             </Link>
                             <Link to="/team-info" className="text-gray-700 hover:text-indigo-600 transition-colors font-medium">
                                 团队介绍
@@ -74,7 +74,7 @@ export default function Home() {
                             <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                                 <GraduationCap className="text-white" size={28} />
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-3">中高考信息</h3>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-3">学生升学规划平台</h3>
                             <p className="text-gray-600 mb-6 leading-relaxed">
                                 AI智能聚合竞赛、考试、升学政策,实时掌握教育资讯动态
                             </p>

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
     Home, Search, Trophy, FileText, GraduationCap, Building2,
     Users, Calendar, Clock, Bookmark, Share2, TrendingUp,
-    AlertCircle, Sparkles, Filter, ChevronRight, ExternalLink, Presentation, Grid
+    AlertCircle, Sparkles, Filter, ChevronRight, ExternalLink, Presentation, Grid, Target, Cpu, Award
 } from 'lucide-react';
 
 // 模拟数据
@@ -196,7 +196,7 @@ export default function ExamInfo() {
                                 <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white">
                                     <GraduationCap size={24} />
                                 </div>
-                                <h1 className="text-xl font-bold text-gray-900">中高考信息分析</h1>
+                                <h1 className="text-xl font-bold text-gray-900">升学信息查询</h1>
                             </div>
                             <div className="relative w-96">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -208,6 +208,34 @@ export default function ExamInfo() {
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                             </div>
+                        </div>
+                        {/* 系统内导航切换 */}
+                        <div className="flex bg-gray-100 p-1 rounded-xl">
+                            <div className="px-4 py-2 rounded-lg text-sm font-medium bg-white text-indigo-700 shadow-sm border border-gray-200 transition-all">
+                                <div className="flex items-center gap-2">
+                                    <Search size={16} />信息查询
+                                </div>
+                            </div>
+                            <Link to="/exam-analysis" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                                <div className="flex items-center gap-2">
+                                    <TrendingUp size={16} />信息分析
+                                </div>
+                            </Link>
+                            <Link to="/strong-base" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                                <div className="flex items-center gap-2">
+                                    <Target size={16} />强基计划
+                                </div>
+                            </Link>
+                            <Link to="/tech-specialty" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                                <div className="flex items-center gap-2">
+                                    <Cpu size={16} />科技特长生
+                                </div>
+                            </Link>
+                            <Link to="/whitelist-competitions" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                                <div className="flex items-center gap-2">
+                                    <Award size={16} />白名单赛事
+                                </div>
+                            </Link>
                         </div>
                         <Link to="/" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
                             <Home size={18} />
@@ -448,10 +476,13 @@ export default function ExamInfo() {
                         </div>
 
                         {/* 热门标签 */}
-                        <div className="bg-white rounded-2xl p-6 border border-gray-100">
-                            <h3 className="font-bold text-gray-900 mb-4">热门标签</h3>
+                        <div className="bg-white rounded-2xl p-6 border border-gray-100 text-left">
+                            <h3 className="font-bold text-gray-900 mb-4">热门政策科普库</h3>
                             <div className="flex flex-wrap gap-2">
-                                {['数学', '物理', '强基计划', '自主招生', '高考', '竞赛', '清华', '北大', '人工智能', '艺术类'].map(tag => (
+                                <Link to="/strong-base" className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold border border-indigo-100 rounded-lg text-xs cursor-pointer transition-colors shadow-sm flex items-center gap-1">
+                                    <Target size={12} /> #什么是强基计划？
+                                </Link>
+                                {['自主招生', '高考', '强基计划', '竞赛', '清华', '北大', '人工智能', '艺术类'].map(tag => (
                                     <span key={tag} className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs cursor-pointer transition-colors">
                                         #{tag}
                                     </span>
