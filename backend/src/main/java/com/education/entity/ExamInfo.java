@@ -51,7 +51,16 @@ public class ExamInfo {
 
     @Column(name = "region")
     private String region;
-    
+
+    @Column(name = "school")
+    private String school;
+
+    @Column(name = "school_level")
+    private String schoolLevel;
+
+    @Column(name = "admission_year")
+    private Integer admissionYear;
+
     @Column(name = "created_at")
     private LocalDate createdAt;
     

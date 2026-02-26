@@ -21,9 +21,10 @@ public class ExamInfoController {
     public ResponseEntity<List<ExamInfo>> getAllExamInfo(
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String region,
+            @RequestParam(required = false) String schoolLevel,
             @RequestParam(required = false) String keyword) {
-        if (category != null || region != null || keyword != null) {
-            return ResponseEntity.ok(examInfoService.searchWithFilters(category, region, keyword));
+        if (category != null || region != null || schoolLevel != null || keyword != null) {
+            return ResponseEntity.ok(examInfoService.searchWithFilters(category, region, schoolLevel, keyword));
         }
         return ResponseEntity.ok(examInfoService.getLatest20());
     }
@@ -50,11 +51,15 @@ public class ExamInfoController {
         return ResponseEntity.ok(examInfoService.getAiRecommended());
     }
 
+    @GetMapping("/stats")
+    public ResponseEntity<Map<String, Object>> getStats() {
+        return ResponseEntity.ok(examInfoService.getStats());
+    }
+
     @PostMapping("/batch-import")
     public ResponseEntity<Map<String, Object>> batchImport(
             @RequestBody List<ExamInfo> items,
             @RequestHeader(value = "X-Crawler-Key", required = false) String apiKey) {
-        // Simple API key validation
         if (!"crawler-secret-2025".equals(apiKey)) {
             return ResponseEntity.status(401).body(Map.of("error", "Unauthorized"));
         }

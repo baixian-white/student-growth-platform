@@ -7,9 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -45,12 +43,32 @@ public class ExamInfoService {
         return examInfoRepository.findTop20ByOrderByDateDesc();
     }
 
-    public List<ExamInfo> searchWithFilters(String category, String region, String keyword) {
+    public List<ExamInfo> searchWithFilters(String category, String region, String schoolLevel, String keyword) {
         return examInfoRepository.findWithFilters(
             (category == null || category.isEmpty()) ? null : category,
             (region == null || region.isEmpty()) ? null : region,
+            (schoolLevel == null || schoolLevel.isEmpty()) ? null : schoolLevel,
             (keyword == null || keyword.isEmpty()) ? null : keyword
         );
+    }
+
+    public Map<String, Object> getStats() {
+        Map<String, Object> stats = new LinkedHashMap<>();
+
+        // 各分类数量
+        Map<String, Long> categoryCount = new LinkedHashMap<>();
+        examInfoRepository.countByCategory()
+            .forEach(row -> categoryCount.put((String) row[0], (Long) row[1]));
+        stats.put("byCategory", categoryCount);
+
+        // 各地区数量
+        Map<String, Long> regionCount = new LinkedHashMap<>();
+        examInfoRepository.countByRegion()
+            .forEach(row -> regionCount.put((String) row[0], (Long) row[1]));
+        stats.put("byRegion", regionCount);
+
+        stats.put("total", examInfoRepository.countAll());
+        return stats;
     }
 
     @Transactional
