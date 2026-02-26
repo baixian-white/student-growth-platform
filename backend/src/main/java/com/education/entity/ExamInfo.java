@@ -30,6 +30,9 @@ public class ExamInfo {
     
     @Column(columnDefinition = "TEXT")
     private String summary;
+
+    @Column(name = "content_summary", columnDefinition = "TEXT")
+    private String contentSummary;
     
     @Column(name = "importance")
     private String importance;
@@ -42,6 +45,12 @@ public class ExamInfo {
     
     @Column(name = "link")
     private String link;
+
+    @Column(name = "source_url", unique = true, length = 1024)
+    private String sourceUrl;
+
+    @Column(name = "region")
+    private String region;
     
     @Column(name = "created_at")
     private LocalDate createdAt;

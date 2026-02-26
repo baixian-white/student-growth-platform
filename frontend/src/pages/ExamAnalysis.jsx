@@ -91,6 +91,11 @@ export default function ExamAnalysis() {
                                         <Cpu size={16} />科技特长生
                                     </div>
                                 </Link>
+                                <Link to="/informatics-olympiad" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-white transition-all">
+                                    <div className="flex items-center gap-2">
+                                        <BookOpen size={16} />信息学奥赛
+                                    </div>
+                                </Link>
                                 <Link to="/whitelist-competitions" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
                                     <div className="flex items-center gap-2">
                                         <Award size={16} />白名单赛事

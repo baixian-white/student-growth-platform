@@ -102,6 +102,23 @@ export default function Home() {
                         </div>
                     </Link>
 
+                    {/* 信息学奥赛卡片 */}
+                    <Link to="/informatics-olympiad" className="group">
+                        <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                            <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <BookOpen className="text-white" size={28} />
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-3">信息学奥赛</h3>
+                            <p className="text-gray-600 mb-6 leading-relaxed">
+                                NOI 全国青少年信息学奥林匹克动态、官方咨询与历年省市核心数据
+                            </p>
+                            <div className="flex items-center text-amber-600 font-semibold group-hover:gap-3 gap-2 transition-all">
+                                查看资料库
+                                <ChevronRight size={20} />
+                            </div>
+                        </div>
+                    </Link>
+
                 </div>
 
                 {/* 数据统计 */}

@@ -327,6 +327,11 @@ export default function TechSpecialty() {
                                         <Award size={16} />白名单赛事
                                     </div>
                                 </Link>
+                                <Link to="/informatics-olympiad" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                                    <div className="flex items-center gap-2">
+                                        <BookOpen size={16} />信息学奥赛
+                                    </div>
+                                </Link>
                             </div>
                         </div>
                         <Link to="/" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
