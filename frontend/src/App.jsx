@@ -10,6 +10,7 @@ import WhitelistCompetitions from './pages/WhitelistCompetitions'
 import CompetitionDetail from './pages/CompetitionDetail'
 import InformaticsOlympiad from './pages/InformaticsOlympiad'
 import InformaticsArticle from './pages/InformaticsArticle'
+import Guihua from './pages/guihua'
 
 function App() {
     return (
@@ -26,6 +27,7 @@ function App() {
                 <Route path="/competition/:id" element={<CompetitionDetail />} />
                 <Route path="/informatics-olympiad" element={<InformaticsOlympiad />} />
                 <Route path="/informatics-article/:type/:id" element={<InformaticsArticle />} />
+                <Route path="/guihua" element={<Guihua />} />
             </Routes>
         </Router>
     )

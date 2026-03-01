@@ -29,6 +29,9 @@ export default function Home() {
                             <Link to="/team-info" className="text-gray-700 hover:text-indigo-600 transition-colors font-medium">
                                 团队介绍
                             </Link>
+                            <Link to="/guihua" className="text-gray-700 hover:text-indigo-600 transition-colors font-medium">
+                                AI 升学规划
+                            </Link>
                             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 border-2 border-indigo-200 flex items-center justify-center text-indigo-700 font-bold">
                                 陈
                             </div>
@@ -102,23 +105,22 @@ export default function Home() {
                         </div>
                     </Link>
 
-                    {/* 信息学奥赛卡片 */}
-                    <Link to="/informatics-olympiad" className="group">
+                    {/* AI 升学规划卡片 */}
+                    <Link to="/guihua" className="group">
                         <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                            <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                                <BookOpen className="text-white" size={28} />
+                            <div className="w-14 h-14 bg-gradient-to-br from-red-500 to-rose-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <TrendingUp className="text-white" size={28} />
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-3">信息学奥赛</h3>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-3">AI 升学规划</h3>
                             <p className="text-gray-600 mb-6 leading-relaxed">
-                                NOI 全国青少年信息学奥林匹克动态、官方咨询与历年省市核心数据
+                                基于大数据的中高考升学全维度深度匹配与路径规划
                             </p>
-                            <div className="flex items-center text-amber-600 font-semibold group-hover:gap-3 gap-2 transition-all">
-                                查看资料库
+                            <div className="flex items-center text-red-600 font-semibold group-hover:gap-3 gap-2 transition-all">
+                                开始规划
                                 <ChevronRight size={20} />
                             </div>
                         </div>
                     </Link>
-
                 </div>
 
                 {/* 数据统计 */}

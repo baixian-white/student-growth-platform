@@ -4,10 +4,11 @@ import {
     BookOpen, Home, Search, Trophy, FileText, GraduationCap, Building2,
     Users, Calendar, Clock, Bookmark, Share2, TrendingUp,
     AlertCircle, Sparkles, Filter, ChevronRight, ExternalLink,
-    Presentation, Grid, Target, Cpu, Award, RefreshCw, MapPin, Wifi, WifiOff
+    Presentation, Grid, Target, Cpu, Award, RefreshCw, MapPin, Wifi, WifiOff,
+    ChevronLeft, School
 } from 'lucide-react';
 
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = '/api';
 
 // ──── Fallback data while backend is loading or unavailable ─────────
 const FALLBACK_DATA = [
@@ -15,43 +16,43 @@ const FALLBACK_DATA = [
         id: 'f1', title: 'NOIP 2025 安徽省获奖名单公布：安师大附中再登榜首',
         category: '竞赛', date: '2025-12-15', source: 'NOI官网',
         summary: '安师大附中共33名学生获奖，包括17名一等奖，连续第十七年蝉联省内信息学第一。',
-        tags: '["NOI","信息学","安徽"]', importance: 'high', aiRecommended: true,
-        link: 'https://www.noi.cn', region: '安徽'
+        tags: '[\"NOI\",\"信息学\",\"安徽\"]', importance: 'high', aiRecommended: true,
+        link: 'https://www.noi.cn', region: '安徽', school: '安师大附中', schoolLevel: '高中'
     },
     {
         id: 'f2', title: 'CSP-J/S 2025 安徽省第二轮认证考点公布',
         category: '竞赛', date: '2025-11-01', source: 'NOI官网',
         summary: '第二轮认证于11月1日举行，考点分布合肥一中、合肥八中、芜湖一中、蚌埠二中四处。',
-        tags: '["CSP","信息学","安徽"]', importance: 'high', aiRecommended: true,
-        link: 'https://www.noi.cn', region: '安徽'
+        tags: '[\"CSP\",\"信息学\",\"安徽\"]', importance: 'high', aiRecommended: true,
+        link: 'https://www.noi.cn', region: '安徽', school: '', schoolLevel: ''
     },
     {
         id: 'f3', title: '合肥市2025年中考科技特长生录取分数线汇总',
         category: '招生', date: '2025-07-12', source: '合肥市教育局',
         summary: '合肥一中信息学方向降分约18-22分，合肥一六八NOIP三等奖即可报名审核。',
-        tags: '["科技特长生","合肥","招生"]', importance: 'high', aiRecommended: true,
-        link: '#', region: '合肥'
+        tags: '[\"科技特长生\",\"合肥\",\"招生\"]', importance: 'high', aiRecommended: true,
+        link: '#', region: '合肥', school: '合肥一中', schoolLevel: '高中'
     },
     {
         id: 'f4', title: '强基计划2026年招生政策解读',
         category: '升学', date: '2026-02-05', source: '阳光高考平台',
         summary: '39所双一流高校继续实施强基计划，重点选拔培养基础学科拔尖且综合素质优秀的学生。',
-        tags: '["强基计划","招生政策","双一流"]', importance: 'high', aiRecommended: true,
-        link: '#', region: '全国'
+        tags: '[\"强基计划\",\"招生政策\",\"双一流\"]', importance: 'high', aiRecommended: true,
+        link: '#', region: '全国', school: '', schoolLevel: ''
     },
     {
         id: 'f5', title: 'NOI 2025 安徽省队选拔：3月在芜湖安师大附中举行',
         category: '竞赛', date: '2025-03-02', source: '安师大附中',
         summary: '省队选拔为两场各4.5小时笔试，综合得分=NOIP2024×30%+省选×70%，前5名入省队A队。',
-        tags: '["NOI","省队","安徽"]', importance: 'high', aiRecommended: true,
-        link: '#', region: '安徽'
+        tags: '[\"NOI\",\"省队\",\"安徽\"]', importance: 'high', aiRecommended: true,
+        link: '#', region: '安徽', school: '安师大附中', schoolLevel: '高中'
     },
     {
-        id: 'f6', title: '合肥四中、七中发布2025年信息学特长生招生简章',
-        category: '招生', date: '2025-06-10', source: '学校官网',
-        summary: '合肥四中录取线降12-18分，合肥七中计划招收信息学特长生2名，门槛为省级二等奖。',
-        tags: '["科技特长生","合肥","招生简章"]', importance: 'medium', aiRecommended: false,
-        link: '#', region: '合肥'
+        id: 'f6', title: '合肥一六八中学发布2025年信息学特长生招生简章',
+        category: '招生', date: '2025-06-10', source: '合肥一六八中学',
+        summary: '合肥一六八录取降分约12-18分，计划招收信息学特长生5名，门槛为省级二等奖。',
+        tags: '[\"科技特长生\",\"合肥\",\"招生简章\"]', importance: 'high', aiRecommended: true,
+        link: '#', region: '合肥', school: '合肥一六八中学', schoolLevel: '高中'
     },
 ];
 
@@ -73,7 +74,7 @@ const pathwayData = {
             { name: '机器人/创客', level: '国家级参赛经历', target: '高校综合评价招生' },
             { name: '科创发明', level: '获得专利保护', target: '自主招生/特长加分' }
         ],
-        advice: '由于该生在逻辑思维雷达图表现极佳，建议在高三上学期冲刺信奥省级联赛，作为名校敲门砖。'
+        advice: '由于该生在逻辑思维雷达图表现极佳，建议在高三上学期冲刺信奥省级联赛。'
     }
 };
 
@@ -117,49 +118,99 @@ export default function ExamInfo() {
     const [loading, setLoading] = useState(true);
     const [backendOnline, setBackendOnline] = useState(false);
     const [lastUpdated, setLastUpdated] = useState(null);
+
+    // 筛选条件
     const [activeCategory, setActiveCategory] = useState('全部');
     const [activeRegion, setActiveRegion] = useState('全部');
+    const [activeSchoolLevel, setActiveSchoolLevel] = useState('全部');
+    const [activeSchool, setActiveSchool] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+
+    // 分页
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalElements, setTotalElements] = useState(0);
+    const PAGE_SIZE = 20;
+
+    // 学校列表（从后端动态加载）
+    const [schoolList, setSchoolList] = useState([]);
+    const [hotSchools, setHotSchools] = useState([]);
 
     const categories = ['全部', '竞赛', '招生', '升学', '考试', '资讯'];
     const regions = ['全部', '合肥', '安徽', '全国'];
+    const schoolLevels = ['全部', '高中', '初中'];
 
-    const fetchData = useCallback(async () => {
+    // 加载学校列表（只需加载一次）
+    useEffect(() => {
+        fetch(`${API_BASE}/exam-info/schools`, { signal: AbortSignal.timeout(4000) })
+            .then(r => r.ok ? r.json() : [])
+            .then(list => setSchoolList(list))
+            .catch(() => { });
+
+        fetch(`${API_BASE}/exam-info/hot-schools?top=8`, { signal: AbortSignal.timeout(4000) })
+            .then(r => r.ok ? r.json() : [])
+            .then(list => setHotSchools(list))
+            .catch(() => { });
+    }, []);
+
+    const fetchData = useCallback(async (page = currentPage) => {
         setLoading(true);
-        const params = new URLSearchParams();
+        const params = new URLSearchParams({ page, size: PAGE_SIZE });
         if (activeCategory && activeCategory !== '全部') params.set('category', activeCategory);
         if (activeRegion && activeRegion !== '全部') params.set('region', activeRegion);
+        if (activeSchoolLevel && activeSchoolLevel !== '全部') params.set('schoolLevel', activeSchoolLevel);
+        if (activeSchool) params.set('school', activeSchool);
         if (searchTerm) params.set('keyword', searchTerm);
 
         try {
-            const resp = await fetch(`${API_BASE}/exam-info?${params}`, { signal: AbortSignal.timeout(4000) });
+            const resp = await fetch(`${API_BASE}/exam-info/page?${params}`,
+                { signal: AbortSignal.timeout(5000) });
             if (resp.ok) {
                 const data = await resp.json();
-                if (data.length > 0) {
-                    setArticles(data);
+                if (data.content && data.content.length > 0) {
+                    setArticles(data.content);
+                    setTotalPages(data.totalPages || 1);
+                    setTotalElements(data.totalElements || 0);
                     setBackendOnline(true);
                     setLastUpdated(new Date());
+                } else if (data.content && data.content.length === 0) {
+                    setArticles([]);
+                    setTotalPages(1);
+                    setTotalElements(0);
+                    setBackendOnline(true);
                 } else {
+                    // 后端有数据但 content 为空，降级
                     setArticles(FALLBACK_DATA);
                     setBackendOnline(true);
                 }
             }
         } catch {
             setBackendOnline(false);
-            // Filter fallback data locally
+            // 本地过滤 fallback 数据
             const filtered = FALLBACK_DATA.filter(item => {
                 const matchCat = activeCategory === '全部' || item.category === activeCategory;
                 const matchReg = activeRegion === '全部' || item.region === activeRegion;
-                const matchSearch = !searchTerm || item.title.includes(searchTerm) || item.summary.includes(searchTerm);
-                return matchCat && matchReg && matchSearch;
+                const matchLevel = activeSchoolLevel === '全部' || item.schoolLevel === activeSchoolLevel;
+                const matchSchool = !activeSchool || item.school === activeSchool;
+                const matchSearch = !searchTerm
+                    || item.title.includes(searchTerm)
+                    || item.summary.includes(searchTerm);
+                return matchCat && matchReg && matchLevel && matchSchool && matchSearch;
             });
             setArticles(filtered.length ? filtered : FALLBACK_DATA);
+            setTotalPages(1);
+            setTotalElements(filtered.length);
         } finally {
             setLoading(false);
         }
-    }, [activeCategory, activeRegion, searchTerm]);
+    }, [activeCategory, activeRegion, activeSchoolLevel, activeSchool, searchTerm, currentPage]);
 
-    useEffect(() => { fetchData(); }, [fetchData]);
+    // 筛选条件变化时重置到第 0 页
+    useEffect(() => {
+        setCurrentPage(0);
+    }, [activeCategory, activeRegion, activeSchoolLevel, activeSchool, searchTerm]);
+
+    useEffect(() => { fetchData(currentPage); }, [fetchData, currentPage]);
 
     const urgentItems = articles.filter(item => {
         if (!item.deadline) return false;
@@ -168,6 +219,16 @@ export default function ExamInfo() {
     }).slice(0, 4);
 
     const aiItems = articles.filter(item => item.aiRecommended).slice(0, 3);
+
+    const handlePageChange = (newPage) => {
+        if (newPage < 0 || newPage >= totalPages) return;
+        setCurrentPage(newPage);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleSchoolClick = (school) => {
+        setActiveSchool(prev => prev === school ? '' : school);
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -228,13 +289,13 @@ export default function ExamInfo() {
                 <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         {backendOnline
-                            ? <><Wifi size={12} className="text-emerald-600" /><span className="text-emerald-700">数据实时加载自后端 · 定时爬虫每日自动更新</span></>
+                            ? <><Wifi size={12} className="text-emerald-600" /><span className="text-emerald-700">数据实时加载自后端 · 定时爬虫每日凌晨 02:00 自动更新</span></>
                             : <><WifiOff size={12} className="text-amber-600" /><span className="text-amber-700">后端离线，显示本地缓存数据。请启动 Spring Boot 后端（端口 8080）</span></>
                         }
                     </div>
                     <div className="flex items-center gap-3">
                         {lastUpdated && <span className="text-gray-400">最后更新: {lastUpdated.toLocaleTimeString('zh-CN')}</span>}
-                        <button onClick={fetchData} className="flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium">
+                        <button onClick={() => fetchData(currentPage)} className="flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium">
                             <RefreshCw size={11} className={loading ? 'animate-spin' : ''} />刷新
                         </button>
                     </div>
@@ -246,7 +307,8 @@ export default function ExamInfo() {
                     {/* ── 主内容区 ── */}
                     <div className="flex-1 min-w-0">
                         {/* 筛选栏 */}
-                        <div className="bg-white rounded-2xl p-4 mb-6 border border-gray-100 shadow-sm">
+                        <div className="bg-white rounded-2xl p-4 mb-6 border border-gray-100 shadow-sm space-y-3">
+                            {/* 第一行：类别 + 地区 */}
                             <div className="flex flex-wrap gap-4">
                                 <div>
                                     <p className="text-xs text-gray-400 mb-2 font-medium">类别</p>
@@ -270,19 +332,55 @@ export default function ExamInfo() {
                                         ))}
                                     </div>
                                 </div>
+                                <div className="border-l border-gray-100 pl-4">
+                                    <p className="text-xs text-gray-400 mb-2 font-medium flex items-center gap-1"><School size={11} />学段</p>
+                                    <div className="flex gap-1.5">
+                                        {schoolLevels.map(lv => (
+                                            <button key={lv} onClick={() => setActiveSchoolLevel(lv)}
+                                                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${activeSchoolLevel === lv ? 'bg-orange-500 text-white shadow' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}>
+                                                {lv}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
+                            {/* 第二行：学校筛选（动态） */}
+                            {schoolList.length > 0 && (
+                                <div className="border-t border-gray-50 pt-3">
+                                    <p className="text-xs text-gray-400 mb-2 font-medium">学校</p>
+                                    <div className="flex gap-1.5 flex-wrap">
+                                        <button onClick={() => setActiveSchool('')}
+                                            className={`px-3 py-1 rounded-lg text-xs transition-all ${activeSchool === '' ? 'bg-slate-600 text-white shadow' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}>
+                                            全部学校
+                                        </button>
+                                        {schoolList.slice(0, 16).map(s => (
+                                            <button key={s} onClick={() => handleSchoolClick(s)}
+                                                className={`px-3 py-1 rounded-lg text-xs transition-all ${activeSchool === s ? 'bg-slate-600 text-white shadow' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}>
+                                                {s}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* 结果统计 */}
                         <div className="flex items-center justify-between mb-4">
                             <p className="text-sm text-gray-500">
-                                共 <span className="font-bold text-gray-900">{articles.length}</span> 条资讯
+                                共 <span className="font-bold text-gray-900">{backendOnline ? totalElements : articles.length}</span> 条资讯
                                 {activeRegion !== '全部' && <span className="ml-1 text-emerald-600">（{activeRegion}地区）</span>}
                                 {activeCategory !== '全部' && <span className="ml-1 text-blue-600">（{activeCategory}类）</span>}
+                                {activeSchoolLevel !== '全部' && <span className="ml-1 text-orange-600">（{activeSchoolLevel}）</span>}
+                                {activeSchool && <span className="ml-1 text-slate-600">· {activeSchool}</span>}
                             </p>
-                            {!backendOnline && (
-                                <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">显示本地数据</span>
-                            )}
+                            <div className="flex items-center gap-2">
+                                {!backendOnline && (
+                                    <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">显示本地数据</span>
+                                )}
+                                {backendOnline && totalPages > 1 && (
+                                    <span className="text-xs text-gray-400">第 {currentPage + 1} / {totalPages} 页</span>
+                                )}
+                            </div>
                         </div>
 
                         {/* 文章列表 */}
@@ -308,12 +406,15 @@ export default function ExamInfo() {
                                     const tags = parseTags(item.tags);
                                     const deadlineDays = daysUntil(item.deadline);
                                     return (
-                                        <div key={item.id || idx}
-                                            className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group">
+                                        <a key={item.id || idx}
+                                            href={item.link && item.link !== '#' ? item.link : undefined}
+                                            target={item.link && item.link !== '#' ? "_blank" : undefined}
+                                            rel="noreferrer"
+                                            className="block bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500">
                                             <div className="flex items-start gap-4">
                                                 {/* 序号 */}
                                                 <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-sm font-bold text-gray-400 shrink-0 mt-0.5 group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
-                                                    {idx + 1}
+                                                    {currentPage * PAGE_SIZE + idx + 1}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     {/* 标签行 */}
@@ -324,6 +425,16 @@ export default function ExamInfo() {
                                                         {item.region && (
                                                             <span className={`px-2 py-0.5 rounded-lg text-xs font-medium flex items-center gap-1 ${getRegionColor(item.region)}`}>
                                                                 <MapPin size={10} />{item.region}
+                                                            </span>
+                                                        )}
+                                                        {item.school && (
+                                                            <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-medium flex items-center gap-1">
+                                                                <Building2 size={10} />{item.school}
+                                                            </span>
+                                                        )}
+                                                        {item.schoolLevel && (
+                                                            <span className="px-2 py-0.5 bg-orange-50 text-orange-600 rounded-lg text-xs">
+                                                                {item.schoolLevel}
                                                             </span>
                                                         )}
                                                         {item.aiRecommended && (
@@ -372,18 +483,66 @@ export default function ExamInfo() {
                                                                 <Bookmark size={14} />
                                                             </button>
                                                             {item.link && item.link !== '#' && (
-                                                                <a href={item.link} target="_blank" rel="noreferrer"
-                                                                    className="p-1.5 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors" title="查看原文">
+                                                                <div className="p-1.5 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors text-gray-400 group-hover:text-blue-500" title="查看原文">
                                                                     <ExternalLink size={14} />
-                                                                </a>
+                                                                </div>
                                                             )}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     );
                                 })}
+                            </div>
+                        )}
+
+                        {/* ── 分页导航 ── */}
+                        {backendOnline && totalPages > 1 && !loading && (
+                            <div className="flex items-center justify-center gap-2 mt-8">
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 0}
+                                    className="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
+                                    <ChevronLeft size={16} />上一页
+                                </button>
+
+                                {/* 页码按钮 */}
+                                {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+                                    let pageNum;
+                                    if (totalPages <= 7) {
+                                        pageNum = i;
+                                    } else if (currentPage <= 3) {
+                                        pageNum = i < 5 ? i : i === 5 ? '...' : totalPages - 1;
+                                    } else if (currentPage >= totalPages - 4) {
+                                        pageNum = i === 0 ? 0 : i === 1 ? '...' : totalPages - (7 - i);
+                                    } else {
+                                        const offset = [-3, -2, -1, 0, 1, 2, 3];
+                                        const p = currentPage + offset[i];
+                                        if (p < 0 || p >= totalPages) return null;
+                                        pageNum = p;
+                                    }
+                                    if (pageNum === '...') {
+                                        return <span key={`ellipsis-${i}`} className="px-2 text-gray-400">…</span>;
+                                    }
+                                    return (
+                                        <button key={pageNum}
+                                            onClick={() => handlePageChange(pageNum)}
+                                            className={`w-9 h-9 rounded-xl text-sm font-medium transition-all ${currentPage === pageNum
+                                                ? 'bg-blue-600 text-white shadow-md'
+                                                : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm'
+                                                }`}>
+                                            {pageNum + 1}
+                                        </button>
+                                    );
+                                })}
+
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage >= totalPages - 1}
+                                    className="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
+                                    下一页<ChevronRight size={16} />
+                                </button>
                             </div>
                         )}
                     </div>
@@ -415,6 +574,31 @@ export default function ExamInfo() {
                                 ))}
                             </div>
                         </div>
+
+                        {/* 热门学校（动态） */}
+                        {hotSchools.length > 0 && (
+                            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <Building2 className="text-slate-600" size={18} />
+                                    <h3 className="font-bold text-gray-900 text-sm">热门学校</h3>
+                                </div>
+                                <div className="space-y-2">
+                                    {hotSchools.map((hs, i) => (
+                                        <button key={hs.school}
+                                            onClick={() => handleSchoolClick(hs.school)}
+                                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all ${activeSchool === hs.school
+                                                ? 'bg-slate-600 text-white'
+                                                : 'bg-gray-50 hover:bg-gray-100 text-gray-700'}`}>
+                                            <span className="flex items-center gap-2">
+                                                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${i < 3 ? 'bg-amber-400 text-white' : 'bg-gray-200 text-gray-500'}`}>{i + 1}</span>
+                                                {hs.school}
+                                            </span>
+                                            <span className={`${activeSchool === hs.school ? 'text-slate-300' : 'text-gray-400'}`}>{hs.matchCount} 条</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
                         {/* 即将截止 */}
                         {urgentItems.length > 0 && (
@@ -485,7 +669,7 @@ export default function ExamInfo() {
                             </div>
                         </div>
 
-                        {/* 热门标签 */}
+                        {/* 快速筛选标签 */}
                         <div className="bg-white rounded-2xl p-5 border border-gray-100">
                             <h3 className="font-bold text-gray-900 mb-3 text-sm">快速筛选</h3>
                             <div className="flex flex-wrap gap-2">
