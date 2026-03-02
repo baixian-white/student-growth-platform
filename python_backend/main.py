@@ -162,6 +162,31 @@ async def trigger_crawl_api(background_tasks: BackgroundTasks):
     background_tasks.add_task(run_crawler_task)
     return {"msg": "Background crawler triggered successfully"}
 
+@app.post("/api/exam-info/batch-import")
+async def batch_import_exam_info(items: List[dict], db: AsyncSession = Depends(get_db)):
+    added = 0
+    for item_data in items:
+        try:
+            stmt = select(models.ExamInfo).filter_by(source_url=item_data.get("sourceUrl"))
+            check_res = await db.execute(stmt)
+            if check_res.scalar() is None:
+                new_item = models.ExamInfo(
+                    title=item_data.get("title"), category=item_data.get("category", "资讯"),
+                    date=item_data.get("date"), source=item_data.get("source"),
+                    summary=item_data.get("summary"), link=item_data.get("link"),
+                    source_url=item_data.get("sourceUrl"), region=item_data.get("region"),
+                    importance=item_data.get("importance"), ai_recommended=item_data.get("aiRecommended", False),
+                    tags=item_data.get("tags"), school=item_data.get("school"),
+                    school_level=item_data.get("schoolLevel"), admission_year=item_data.get("admissionYear")
+                )
+                db.add(new_item)
+                await db.commit()
+                added += 1
+        except Exception as e:
+            await db.rollback()
+            log.warning(f"单条写入冲突跳过 (URL: {item_data.get('sourceUrl')}): {e.__class__.__name__}")
+    return {"msg": "success", "imported": added, "skipped": len(items) - added}
+
 
 @app.get("/api/exam-info/page", response_model=schemas.PageResponse)
 async def get_exam_info_page(
