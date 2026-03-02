@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
     RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip,
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, LineChart, Line
@@ -27,7 +28,8 @@ import {
     FileText,
     X,
     Award,
-    Edit3
+    Edit3,
+    Cpu
 } from 'lucide-react';
 
 const App = () => {
@@ -164,24 +166,51 @@ const App = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-10">
+            {/* 顶部导航 */}
+            <nav className="bg-white border-b border-red-100 sticky top-0 z-50">
+                <div className="max-w-7xl mx-auto px-6 py-4">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="flex flex-col md:flex-row items-center gap-6 w-full md:w-auto">
+                            <div className="flex items-center gap-3 self-start md:self-auto min-w-max">
+                                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-md">
+                                    <GraduationCap size={24} />
+                                </div>
+                                <h1 className="text-xl font-bold text-gray-900 tracking-wide whitespace-nowrap">AI升学规划平台</h1>
+                            </div>
+
+                            {/* 本应用内的向导步骤导航 */}
+                            <div className="flex bg-white p-1 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100 gap-1 overflow-x-auto scrollbar-hide py-1 md:py-1 w-full md:w-auto">
+                                {[1, 2, 3].map(s => (
+                                    <button
+                                        key={s}
+                                        onClick={() => setStep(s)}
+                                        className={`px-6 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2 ${step === s ? 'bg-gradient-to-r from-red-600 to-red-500 text-white shadow-md shadow-red-500/20' : 'text-slate-500 hover:text-red-500 hover:bg-red-50'}`}
+                                        disabled={loading || (s === 3 && !report)}
+                                    >
+                                        {s === 1 && <><Search size={16} />模考数据录入</>}
+                                        {s === 2 && <><TrendingUp size={16} />AI路径测算</>}
+                                        {s === 3 && <><Award size={16} />预估分析报告</>}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        <Link to="/" className="flex items-center gap-2 px-5 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full transition-colors text-gray-600 font-medium whitespace-nowrap self-end md:self-auto hidden md:flex">
+                            <Home size={16} />
+                            <span className="text-sm">返回首页</span>
+                        </Link>
+                    </div>
+                </div>
+            </nav>
+
             <div className="max-w-7xl mx-auto p-4 md:p-10">
 
-                {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
-                    <div className="text-center md:text-left">
-                        <div className="inline-flex items-center px-3 py-1 bg-red-50 text-red-600 rounded-full text-xs font-black mb-3 border border-red-100 uppercase tracking-widest">
-                            <Calendar size={14} className="mr-2" /> Pre-Exam Planning / 考前规划版
-                        </div>
-                        <h1 className="text-3xl font-black text-slate-900">安徽初升高考前模拟导航</h1>
-                        <p className="text-slate-500 font-medium">利用平时模考排名，锁定中考理想目标</p>
+                {/* Header Subtitle Area */}
+                <div className="mb-8">
+                    <div className="inline-flex items-center px-3 py-1 bg-red-50 text-red-600 rounded-full text-xs font-black mb-3 border border-red-100 uppercase tracking-widest">
+                        <Calendar size={14} className="mr-2" /> Pre-Exam Planning / 考前规划版
                     </div>
-                    <div className="flex bg-white p-1.5 rounded-2xl shadow-sm border border-slate-200">
-                        {[1, 2, 3].map(s => (
-                            <div key={s} className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${step === s ? 'bg-red-600 text-white shadow-md' : 'text-slate-400'}`}>
-                                {s === 1 ? '模考数据录入' : s === 2 ? 'AI 路径测算' : '预估分析报告'}
-                            </div>
-                        ))}
-                    </div>
+                    <h1 className="text-3xl font-black text-slate-900">安徽初升高考前模拟导航</h1>
+                    <p className="text-slate-500 font-medium mt-2">利用平时模考排名，锁定中考理想目标</p>
                 </div>
 
                 {step === 1 && (

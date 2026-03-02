@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BookOpen,  Home, Search, TrendingUp, Target, Cpu, Award, Globe, Rocket, Lightbulb, MapPin, Calendar, ArrowRight, X } from 'lucide-react';
+import { BookOpen, Home, Search, TrendingUp, Target, Cpu, Award, Globe, Rocket, Lightbulb, MapPin, Calendar, ArrowRight, X } from 'lucide-react';
 
 const competitionsData = [
     {
@@ -138,8 +138,7 @@ const competitionsData = [
         level: "白名单赛事 (自然科学素养类)",
         url: "https://www.noi.cn/",
         icon: <Rocket className="text-blue-500" size={24} />,
-        bg: "bg-blue-50",
-        internalRoute: "/informatics-olympiad"
+        bg: "bg-blue-50"
     },
     {
         title: "丘成桐中学科学奖",
@@ -496,11 +495,6 @@ export default function WhitelistCompetitions() {
                                 <Link to="/tech-specialty" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-white transition-all">
                                     <div className="flex items-center gap-2">
                                         <Cpu size={16} />科技特长生
-                                    </div>
-                                </Link>
-                                <Link to="/informatics-olympiad" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-white transition-all">
-                                    <div className="flex items-center gap-2">
-                                        <BookOpen size={16} />信息学奥赛
                                     </div>
                                 </Link>
                                 <div className="px-4 py-2 rounded-lg text-sm font-bold bg-white text-blue-600 shadow-sm border border-gray-200 transition-all">

@@ -241,7 +241,7 @@ export default function ExamInfo() {
                                 <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white">
                                     <GraduationCap size={24} />
                                 </div>
-                                <h1 className="text-xl font-bold text-gray-900">升学信息查询</h1>
+                                <h1 className="text-xl font-bold text-gray-900">升学政策咨询库</h1>
                             </div>
                             <div className="relative flex-1 max-w-md">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -267,9 +267,6 @@ export default function ExamInfo() {
                             </Link>
                             <Link to="/tech-specialty" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all flex items-center gap-1.5">
                                 <Cpu size={14} />科技特长生
-                            </Link>
-                            <Link to="/informatics-olympiad" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-white transition-all flex items-center gap-1.5">
-                                <BookOpen size={14} />信息学奥赛
                             </Link>
                             <Link to="/whitelist-competitions" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all flex items-center gap-1.5">
                                 <Award size={14} />白名单赛事
