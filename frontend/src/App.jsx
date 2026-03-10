@@ -11,7 +11,8 @@ import CompetitionDetail from './pages/CompetitionDetail'
 import InformaticsOlympiad from './pages/InformaticsOlympiad'
 import InformaticsArticle from './pages/InformaticsArticle'
 import Guihua from './pages/guihua'
-
+import TypeOfClass from './pages/TypeOfClass'
+import ClassTypeDetail from './pages/ClassTypeDetail'
 function App() {
     return (
         <Router>
@@ -28,6 +29,8 @@ function App() {
                 <Route path="/informatics-olympiad" element={<InformaticsOlympiad />} />
                 <Route path="/informatics-article/:type/:id" element={<InformaticsArticle />} />
                 <Route path="/guihua" element={<Guihua />} />
+                <Route path="/type-of-class" element={<TypeOfClass />} />
+                <Route path="/type-of-class/detail/:slug" element={<ClassTypeDetail />} />
             </Routes>
         </Router>
     )

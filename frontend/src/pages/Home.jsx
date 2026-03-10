@@ -20,17 +20,17 @@ export default function Home() {
                             <Link to="/" className="text-gray-700 hover:text-indigo-600 transition-colors font-medium">
                                 首页
                             </Link>
-                            <Link to="/analytics" className="text-gray-700 hover:text-indigo-600 transition-colors font-medium">
-                                学情分析
-                            </Link>
                             <Link to="/exam-info" className="text-gray-700 hover:text-indigo-600 transition-colors font-medium">
                                 升学政策资讯库
                             </Link>
-                            <Link to="/team-info" className="text-gray-700 hover:text-indigo-600 transition-colors font-medium">
-                                团队介绍
-                            </Link>
                             <Link to="/guihua" className="text-gray-700 hover:text-indigo-600 transition-colors font-medium">
                                 AI升学规划平台
+                            </Link>
+                            <Link to="/type-of-class" className="text-gray-700 hover:text-indigo-600 transition-colors font-medium">
+                                班型分析
+                            </Link>
+                            <Link to="/team-info" className="text-gray-700 hover:text-indigo-600 transition-colors font-medium">
+                                团队介绍
                             </Link>
 
                         </div>
@@ -52,24 +52,7 @@ export default function Home() {
 
                 {/* 功能卡片 */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8 mb-16">
-                    {/* 学情分析卡片 */}
-                    <Link to="/analytics" className="group h-full block">
-                        <div className="flex flex-col h-full bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                            <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shrink-0">
-                                <BarChart3 className="text-white" size={28} />
-                            </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-3 shrink-0">学情分析</h3>
-                            <p className="text-gray-600 mb-6 leading-relaxed flex-grow">
-                                全方位学生数据分析，智能诊断学习状况，提供个性化教学建议
-                            </p>
-                            <div className="flex items-center text-indigo-600 font-semibold group-hover:gap-3 gap-2 transition-all shrink-0">
-                                进入系统
-                                <ChevronRight size={20} />
-                            </div>
-                        </div>
-                    </Link>
-
-                    {/* 中高考信息卡片 */}
+                    {/* 升学政策资讯库卡片 */}
                     <Link to="/exam-info" className="group h-full block">
                         <div className="flex flex-col h-full bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                             <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shrink-0">
@@ -80,23 +63,6 @@ export default function Home() {
                                 AI智能聚合竞赛、考试、升学政策,实时掌握教育资讯动态
                             </p>
                             <div className="flex items-center text-blue-600 font-semibold group-hover:gap-3 gap-2 transition-all shrink-0">
-                                进入系统
-                                <ChevronRight size={20} />
-                            </div>
-                        </div>
-                    </Link>
-
-                    {/* 团队介绍卡片 */}
-                    <Link to="/team-info" className="group h-full block">
-                        <div className="flex flex-col h-full bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                            <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shrink-0">
-                                <Users className="text-white" size={28} />
-                            </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-3 shrink-0">团队介绍</h3>
-                            <p className="text-gray-600 mb-6 leading-relaxed flex-grow">
-                                了解我们的专家团队,AI算法、教育政策、数据分析领域精英
-                            </p>
-                            <div className="flex items-center text-emerald-600 font-semibold group-hover:gap-3 gap-2 transition-all shrink-0">
                                 进入系统
                                 <ChevronRight size={20} />
                             </div>
@@ -115,6 +81,40 @@ export default function Home() {
                             </p>
                             <div className="flex items-center text-red-600 font-semibold group-hover:gap-3 gap-2 transition-all shrink-0">
                                 开始规划
+                                <ChevronRight size={20} />
+                            </div>
+                        </div>
+                    </Link>
+
+                    {/* 班型分析卡片 */}
+                    <Link to="/type-of-class" className="group h-full block">
+                        <div className="flex flex-col h-full bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                            <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-violet-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shrink-0">
+                                <BookOpen className="text-white" size={28} />
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-3 shrink-0">班型分析</h3>
+                            <p className="text-gray-600 mb-6 leading-relaxed flex-grow">
+                                聚焦名校班型设置、校区结构与培养路径,快速匹配适合的发展方向
+                            </p>
+                            <div className="flex items-center text-indigo-600 font-semibold group-hover:gap-3 gap-2 transition-all shrink-0">
+                                查看详情
+                                <ChevronRight size={20} />
+                            </div>
+                        </div>
+                    </Link>
+
+                    {/* 团队介绍卡片 */}
+                    <Link to="/team-info" className="group h-full block">
+                        <div className="flex flex-col h-full bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                            <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shrink-0">
+                                <Users className="text-white" size={28} />
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-3 shrink-0">团队介绍</h3>
+                            <p className="text-gray-600 mb-6 leading-relaxed flex-grow">
+                                了解我们的专家团队,AI算法、教育政策、数据分析领域精英
+                            </p>
+                            <div className="flex items-center text-emerald-600 font-semibold group-hover:gap-3 gap-2 transition-all shrink-0">
+                                进入系统
                                 <ChevronRight size={20} />
                             </div>
                         </div>

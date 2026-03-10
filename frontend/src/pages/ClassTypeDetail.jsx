@@ -1,0 +1,124 @@
+import { Link, useParams } from 'react-router-dom'
+import { ArrowLeft, ExternalLink, CalendarClock, School, Users, Sparkles, AlertCircle } from 'lucide-react'
+import classTypeDetails from '../data/classTypeDetails.json'
+
+function formatTime(isoTime) {
+    if (!isoTime) return '-'
+    const date = new Date(isoTime)
+    if (Number.isNaN(date.getTime())) return isoTime
+    return date.toLocaleString('zh-CN', { hour12: false })
+}
+
+const iconByField = {
+    成立时间: CalendarClock,
+    创建时间: CalendarClock,
+    合作单位: School,
+    合作高校: School,
+    招生人数: Users,
+    培养模式: Sparkles,
+}
+
+export default function ClassTypeDetail() {
+    const { slug } = useParams()
+    const item = (classTypeDetails.items || []).find(entry => entry.slug === slug)
+
+    if (!item) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+                <div className="max-w-4xl mx-auto px-6 py-12">
+                    <Link
+                        to="/type-of-class"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-slate-900 shadow-sm mb-8"
+                    >
+                        <ArrowLeft size={16} />
+                        返回班型分析
+                    </Link>
+                    <div className="bg-white border border-slate-100 rounded-3xl p-10 shadow-sm text-center">
+                        <AlertCircle className="mx-auto text-slate-400 mb-4" size={36} />
+                        <h1 className="text-2xl font-black text-slate-900 mb-3">暂无可展示的公开资料</h1>
+                        <p className="text-slate-600">
+                            当前班型未抓取到可信公开词条，因此不展示详情页面内容。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    const baseInfoEntries = Object.entries(item.baseInfo || {})
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+            <div className="max-w-6xl mx-auto px-6 py-10">
+                <div className="mb-8">
+                    <Link
+                        to="/type-of-class"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-slate-900 shadow-sm"
+                    >
+                        <ArrowLeft size={16} />
+                        返回班型分析
+                    </Link>
+                </div>
+
+                <section className="bg-white border border-slate-100 rounded-3xl p-8 md:p-10 shadow-sm mb-8">
+                    <p className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold mb-4">
+                        <Sparkles size={14} />
+                        公开词条抓取生成
+                    </p>
+                    <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">
+                        {item.title}
+                    </h1>
+                    <p className="text-slate-600 text-lg mb-6">
+                        {item.subtitle}
+                    </p>
+                    <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5">
+                        <h2 className="text-sm font-semibold text-slate-800 mb-2">词条摘要</h2>
+                        <p className="text-slate-700 leading-8">
+                            {item.summary}
+                        </p>
+                    </div>
+                </section>
+
+                <section className="bg-white border border-slate-100 rounded-3xl p-8 md:p-10 shadow-sm mb-8">
+                    <h2 className="text-2xl font-black text-slate-900 mb-6">基础信息</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {baseInfoEntries.map(([key, value]) => {
+                            const Icon = iconByField[key]
+                            return (
+                                <div key={key} className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
+                                    <div className="flex items-center gap-2 text-slate-500 text-sm mb-2">
+                                        {Icon ? <Icon size={15} /> : null}
+                                        <span>{key}</span>
+                                    </div>
+                                    <div className="text-slate-900 font-semibold leading-7">
+                                        {value}
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </section>
+
+                <section className="bg-white border border-slate-100 rounded-3xl p-8 md:p-10 shadow-sm">
+                    <h2 className="text-2xl font-black text-slate-900 mb-4">数据来源</h2>
+                    <p className="text-slate-600 mb-5">
+                        本页仅展示已抓取到的公开词条数据，未抓到可信条目的班型不会显示详情入口。
+                    </p>
+                    <div className="flex flex-col gap-2 text-sm text-slate-700">
+                        <a
+                            href={item.source?.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-blue-700 hover:text-blue-800 font-medium"
+                        >
+                            查看原词条
+                            <ExternalLink size={14} />
+                        </a>
+                        <div>抓取时间：{formatTime(item.source?.fetchedAt)}</div>
+                        <div>匹配查询：{item.source?.matchedQuery || '-'}</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    )
+}
