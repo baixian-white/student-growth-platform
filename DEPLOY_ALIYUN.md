@@ -321,3 +321,133 @@ sudo podman exec -it sgp_backend python /app/crawler/crawl_agent.py --llm-key "s
 # 进入后端容器的 shell 进行调试
 sudo podman exec -it sgp_backend sh
 ```
+
+---
+
+## 10. Git 更新与推送规范（2026-03-11 实战补充）
+
+目标：后续固定为“本地 push -> 服务器 pull -> 重启服务”，避免服务器本地脏改动导致拉取失败。
+
+### 10.1 推荐标准流程
+
+本地：
+
+```bash
+git add .
+git commit -m "feat/fix/chore: ..."
+git push origin main
+```
+
+服务器：
+
+```bash
+cd /opt/student-growth-platform
+git pull --ff-only origin main
+sudo podman-compose up -d --build
+```
+
+### 10.2 `git pull` 被本地改动拦截时
+
+典型报错：
+
+```text
+error: Your local changes to the following files would be overwritten by merge
+```
+
+方式 A（临时保留服务器本地改动）：
+
+```bash
+git stash push -m "server-local-changes" docker-compose.yml python_backend/Dockerfile
+git pull origin main
+git stash pop
+```
+
+方式 B（不需要本地改动，直接对齐远端）：
+
+```bash
+git restore docker-compose.yml python_backend/Dockerfile
+git pull --ff-only origin main
+```
+
+### 10.3 服务器本地文件忽略规则
+
+这些文件只应留在服务器本地，不推送远端：
+
+- `.env`
+- `**/__pycache__/`
+- `*.pyc`
+
+建议 `.gitignore` 包含：
+
+```gitignore
+.env
+**/__pycache__/
+*.pyc
+```
+
+清理缓存：
+
+```bash
+rm -rf crawler/__pycache__
+```
+
+### 10.4 服务器首次提交前配置 Git 身份
+
+出现 `Author identity unknown` 时执行：
+
+```bash
+git config --global user.name "your-github-name"
+git config --global user.email "your-github-email"
+```
+
+### 10.5 服务器 `git push` 认证说明（GitHub）
+
+GitHub 已不支持账号密码推送。
+
+- `https` 方式：使用 PAT
+- 推荐：SSH key
+
+SSH 方式示例：
+
+```bash
+ssh-keygen -t ed25519 -C "server-deploy" -f ~/.ssh/id_ed25519 -N ""
+cat ~/.ssh/id_ed25519.pub
+# 把公钥加到 GitHub -> Settings -> SSH and GPG keys
+
+git remote set-url origin git@github.com:baixian-white/student-growth-platform.git
+ssh -T git@github.com
+git push origin main
+```
+
+### 10.6 `podman-compose --force-recreate` 出现 `exit code: 125`
+
+实战里可能出现依赖容器删除顺序问题，中途报 `125`，但最终容器仍可能成功启动。
+
+因此要看最终状态：
+
+```bash
+sudo podman-compose ps
+sudo podman-compose logs --tail=100 backend
+```
+
+如需干净重建：
+
+```bash
+sudo podman-compose down
+sudo podman-compose up -d --build
+```
+
+### 10.7 部署后快速自检
+
+```bash
+cd /opt/student-growth-platform
+git status -sb
+sudo podman-compose ps
+curl -I http://127.0.0.1
+```
+
+预期：
+
+- `git status -sb` 无 `M/D/??`
+- `sgp_postgres` 为 `healthy`
+- `sgp_backend`、`sgp_frontend` 为 `Up`
