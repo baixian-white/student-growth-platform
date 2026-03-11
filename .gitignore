@@ -26,3 +26,6 @@ Thumbs.db
 # 临时文件
 *.tmp
 *.temp
+.env
+**/__pycache__/
+*.pyc
