@@ -52,8 +52,6 @@ const App = () => {
     },
   };
 
-  // 妯℃嫙鍚堣偉琛屾斂鍖哄潗鏍?(x, y 涓哄湴鍥剧櫨鍒嗘瘮)
-  // 閫昏緫锛氬簮闃?50,35), 铚€灞?35,45), 鍖呮渤(55,60), 鐟舵捣(65,40), 楂樻柊(25,55), 缁忓紑(45,75), 鏂扮珯(75,25), 婊ㄦ箹(60,85), 鑲ヨタ(20,80)
   const campuses = {
     hf1z: [
       { id: 'yaohai', name: '瑶海校区', color: 'bg-blue-600', text: 'text-blue-600', border: 'border-blue-600', shadow: 'shadow-blue-100', bg: 'from-blue-50 to-indigo-50', pos: { x: 72, y: 40 } },
@@ -268,7 +266,7 @@ const App = () => {
     base: '#059669'
   };
 
-  // 鍚堣偉杞粨鍥撅紙缁嗙矑搴︼級+ 鏍″尯鏍囨敞
+  
   const HefeiMap = () => {
     const activeSchoolCampuses = campuses[activeSchool] || [];
     const activeSchoolName = schools.find(s => s.id === activeSchool)?.name || '合肥重点校';
