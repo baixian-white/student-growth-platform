@@ -1,0 +1,27 @@
+﻿{
+    "schoolId":  "hf6z",
+    "schoolName":  "合肥六中",
+    "slug":  "manual-hf6z-2025-qingbeiban",
+    "title":  "清北班",
+    "entryTitle":  "合肥六中百花井校区清北班",
+    "subtitle":  "百花井校区“小而精”定位下的竞赛强基班型",
+    "summary":  "清北班（2个，配备“国家队教练”级师资）。",
+    "baseInfo":  {
+                     "所属学校":  "合肥六中",
+                     "主要校区":  "百花井校区",
+                     "班级规模":  "2个",
+                     "师资特点":  "配备“国家队教练”级师资",
+                     "校区定位":  "“小而精”定位，突出竞赛与强基"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "清北班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:45:29.7851464Z",
+                   "matchScore":  100
+               }
+}

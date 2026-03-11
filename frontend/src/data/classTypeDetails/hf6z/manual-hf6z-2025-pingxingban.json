@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf6z",
+    "schoolName":  "合肥六中",
+    "slug":  "manual-hf6z-2025-pingxingban",
+    "title":  "平行班",
+    "entryTitle":  "合肥六中平行班",
+    "subtitle":  "按中考成绩均衡分配，高二后可能重组",
+    "summary":  "平行班：其余班级，按中考成绩均衡分配，高二后也可能重组。",
+    "baseInfo":  {
+                     "所属学校":  "合肥六中",
+                     "主要校区":  "菱湖校区",
+                     "分班方式":  "按中考成绩均衡分配",
+                     "后续机制":  "高二后也可能重组"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "平行班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:45:29.7851464Z",
+                   "matchScore":  100
+               }
+}

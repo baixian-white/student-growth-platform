@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf4z",
+    "schoolName":  "合肥四中",
+    "slug":  "manual-hf4z-2025-yingcaiban",
+    "title":  "英才班",
+    "entryTitle":  "合肥四中英才班",
+    "subtitle":  "面向高分段学生，通常通过统招或自主招生提前批次录取进入",
+    "summary":  "英才班：面向高分段学生，通常通过统招或自主招生提前批次录取进入。师资配备最强教师团队，课程难度与进度较高。",
+    "baseInfo":  {
+                     "所属学校":  "合肥四中",
+                     "招生定位":  "面向高分段学生",
+                     "录取方式":  "通常通过统招或自主招生提前批次录取进入",
+                     "教学特点":  "师资配备最强教师团队，课程难度与进度较高"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "英才班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T12:00:37.5897544Z",
+                   "matchScore":  100
+               }
+}

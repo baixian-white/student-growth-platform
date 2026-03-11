@@ -1,0 +1,27 @@
+﻿{
+    "schoolId":  "hf7z",
+    "schoolName":  "合肥七中",
+    "slug":  "manual-hf7z-2025-hongzhiban",
+    "title":  "宏志班",
+    "entryTitle":  "合肥七中宏志班",
+    "subtitle":  "规模最大的普及型基础班型，强调教育普惠性",
+    "summary":  "宏志班：规模最大的班型。面向统招线下10分以内及指标到校生。定位为普及型基础班型，侧重基础知识巩固，强调教育普惠性。",
+    "baseInfo":  {
+                     "所属学校":  "合肥七中",
+                     "班型规模":  "规模最大的班型",
+                     "招生定位":  "面向统招线下10分以内及指标到校生",
+                     "班型定位":  "普及型基础班型",
+                     "培养重点":  "侧重基础知识巩固，强调教育普惠性"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "宏志班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T12:06:02.5504670Z",
+                   "matchScore":  100
+               }
+}

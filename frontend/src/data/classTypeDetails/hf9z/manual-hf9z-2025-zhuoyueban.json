@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf9z",
+    "schoolName":  "合肥九中",
+    "slug":  "manual-hf9z-2025-zhuoyueban",
+    "title":  "卓越班",
+    "entryTitle":  "合肥九中卓越班",
+    "subtitle":  "面向其他被录取的普通学生，作为主体班型实施分层教学",
+    "summary":  "卓越班：面向其他被录取的普通学生，作为主体班型，实施分层教学。",
+    "baseInfo":  {
+                     "所属学校":  "合肥九中",
+                     "覆盖校区":  "新站校区、四牌楼校区",
+                     "招生定位":  "面向其他被录取的普通学生",
+                     "班型定位":  "主体班型，实施分层教学"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "卓越班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T12:15:54.9695466Z",
+                   "matchScore":  100
+               }
+}

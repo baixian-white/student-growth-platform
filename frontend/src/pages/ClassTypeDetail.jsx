@@ -1,6 +1,7 @@
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, ExternalLink, CalendarClock, School, Users, Sparkles, AlertCircle } from 'lucide-react'
-import classTypeDetails from '../data/classTypeDetails.json'
+import classTypeDetailsIndex from '../data/classTypeDetails/index.json'
 
 const iconByField = {
     成立时间: CalendarClock,
@@ -11,9 +12,78 @@ const iconByField = {
     培养模式: Sparkles,
 }
 
+const detailModules = import.meta.glob('../data/classTypeDetails/*/*.json')
+
 export default function ClassTypeDetail() {
     const { slug } = useParams()
-    const item = (classTypeDetails.items || []).find(entry => entry.slug === slug)
+    const [item, setItem] = useState(null)
+    const [isLoading, setIsLoading] = useState(true)
+
+    const detailPath = useMemo(
+        () => classTypeDetailsIndex.slugToFile?.[slug] || '',
+        [slug]
+    )
+
+    useEffect(() => {
+        let cancelled = false
+
+        const loadItem = async () => {
+            setIsLoading(true)
+            setItem(null)
+
+            if (!detailPath) {
+                if (!cancelled) setIsLoading(false)
+                return
+            }
+
+            const moduleKey = `../data/classTypeDetails/${detailPath}`
+            const loader = detailModules[moduleKey]
+            if (!loader) {
+                if (!cancelled) setIsLoading(false)
+                return
+            }
+
+            try {
+                const loaded = await loader()
+                if (!cancelled) {
+                    setItem(loaded.default || loaded)
+                }
+            } catch {
+                if (!cancelled) {
+                    setItem(null)
+                }
+            } finally {
+                if (!cancelled) {
+                    setIsLoading(false)
+                }
+            }
+        }
+
+        loadItem()
+        return () => {
+            cancelled = true
+        }
+    }, [detailPath])
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+                <div className="max-w-4xl mx-auto px-6 py-12">
+                    <Link
+                        to="/type-of-class"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-slate-900 shadow-sm mb-8"
+                    >
+                        <ArrowLeft size={16} />
+                        返回班型分析
+                    </Link>
+                    <div className="bg-white border border-slate-100 rounded-3xl p-10 shadow-sm text-center">
+                        <h1 className="text-2xl font-black text-slate-900 mb-3">详情加载中</h1>
+                        <p className="text-slate-600">正在读取班型详情数据，请稍候。</p>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     if (!item) {
         return (

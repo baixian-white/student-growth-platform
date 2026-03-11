@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf4z",
+    "schoolName":  "合肥四中",
+    "slug":  "manual-hf4z-2025-pingxingban",
+    "title":  "平行班",
+    "entryTitle":  "合肥四中平行班",
+    "subtitle":  "高一按中考成绩均衡编班，高一期末依据选科成绩重新分班",
+    "summary":  "平行班：高一按中考成绩均衡编班，高一期末将根据选科成绩重新分班为“重/次重点班”。",
+    "baseInfo":  {
+                     "所属学校":  "合肥四中",
+                     "高一分班":  "按中考成绩均衡编班",
+                     "高一期末调整":  "根据选科成绩重新分班",
+                     "分班去向":  "重/次重点班"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "平行班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T12:00:37.6899549Z",
+                   "matchScore":  100
+               }
+}

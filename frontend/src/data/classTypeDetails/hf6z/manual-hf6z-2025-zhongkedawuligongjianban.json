@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf6z",
+    "schoolName":  "合肥六中",
+    "slug":  "manual-hf6z-2025-zhongkedawuligongjianban",
+    "title":  "中科大物理共建班",
+    "entryTitle":  "合肥六中菱湖校区中科大物理共建班",
+    "subtitle":  "与中科大合作培养物理学科拔尖人才",
+    "summary":  "中科大物理共建班：与中科大合作，培养物理学科拔尖人才。",
+    "baseInfo":  {
+                     "所属学校":  "合肥六中",
+                     "主要校区":  "菱湖校区",
+                     "合作单位":  "中国科学技术大学",
+                     "培养方向":  "物理学科拔尖人才"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "中科大物理共建班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:45:29.7688301Z",
+                   "matchScore":  100
+               }
+}

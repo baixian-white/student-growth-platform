@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf8z",
+    "schoolName":  "合肥八中",
+    "slug":  "manual-hf8z-2025-changxinkechuangban",
+    "title":  "长鑫科创班",
+    "entryTitle":  "合肥八中长鑫科创班",
+    "subtitle":  "与长鑫存储合作，培养科技创新人才",
+    "summary":  "长鑫科创班：与长鑫存储合作，培养科技创新人才，对接高校强基计划。",
+    "baseInfo":  {
+                     "所属学校":  "合肥八中",
+                     "覆盖校区":  "匡河校区、运河校区",
+                     "合作单位":  "长鑫存储",
+                     "培养方向":  "科技创新人才、对接高校强基计划"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "长鑫科创班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:53:22.0255114Z",
+                   "matchScore":  100
+               }
+}

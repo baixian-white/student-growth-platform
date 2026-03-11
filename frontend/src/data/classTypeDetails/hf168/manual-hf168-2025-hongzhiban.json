@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf168",
+    "schoolName":  "合肥一六八中学",
+    "slug":  "manual-hf168-2025-hongzhiban",
+    "title":  "宏志班",
+    "entryTitle":  "合肥一六八中学宏志班",
+    "subtitle":  "面向家庭经济条件一般且学业潜力良好的学生",
+    "summary":  "宏志班主要面向家庭经济条件一般但学业潜力良好的学生，强调基础夯实与学习方法指导。",
+    "baseInfo":  {
+                     "所属学校":  "合肥一六八中学",
+                     "招生定位":  "家庭经济条件一般且学业潜力良好的学生",
+                     "培养重点":  "基础夯实、学习方法指导",
+                     "班型特点":  "成长支持与持续提升"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "宏志班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:37:39.7355435Z",
+                   "matchScore":  100
+               }
+}

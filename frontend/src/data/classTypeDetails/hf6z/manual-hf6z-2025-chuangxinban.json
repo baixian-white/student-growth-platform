@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf6z",
+    "schoolName":  "合肥六中",
+    "slug":  "manual-hf6z-2025-chuangxinban",
+    "title":  "创新班",
+    "entryTitle":  "合肥六中创新班",
+    "subtitle":  "高分段学生班型，强调创新思维与学科能力",
+    "summary":  "创新班：7–8个，面向高分段学生，强调创新思维与学科能力。",
+    "baseInfo":  {
+                     "所属学校":  "合肥六中",
+                     "主要校区":  "菱湖校区、新桥校区",
+                     "班级规模":  "7-8个",
+                     "培养方向":  "创新思维、学科能力"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "创新班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:45:29.7770019Z",
+                   "matchScore":  100
+               }
+}

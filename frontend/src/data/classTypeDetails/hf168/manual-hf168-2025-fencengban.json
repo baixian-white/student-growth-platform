@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf168",
+    "schoolName":  "合肥一六八中学",
+    "slug":  "manual-hf168-2025-fencengban",
+    "title":  "分层班",
+    "entryTitle":  "合肥一六八中学分层班",
+    "subtitle":  "依据学生学习水平开展分层教学",
+    "summary":  "分层班根据学生实际学习水平进行分层教学，兼顾不同层次学习需求，强调因材施教与教学节奏匹配。",
+    "baseInfo":  {
+                     "所属学校":  "合肥一六八中学",
+                     "教学模式":  "分层教学",
+                     "分层依据":  "学生实际学习水平",
+                     "目标":  "兼顾不同层次学习需求"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "分层班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:37:39.7355435Z",
+                   "matchScore":  100
+               }
+}

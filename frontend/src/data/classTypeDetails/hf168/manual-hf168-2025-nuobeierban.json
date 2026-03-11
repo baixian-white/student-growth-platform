@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf168",
+    "schoolName":  "合肥一六八中学",
+    "slug":  "manual-hf168-2025-nuobeierban",
+    "title":  "诺贝尔班",
+    "entryTitle":  "合肥一六八中学诺贝尔班",
+    "subtitle":  "面向统招高分段学生",
+    "summary":  "诺贝尔班面向统招高分段学生。根据已提供口径，2025年预计录取区间为690–701分，整体学术氛围较浓厚。",
+    "baseInfo":  {
+                     "所属学校":  "合肥一六八中学",
+                     "招生定位":  "统招高分段学生",
+                     "2025录取参考":  "690-701分（预计）",
+                     "班型特点":  "学术氛围浓厚"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "诺贝尔班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:37:39.7355435Z",
+                   "matchScore":  100
+               }
+}

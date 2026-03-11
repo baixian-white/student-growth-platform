@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf4z",
+    "schoolName":  "合肥四中",
+    "slug":  "manual-hf4z-2025-chuangxinshiyanban",
+    "title":  "创新实验班",
+    "entryTitle":  "合肥四中创新实验班",
+    "subtitle":  "强调探究性学习与实践能力培养",
+    "summary":  "创新实验班：强调探究性学习与实践能力培养。开设全学科竞赛课程，部分学生可参与高校或企业科研项目。",
+    "baseInfo":  {
+                     "所属学校":  "合肥四中",
+                     "培养重点":  "探究性学习与实践能力培养",
+                     "课程设置":  "开设全学科竞赛课程",
+                     "项目实践":  "部分学生可参与高校或企业科研项目"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "创新实验班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T12:00:37.6879484Z",
+                   "matchScore":  100
+               }
+}

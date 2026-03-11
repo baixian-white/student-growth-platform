@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf7z",
+    "schoolName":  "合肥七中",
+    "slug":  "manual-hf7z-2025-boyaban",
+    "title":  "博雅班",
+    "entryTitle":  "合肥七中博雅班",
+    "subtitle":  "主要面向统招线下10分左右学生，重视综合素质培养",
+    "summary":  "博雅班：主要面向统招线下10分左右的学生，特长生及指标到校高分段，注重综合素质培养。",
+    "baseInfo":  {
+                     "所属学校":  "合肥七中",
+                     "招生定位":  "主要面向统招线下10分左右的学生",
+                     "生源类型":  "特长生及指标到校高分段",
+                     "培养重点":  "注重综合素质培养"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "博雅班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T12:06:02.5461530Z",
+                   "matchScore":  100
+               }
+}

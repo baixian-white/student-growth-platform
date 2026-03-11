@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf6z",
+    "schoolName":  "合肥六中",
+    "slug":  "manual-hf6z-2025-qiangjiaban-a",
+    "title":  "强基A班",
+    "entryTitle":  "合肥六中强基A班",
+    "subtitle":  "竞赛核心阵地，聚焦强基计划与学科竞赛",
+    "summary":  "强基A班：面向中考成绩前120名左右（竞赛核心阵地），注重强基计划与学科竞赛培养。",
+    "baseInfo":  {
+                     "所属学校":  "合肥六中",
+                     "覆盖校区":  "菱湖校区、新桥校区、百花井校区",
+                     "招生定位":  "面向中考成绩前120名左右",
+                     "培养方向":  "强基计划、学科竞赛"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "强基A班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:45:29.7688301Z",
+                   "matchScore":  100
+               }
+}

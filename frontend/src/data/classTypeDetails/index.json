@@ -1,0 +1,135 @@
+﻿{
+    "updatedAt":  "2026-03-11T12:15:55.1106442Z",
+    "sourceName":  "manual-static",
+    "schools":  {
+                    "hf1z":  "合肥一中",
+                    "hf6z":  "合肥六中",
+                    "hf7z":  "合肥七中",
+                    "hf9z":  "合肥九中",
+                    "hf4z":  "合肥四中",
+                    "hf168":  "合肥一六八中学",
+                    "common":  "通用",
+                    "hf8z":  "合肥八中"
+                },
+    "indexByTitle":  {
+                         "杨振宁班":  "lemma-61093698",
+                         "国防教育班":  "manual-hf1z-2025-guofangjiaoyu",
+                         "实验班":  "lemma-681335",
+                         "北大博雅英才班":  "lemma-65422800",
+                         "钱学森班":  "manual-hf168-2025-qianxuesenban",
+                         "茅以升班":  "manual-hf168-2025-maoyishengban",
+                         "诺贝尔班":  "manual-hf168-2025-nuobeierban",
+                         "分层班":  "manual-hf168-2025-fencengban",
+                         "宏志班":  "manual-hf168-2025-hongzhiban",
+                         "北大博雅人才班":  "manual-hf6z-2025-beidaboyarencaiban",
+                         "中科大物理共建班":  "manual-hf6z-2025-zhongkedawuligongjianban",
+                         "强基A班":  "manual-hf6z-2025-qiangjiaban-a",
+                         "强基B班":  "manual-hf6z-2025-qiangjiaban-b",
+                         "领航班":  "manual-hf6z-2025-linghangban",
+                         "创新班":  "manual-hf6z-2025-chuangxinban",
+                         "平行班":  "manual-hf6z-2025-pingxingban",
+                         "清北班":  "manual-hf6z-2025-qingbeiban",
+                         "长鑫科创班":  "manual-hf8z-2025-changxinkechuangban",
+                         "英才A班":  "manual-hf8z-2025-yingcaia",
+                         "英才B班":  "manual-hf8z-2025-yingcaib",
+                         "卓越班":  "manual-hf8z-2025-zhuoyueban",
+                         "英才班":  "manual-hf4z-2025-yingcaiban",
+                         "学科素养班":  "manual-hf4z-2025-xuekeshuyangban",
+                         "创新实验班":  "manual-hf4z-2025-chuangxinshiyanban",
+                         "火箭班":  "manual-hf7z-2025-huojianban",
+                         "博雅班":  "manual-hf7z-2025-boyaban",
+                         "杨武之班":  "manual-hf9z-2025-yangwuzhiban",
+                         "横渠班":  "manual-hf9z-2025-hengquban"
+                     },
+    "slugToFile":  {
+                       "lemma-61093698":  "hf1z/lemma-61093698.json",
+                       "manual-hf1z-2025-guofangjiaoyu":  "hf1z/manual-hf1z-2025-guofangjiaoyu.json",
+                       "lemma-681335":  "hf1z/lemma-681335.json",
+                       "lemma-65422800":  "hf1z/lemma-65422800.json",
+                       "manual-hf168-2025-qianxuesenban":  "hf168/manual-hf168-2025-qianxuesenban.json",
+                       "manual-hf168-2025-maoyishengban":  "hf168/manual-hf168-2025-maoyishengban.json",
+                       "manual-hf168-2025-nuobeierban":  "hf168/manual-hf168-2025-nuobeierban.json",
+                       "manual-hf168-2025-fencengban":  "hf168/manual-hf168-2025-fencengban.json",
+                       "manual-hf168-2025-hongzhiban":  "hf168/manual-hf168-2025-hongzhiban.json",
+                       "manual-hf6z-2025-beidaboyarencaiban":  "hf6z/manual-hf6z-2025-beidaboyarencaiban.json",
+                       "manual-hf6z-2025-zhongkedawuligongjianban":  "hf6z/manual-hf6z-2025-zhongkedawuligongjianban.json",
+                       "manual-hf6z-2025-qiangjiaban-a":  "hf6z/manual-hf6z-2025-qiangjiaban-a.json",
+                       "manual-hf6z-2025-qiangjiaban-b":  "hf6z/manual-hf6z-2025-qiangjiaban-b.json",
+                       "manual-hf6z-2025-linghangban":  "hf6z/manual-hf6z-2025-linghangban.json",
+                       "manual-hf6z-2025-chuangxinban":  "hf6z/manual-hf6z-2025-chuangxinban.json",
+                       "manual-hf6z-2025-shiyanban":  "hf6z/manual-hf6z-2025-shiyanban.json",
+                       "manual-hf6z-2025-pingxingban":  "hf6z/manual-hf6z-2025-pingxingban.json",
+                       "manual-hf6z-2025-qingbeiban":  "hf6z/manual-hf6z-2025-qingbeiban.json",
+                       "manual-hf8z-2025-changxinkechuangban":  "hf8z/manual-hf8z-2025-changxinkechuangban.json",
+                       "manual-hf8z-2025-yingcaia":  "hf8z/manual-hf8z-2025-yingcaia.json",
+                       "manual-hf8z-2025-yingcaib":  "hf8z/manual-hf8z-2025-yingcaib.json",
+                       "manual-hf8z-2025-shiyanban":  "hf8z/manual-hf8z-2025-shiyanban.json",
+                       "manual-hf8z-2025-zhuoyueban":  "hf8z/manual-hf8z-2025-zhuoyueban.json",
+                       "manual-hf4z-2025-yingcaiban":  "hf4z/manual-hf4z-2025-yingcaiban.json",
+                       "manual-hf4z-2025-xuekeshuyangban":  "hf4z/manual-hf4z-2025-xuekeshuyangban.json",
+                       "manual-hf4z-2025-chuangxinshiyanban":  "hf4z/manual-hf4z-2025-chuangxinshiyanban.json",
+                       "manual-hf4z-2025-pingxingban":  "hf4z/manual-hf4z-2025-pingxingban.json",
+                       "manual-hf7z-2025-huojianban":  "hf7z/manual-hf7z-2025-huojianban.json",
+                       "manual-hf7z-2025-boyaban":  "hf7z/manual-hf7z-2025-boyaban.json",
+                       "manual-hf7z-2025-hongzhiban":  "hf7z/manual-hf7z-2025-hongzhiban.json",
+                       "manual-hf9z-2025-yangwuzhiban":  "hf9z/manual-hf9z-2025-yangwuzhiban.json",
+                       "manual-hf9z-2025-hengquban":  "hf9z/manual-hf9z-2025-hengquban.json",
+                       "manual-hf9z-2025-zhuoyueban":  "hf9z/manual-hf9z-2025-zhuoyueban.json"
+                   },
+    "schoolIndexByTitle":  {
+                               "hf1z":  {
+                                            "杨振宁班":  "lemma-61093698",
+                                            "国防教育班":  "manual-hf1z-2025-guofangjiaoyu",
+                                            "实验班":  "lemma-681335",
+                                            "北大博雅英才班":  "lemma-65422800"
+                                        },
+                               "hf6z":  {
+                                            "北大博雅人才班":  "manual-hf6z-2025-beidaboyarencaiban",
+                                            "中科大物理共建班":  "manual-hf6z-2025-zhongkedawuligongjianban",
+                                            "强基A班":  "manual-hf6z-2025-qiangjiaban-a",
+                                            "强基B班":  "manual-hf6z-2025-qiangjiaban-b",
+                                            "领航班":  "manual-hf6z-2025-linghangban",
+                                            "创新班":  "manual-hf6z-2025-chuangxinban",
+                                            "实验班":  "manual-hf6z-2025-shiyanban",
+                                            "平行班":  "manual-hf6z-2025-pingxingban",
+                                            "清北班":  "manual-hf6z-2025-qingbeiban"
+                                        },
+                               "hf7z":  {
+                                            "火箭班":  "manual-hf7z-2025-huojianban",
+                                            "博雅班":  "manual-hf7z-2025-boyaban",
+                                            "宏志班":  "manual-hf7z-2025-hongzhiban"
+                                        },
+                               "hf9z":  {
+                                            "杨武之班":  "manual-hf9z-2025-yangwuzhiban",
+                                            "横渠班":  "manual-hf9z-2025-hengquban",
+                                            "卓越班":  "manual-hf9z-2025-zhuoyueban"
+                                        },
+                               "hf4z":  {
+                                            "英才班":  "manual-hf4z-2025-yingcaiban",
+                                            "学科素养班":  "manual-hf4z-2025-xuekeshuyangban",
+                                            "创新实验班":  "manual-hf4z-2025-chuangxinshiyanban",
+                                            "平行班":  "manual-hf4z-2025-pingxingban"
+                                        },
+                               "hf168":  {
+                                             "钱学森班":  "manual-hf168-2025-qianxuesenban",
+                                             "茅以升班":  "manual-hf168-2025-maoyishengban",
+                                             "诺贝尔班":  "manual-hf168-2025-nuobeierban",
+                                             "分层班":  "manual-hf168-2025-fencengban",
+                                             "宏志班":  "manual-hf168-2025-hongzhiban"
+                                         },
+                               "common":  {
+
+                                          },
+                               "hf8z":  {
+                                            "长鑫科创班":  "manual-hf8z-2025-changxinkechuangban",
+                                            "英才A班":  "manual-hf8z-2025-yingcaia",
+                                            "英才B班":  "manual-hf8z-2025-yingcaib",
+                                            "实验班":  "manual-hf8z-2025-shiyanban",
+                                            "卓越班":  "manual-hf8z-2025-zhuoyueban"
+                                        }
+                           },
+    "missingTitles":  [
+                          "强基班",
+                          "素养班"
+                      ]
+}

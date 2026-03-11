@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf6z",
+    "schoolName":  "合肥六中",
+    "slug":  "manual-hf6z-2025-beidaboyarencaiban",
+    "title":  "北大博雅人才班",
+    "entryTitle":  "合肥六中菱湖校区北大博雅人才班",
+    "subtitle":  "全省唯一北大博雅四星级共育基地",
+    "summary":  "北大博雅人才班：全省唯一北大博雅四星级共育基地，对接北大资源，主攻顶尖高校。",
+    "baseInfo":  {
+                     "所属学校":  "合肥六中",
+                     "主要校区":  "菱湖校区",
+                     "班型定位":  "全省唯一北大博雅四星级共育基地",
+                     "培养方向":  "对接北大资源，主攻顶尖高校"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "北大博雅人才班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:45:29.6952547Z",
+                   "matchScore":  100
+               }
+}

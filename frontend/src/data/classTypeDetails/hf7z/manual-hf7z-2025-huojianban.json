@@ -1,0 +1,27 @@
+﻿{
+    "schoolId":  "hf7z",
+    "schoolName":  "合肥七中",
+    "slug":  "manual-hf7z-2025-huojianban",
+    "title":  "火箭班",
+    "entryTitle":  "合肥七中火箭班",
+    "subtitle":  "面向统招线以上学生，设置三大特色方向并与合肥一六八中学联动",
+    "summary":  "火箭班：面向统招线以上学生。分设人工智能、科技创新、人文素养三个特色方向，并开设相应特色课程。与合肥一六八中学联动，共享优质资源。",
+    "baseInfo":  {
+                     "所属学校":  "合肥七中",
+                     "招生定位":  "面向统招线以上学生",
+                     "方向设置":  "人工智能、科技创新、人文素养三个特色方向",
+                     "课程特点":  "开设相应特色课程",
+                     "资源联动":  "与合肥一六八中学联动，共享优质资源"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "火箭班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T12:06:02.4801557Z",
+                   "matchScore":  100
+               }
+}

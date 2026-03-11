@@ -1,0 +1,28 @@
+﻿{
+    "schoolId":  "hf1z",
+    "schoolName":  "合肥一中",
+    "slug":  "lemma-681335",
+    "title":  "实验班",
+    "entryTitle":  "实验班",
+    "subtitle":  "复合应用型人才培养模式改革实验区",
+    "summary":  "实验班是我国高等教育领域实施复合应用型人才培养模式改革的实践载体，主要通过跨学科课程体系、小班化教学和动态管理机制实现人才培养目标。在高等教育阶段有实践，例如高校设立的拔尖实验班推行完全学分制与跨学科选课，中学阶段则有如“王亚南实验班”这类高中与大学协同育人的探索。国家层面自2008年起实施人才培养模式创新实验区建设项目。此后，各类实验班在多地高校与中学展开，成为人才培养模式创新的重要形式。",
+    "baseInfo":  {
+                     "培养目标":  "复合应用型人才",
+                     "选拔方式":  "高考招生与校内遴选",
+                     "课程体系":  "跨学科模块化教学",
+                     "班级规模":  "单班不超过60人",
+                     "管理机制":  "动态调整与分流淘汰",
+                     "政策支持":  "国家级实验区建设项目"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "百度百科：实验班",
+                   "url":  "https://baike.baidu.com/item/%E5%AE%9E%E9%AA%8C%E7%8F%AD/681335",
+                   "api":  "https://baike.baidu.com/api/openapi/BaikeLemmaCardApi?scope=2\u0026format=json\u0026appid=379020\u0026bk_key=%E5%AE%9E%E9%AA%8C%E7%8F%AD\u0026bk_length=1200",
+                   "matchedQuery":  "实验班",
+                   "scope":  2,
+                   "lemmaId":  681335,
+                   "fetchedAt":  "2026-03-11T02:15:31.545874+00:00",
+                   "matchScore":  60
+               }
+}

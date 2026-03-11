@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf8z",
+    "schoolName":  "合肥八中",
+    "slug":  "manual-hf8z-2025-yingcaib",
+    "title":  "英才B班",
+    "entryTitle":  "合肥八中英才B班",
+    "subtitle":  "面向次顶尖学生，重点冲刺985、211高校",
+    "summary":  "英才B班面向次顶尖学生，重点冲刺985、211高校。",
+    "baseInfo":  {
+                     "所属学校":  "合肥八中",
+                     "覆盖校区":  "匡河校区、运河校区",
+                     "招生定位":  "次顶尖学生",
+                     "培养方向":  "重点冲刺985、211高校"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "英才B班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:53:22.0867574Z",
+                   "matchScore":  100
+               }
+}

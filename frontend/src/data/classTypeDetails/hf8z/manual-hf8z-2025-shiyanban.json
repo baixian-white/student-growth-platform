@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf8z",
+    "schoolName":  "合肥八中",
+    "slug":  "manual-hf8z-2025-shiyanban",
+    "title":  "实验班",
+    "entryTitle":  "合肥八中实验班",
+    "subtitle":  "针对中等偏上学生，重点冲刺一本",
+    "summary":  "实验班：针对中等偏上学生，重点冲刺一本。",
+    "baseInfo":  {
+                     "所属学校":  "合肥八中",
+                     "覆盖校区":  "匡河校区、运河校区",
+                     "招生定位":  "中等偏上学生",
+                     "培养方向":  "重点冲刺一本"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "实验班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:53:22.0887641Z",
+                   "matchScore":  100
+               }
+}

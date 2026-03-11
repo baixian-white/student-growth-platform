@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf8z",
+    "schoolName":  "合肥八中",
+    "slug":  "manual-hf8z-2025-yingcaia",
+    "title":  "英才A班",
+    "entryTitle":  "合肥八中英才A班",
+    "subtitle":  "选拔顶尖学生，冲刺清北等顶尖名校",
+    "summary":  "英才A班选拔顶尖学生，冲刺清北等顶尖名校，配备最优师资课程。",
+    "baseInfo":  {
+                     "所属学校":  "合肥八中",
+                     "覆盖校区":  "匡河校区、运河校区",
+                     "招生定位":  "顶尖学生",
+                     "培养方向":  "冲刺清北等顶尖名校，配备最优师资课程"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "英才A班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:53:22.0867574Z",
+                   "matchScore":  100
+               }
+}

@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf4z",
+    "schoolName":  "合肥四中",
+    "slug":  "manual-hf4z-2025-xuekeshuyangban",
+    "title":  "学科素养班",
+    "entryTitle":  "合肥四中学科素养班",
+    "subtitle":  "注重综合素质与学科能力均衡发展",
+    "summary":  "学科素养班：注重综合素质与学科能力均衡发展。采用“Z形”或“S形”分班法，确保各班生源水平均衡。",
+    "baseInfo":  {
+                     "所属学校":  "合肥四中",
+                     "培养重点":  "综合素质与学科能力均衡发展",
+                     "分班方式":  "采用“Z形”或“S形”分班法",
+                     "分班目标":  "确保各班生源水平均衡"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "学科素养班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T12:00:37.6525768Z",
+                   "matchScore":  100
+               }
+}

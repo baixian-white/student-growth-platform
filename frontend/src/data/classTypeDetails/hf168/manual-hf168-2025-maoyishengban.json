@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf168",
+    "schoolName":  "合肥一六八中学",
+    "slug":  "manual-hf168-2025-maoyishengban",
+    "title":  "茅以升班",
+    "entryTitle":  "合肥一六八中学茅以升班",
+    "subtitle":  "面向成绩优异学生的高分段班型",
+    "summary":  "茅以升班主要面向成绩优异学生。根据已提供口径，2025年预计录取分数线为中考702分及以上，注重学科综合素养与竞赛方向培养。",
+    "baseInfo":  {
+                     "所属学校":  "合肥一六八中学",
+                     "招生定位":  "成绩优异学生",
+                     "2025录取参考":  "中考702分及以上（预计）",
+                     "培养重点":  "学科综合素养、竞赛方向"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "茅以升班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:37:39.7055150Z",
+                   "matchScore":  100
+               }
+}

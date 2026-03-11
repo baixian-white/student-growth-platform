@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf6z",
+    "schoolName":  "合肥六中",
+    "slug":  "manual-hf6z-2025-linghangban",
+    "title":  "领航班",
+    "entryTitle":  "合肥六中领航班",
+    "subtitle":  "采用S形分班法，注重综合素质与高考冲刺",
+    "summary":  "领航班：采用“S形分班”法均衡男女比例，注重综合素质与高考冲刺。",
+    "baseInfo":  {
+                     "所属学校":  "合肥六中",
+                     "覆盖校区":  "菱湖校区、新桥校区、百花井校区",
+                     "分班方式":  "S形分班法，均衡男女比例",
+                     "培养方向":  "综合素质、高考冲刺"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "领航班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:45:29.7770019Z",
+                   "matchScore":  100
+               }
+}

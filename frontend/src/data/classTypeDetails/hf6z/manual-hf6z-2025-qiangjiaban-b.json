@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf6z",
+    "schoolName":  "合肥六中",
+    "slug":  "manual-hf6z-2025-qiangjiaban-b",
+    "title":  "强基B班",
+    "entryTitle":  "合肥六中强基B班",
+    "subtitle":  "强基计划补充梯队，聚焦竞赛与拔尖人才培养",
+    "summary":  "强基B班：作为强基计划的补充梯队，同样聚焦竞赛与拔尖人才培养。",
+    "baseInfo":  {
+                     "所属学校":  "合肥六中",
+                     "覆盖校区":  "菱湖校区、新桥校区、百花井校区",
+                     "班型定位":  "强基计划补充梯队",
+                     "培养方向":  "竞赛、拔尖人才培养"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "强基B班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:45:29.7688301Z",
+                   "matchScore":  100
+               }
+}

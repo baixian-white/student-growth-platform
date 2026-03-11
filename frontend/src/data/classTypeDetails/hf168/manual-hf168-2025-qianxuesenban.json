@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf168",
+    "schoolName":  "合肥一六八中学",
+    "slug":  "manual-hf168-2025-qianxuesenban",
+    "title":  "钱学森班",
+    "entryTitle":  "合肥一六八中学钱学森班",
+    "subtitle":  "2025年新设班型，通过入学考试选拔",
+    "summary":  "钱学森班为合肥一六八中学在2025年新设班型，采用入学考试选拔，培养重点为科学素养与创新能力。",
+    "baseInfo":  {
+                     "所属学校":  "合肥一六八中学",
+                     "开设时间":  "2025年",
+                     "选拔方式":  "入学考试",
+                     "培养重点":  "科学素养、创新能力"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "钱学森班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:37:39.6312813Z",
+                   "matchScore":  100
+               }
+}

@@ -1,0 +1,26 @@
+﻿{
+    "schoolId":  "hf6z",
+    "schoolName":  "合肥六中",
+    "slug":  "manual-hf6z-2025-shiyanban",
+    "title":  "实验班",
+    "entryTitle":  "合肥六中实验班",
+    "subtitle":  "985/211目标导向班型，可动态调整",
+    "summary":  "实验班：若干，重点培养985/211目标学生，高二可依据选科成绩动态调整。",
+    "baseInfo":  {
+                     "所属学校":  "合肥六中",
+                     "主要校区":  "菱湖校区、新桥校区",
+                     "班级规模":  "若干",
+                     "培养方向":  "985/211目标学生，高二依据选科成绩动态调整"
+                 },
+    "policySections":  null,
+    "source":  {
+                   "name":  "用户提供数据",
+                   "url":  null,
+                   "api":  null,
+                   "matchedQuery":  "实验班",
+                   "scope":  "manual",
+                   "lemmaId":  null,
+                   "fetchedAt":  "2026-03-11T11:45:29.7770019Z",
+                   "matchScore":  100
+               }
+}
