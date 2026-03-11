@@ -2,13 +2,6 @@ import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, ExternalLink, CalendarClock, School, Users, Sparkles, AlertCircle } from 'lucide-react'
 import classTypeDetails from '../data/classTypeDetails.json'
 
-function formatTime(isoTime) {
-    if (!isoTime) return '-'
-    const date = new Date(isoTime)
-    if (Number.isNaN(date.getTime())) return isoTime
-    return date.toLocaleString('zh-CN', { hour12: false })
-}
-
 const iconByField = {
     成立时间: CalendarClock,
     创建时间: CalendarClock,
@@ -37,7 +30,7 @@ export default function ClassTypeDetail() {
                         <AlertCircle className="mx-auto text-slate-400 mb-4" size={36} />
                         <h1 className="text-2xl font-black text-slate-900 mb-3">暂无可展示的公开资料</h1>
                         <p className="text-slate-600">
-                            当前班型未抓取到可信公开词条，因此不展示详情页面内容。
+                            当前班型暂未收录可展示的详情内容。
                         </p>
                     </div>
                 </div>
@@ -63,7 +56,7 @@ export default function ClassTypeDetail() {
                 <section className="bg-white border border-slate-100 rounded-3xl p-8 md:p-10 shadow-sm mb-8">
                     <p className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold mb-4">
                         <Sparkles size={14} />
-                        公开词条抓取生成
+                        班型详细介绍
                     </p>
                     <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">
                         {item.title}
@@ -72,7 +65,7 @@ export default function ClassTypeDetail() {
                         {item.subtitle}
                     </p>
                     <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5">
-                        <h2 className="text-sm font-semibold text-slate-800 mb-2">词条摘要</h2>
+                        <h2 className="text-sm font-semibold text-slate-800 mb-2">班型简介</h2>
                         <p className="text-slate-700 leading-8">
                             {item.summary}
                         </p>
@@ -99,23 +92,40 @@ export default function ClassTypeDetail() {
                     </div>
                 </section>
 
+                {Array.isArray(item.policySections) && item.policySections.length > 0 && (
+                    <section className="bg-white border border-slate-100 rounded-3xl p-8 md:p-10 shadow-sm mb-8">
+                        <h2 className="text-2xl font-black text-slate-900 mb-6">实施办法正文</h2>
+                        <div className="space-y-6">
+                            {item.policySections.map((section, idx) => (
+                                <div key={`${section.title}-${idx}`} className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
+                                    <h3 className="text-lg font-black text-slate-900 mb-3">{section.title}</h3>
+                                    <div className="space-y-2 text-slate-700 leading-7">
+                                        {(section.paragraphs || []).map((paragraph, pIdx) => (
+                                            <p key={pIdx}>{paragraph}</p>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
                 <section className="bg-white border border-slate-100 rounded-3xl p-8 md:p-10 shadow-sm">
-                    <h2 className="text-2xl font-black text-slate-900 mb-4">数据来源</h2>
-                    <p className="text-slate-600 mb-5">
-                        本页仅展示已抓取到的公开词条数据，未抓到可信条目的班型不会显示详情入口。
-                    </p>
-                    <div className="flex flex-col gap-2 text-sm text-slate-700">
-                        <a
-                            href={item.source?.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-blue-700 hover:text-blue-800 font-medium"
-                        >
-                            查看原词条
-                            <ExternalLink size={14} />
-                        </a>
-                        <div>抓取时间：{formatTime(item.source?.fetchedAt)}</div>
-                        <div>匹配查询：{item.source?.matchedQuery || '-'}</div>
+                    <h2 className="text-2xl font-black text-slate-900 mb-4">官网链接</h2>
+                    <div className="flex flex-col gap-3 text-sm text-slate-700">
+                        {item.source?.url ? (
+                            <a
+                                href={item.source.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1 text-blue-700 hover:text-blue-800 font-medium"
+                            >
+                                跳转官网原文
+                                <ExternalLink size={14} />
+                            </a>
+                        ) : (
+                            <div className="text-slate-600">暂未提供官网链接</div>
+                        )}
                     </div>
                 </section>
             </div>
