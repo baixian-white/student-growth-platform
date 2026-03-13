@@ -2,8 +2,10 @@ from fastapi import FastAPI, Depends, Query, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy import func, desc, nullslast
+from sqlalchemy import func, desc, nullslast, case, and_, or_
 from typing import List, Optional
+from urllib.parse import urlparse
+import json
 
 from database import get_db, engine, Base
 import models
@@ -49,6 +51,108 @@ log = logging.getLogger("backend")
 
 # 用于控制不要同时跑多个爬虫实例
 is_crawling = False
+
+
+def _looks_broken_text(value: Optional[str]) -> bool:
+    if value is None:
+        return True
+    text = str(value).strip()
+    if not text:
+        return True
+    if "??" in text:
+        return True
+    if set(text) == {"?"}:
+        return True
+    q_ratio = text.count("?") / max(len(text), 1)
+    return q_ratio >= 0.4
+
+
+def _infer_category(title: str) -> str:
+    t = title or ""
+    if any(k in t for k in ["竞赛", "NOI", "NOIP", "CSP", "白名单"]):
+        return "竞赛"
+    if any(k in t for k in ["考试", "准考证", "成绩", "月历", "研考", "合格性", "测试"]):
+        return "考试"
+    if any(k in t for k in ["招生", "录取", "章程", "简章", "报名", "对口", "专升本", "分类考试"]):
+        return "招生"
+    if any(k in t for k in ["政策", "通知", "通告", "方案", "办法", "升学"]):
+        return "升学"
+    return "资讯"
+
+
+def _infer_region(url: str, title: str) -> str:
+    domain = (urlparse(url).netloc or "").lower()
+    t = title or ""
+    if "全国" in t:
+        return "全国"
+    if "合肥" in t or "hefei" in domain:
+        return "合肥"
+    if "安徽" in t or "ahzsks.cn" in domain or ".ah.gov.cn" in domain:
+        return "安徽"
+    return "全国"
+
+
+def _infer_source(url: str, title: str) -> str:
+    domain = (urlparse(url).netloc or "").lower()
+    t = title or ""
+    if "ahzsks.cn" in domain:
+        return "安徽省教育招生考试院"
+    if "moe.gov.cn" in domain:
+        return "中华人民共和国教育部"
+    if "gaokao.chsi.com.cn" in domain:
+        return "阳光高考"
+    if "noi.cn" in domain:
+        return "NOI官网"
+    if "hfyz.net" in domain:
+        return "合肥市第一中学"
+    if "hf168.net" in domain:
+        return "合肥一六八中学"
+    if "合肥" in t:
+        return "合肥教育资讯"
+    if "安徽" in t:
+        return "安徽教育资讯"
+    return "升学资讯整理"
+
+
+def _infer_tags(title: str, category: str, region: str) -> str:
+    keys = ["强基计划", "信息学", "科技特长生", "招生", "考试", "竞赛", "自主招生", "专升本", "分类考试", "研考", "白名单"]
+    tags = [k for k in keys if k in (title or "")]
+    if region and region not in tags:
+        tags.insert(0, region)
+    if category and category not in tags:
+        tags.append(category)
+    if not tags:
+        tags = [region or "全国", category or "资讯"]
+    return json.dumps(tags, ensure_ascii=False)
+
+
+def normalize_item_data(item_data: dict) -> dict:
+    item = dict(item_data or {})
+    title = str(item.get("title") or "").strip()
+    source_url = str(item.get("sourceUrl") or item.get("link") or "").strip()
+
+    if _looks_broken_text(item.get("category")):
+        item["category"] = _infer_category(title)
+    if _looks_broken_text(item.get("region")):
+        item["region"] = _infer_region(source_url, title)
+    if _looks_broken_text(item.get("source")):
+        item["source"] = _infer_source(source_url, title)
+    if _looks_broken_text(item.get("tags")):
+        item["tags"] = _infer_tags(title, item.get("category"), item.get("region"))
+
+    if _looks_broken_text(item.get("school")):
+        item["school"] = ""
+    if _looks_broken_text(item.get("schoolLevel")):
+        item["schoolLevel"] = ""
+
+    if not item.get("importance"):
+        item["importance"] = "high" if item.get("category") in ("招生", "考试", "竞赛") else "medium"
+
+    if not item.get("sourceUrl") and source_url:
+        item["sourceUrl"] = source_url
+
+    return item
+
 
 async def run_crawler_task():
     global is_crawling
@@ -96,29 +200,35 @@ async def run_crawler_task():
                 async with AsyncSessionLocal() as db:
                     for item_data in items:
                         try:
-                            stmt = select(models.ExamInfo).filter_by(source_url=item_data.get("sourceUrl"))
+                            normalized = normalize_item_data(item_data)
+                            source_url = normalized.get("sourceUrl")
+                            if not source_url:
+                                log.warning("跳过缺失 sourceUrl 的数据项")
+                                continue
+
+                            stmt = select(models.ExamInfo).filter_by(source_url=source_url)
                             check_res = await db.execute(stmt)
                             if check_res.scalar() is None:
                                 new_item = models.ExamInfo(
-                                    title=item_data.get("title"),
-                                    category=item_data.get("category"),
-                                    date=item_data.get("date"),
-                                    source=item_data.get("source"),
-                                    summary=item_data.get("summary"),
-                                    link=item_data.get("link"),
-                                    source_url=item_data.get("sourceUrl"),
-                                    region=item_data.get("region"),
-                                    importance=item_data.get("importance"),
-                                    ai_recommended=item_data.get("aiRecommended", False),
-                                    tags=item_data.get("tags"),
-                                    school=item_data.get("school"),
-                                    school_level=item_data.get("schoolLevel"),
-                                    admission_year=item_data.get("admissionYear")
+                                    title=normalized.get("title"),
+                                    category=normalized.get("category"),
+                                    date=normalized.get("date"),
+                                    source=normalized.get("source"),
+                                    summary=normalized.get("summary"),
+                                    link=normalized.get("link"),
+                                    source_url=source_url,
+                                    region=normalized.get("region"),
+                                    importance=normalized.get("importance"),
+                                    ai_recommended=normalized.get("aiRecommended", False),
+                                    tags=normalized.get("tags"),
+                                    school=normalized.get("school"),
+                                    school_level=normalized.get("schoolLevel"),
+                                    admission_year=normalized.get("admissionYear")
                                 )
                                 db.add(new_item)
                                 await db.commit()  # 移到循环内，单条提交
                                 added += 1
-                                existing_urls.add(item_data.get("sourceUrl"))
+                                existing_urls.add(source_url)
                         except Exception as e:
                             await db.rollback()
                             log.warning(f"单条写入冲突跳过 (URL: {item_data.get('sourceUrl')}): {e.__class__.__name__}")
@@ -167,17 +277,22 @@ async def batch_import_exam_info(items: List[dict], db: AsyncSession = Depends(g
     added = 0
     for item_data in items:
         try:
-            stmt = select(models.ExamInfo).filter_by(source_url=item_data.get("sourceUrl"))
+            normalized = normalize_item_data(item_data)
+            source_url = normalized.get("sourceUrl")
+            if not source_url:
+                continue
+
+            stmt = select(models.ExamInfo).filter_by(source_url=source_url)
             check_res = await db.execute(stmt)
             if check_res.scalar() is None:
                 new_item = models.ExamInfo(
-                    title=item_data.get("title"), category=item_data.get("category", "资讯"),
-                    date=item_data.get("date"), source=item_data.get("source"),
-                    summary=item_data.get("summary"), link=item_data.get("link"),
-                    source_url=item_data.get("sourceUrl"), region=item_data.get("region"),
-                    importance=item_data.get("importance"), ai_recommended=item_data.get("aiRecommended", False),
-                    tags=item_data.get("tags"), school=item_data.get("school"),
-                    school_level=item_data.get("schoolLevel"), admission_year=item_data.get("admissionYear")
+                    title=normalized.get("title"), category=normalized.get("category", "资讯"),
+                    date=normalized.get("date"), source=normalized.get("source"),
+                    summary=normalized.get("summary"), link=normalized.get("link"),
+                    source_url=source_url, region=normalized.get("region"),
+                    importance=normalized.get("importance"), ai_recommended=normalized.get("aiRecommended", False),
+                    tags=normalized.get("tags"), school=normalized.get("school"),
+                    school_level=normalized.get("schoolLevel"), admission_year=normalized.get("admissionYear")
                 )
                 db.add(new_item)
                 await db.commit()
@@ -220,7 +335,63 @@ async def get_exam_info_page(
     total_elements = await db.scalar(count_stmt)
     
     # pagination & sorting
-    stmt = stmt.order_by(models.ExamInfo.date.desc(), models.ExamInfo.id.desc())
+    # Prioritize Hefei middle-school-related items first, then by date/id desc.
+    school_text = func.coalesce(models.ExamInfo.school, "")
+    title_text = func.coalesce(models.ExamInfo.title, "")
+    source_text = func.coalesce(models.ExamInfo.source, "")
+    region_text = func.coalesce(models.ExamInfo.region, "")
+
+    hefei_kw = "\u5408\u80a5"  # 合肥
+    middle_keywords = [
+        "\u4e2d\u5b66",          # 中学
+        "\u4e00\u4e2d",          # 一中
+        "\u4e8c\u4e2d",          # 二中
+        "\u4e09\u4e2d",          # 三中
+        "\u56db\u4e2d",          # 四中
+        "\u4e94\u4e2d",          # 五中
+        "\u516d\u4e2d",          # 六中
+        "\u4e03\u4e2d",          # 七中
+        "\u516b\u4e2d",          # 八中
+        "\u4e5d\u4e2d",          # 九中
+        "\u5341\u4e2d",          # 十中
+        "\u5341\u4e00\u4e2d",    # 十一中
+        "\u56db\u5341\u4e94\u4e2d",  # 四十五中
+        "\u9644\u4e2d",          # 附中
+    ]
+    hefei_168_keywords = [
+        "\u4e00\u516d\u516b\u4e2d\u5b66",  # 一六八中学
+        "168\u4e2d\u5b66",                 # 168中学
+    ]
+
+    has_hefei = or_(
+        school_text.like(f"%{hefei_kw}%"),
+        title_text.like(f"%{hefei_kw}%"),
+        source_text.like(f"%{hefei_kw}%"),
+        region_text.like(f"%{hefei_kw}%")
+    )
+
+    school_fields = (school_text, title_text, source_text)
+
+    middle_school_conditions = []
+    for kw in middle_keywords:
+        for field in school_fields:
+            middle_school_conditions.append(field.like(f"%{kw}%"))
+    has_middle_school_signal = or_(*middle_school_conditions)
+
+    hefei_168_conditions = []
+    for kw in hefei_168_keywords:
+        for field in school_fields:
+            hefei_168_conditions.append(field.like(f"%{kw}%"))
+    is_hefei_168_middle = or_(*hefei_168_conditions)
+
+    is_hefei_middle = or_(
+        and_(has_hefei, has_middle_school_signal),
+        is_hefei_168_middle
+    )
+
+    hefei_middle_priority = case((is_hefei_middle, 0), else_=1)
+
+    stmt = stmt.order_by(hefei_middle_priority.asc(), models.ExamInfo.date.desc(), models.ExamInfo.id.desc())
     stmt = stmt.offset(page * size).limit(size)
     
     result = await db.execute(stmt)

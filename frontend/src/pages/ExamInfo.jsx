@@ -5,7 +5,7 @@ import {
     Users, Calendar, Clock, Bookmark, Share2, TrendingUp,
     AlertCircle, Sparkles, Filter, ChevronRight, ExternalLink,
     Presentation, Grid, Target, Cpu, Award, RefreshCw, MapPin, Wifi, WifiOff,
-    ChevronLeft, School
+    ChevronLeft
 } from 'lucide-react';
 
 const API_BASE = '/api';
@@ -119,11 +119,7 @@ export default function ExamInfo() {
     const [backendOnline, setBackendOnline] = useState(false);
     const [lastUpdated, setLastUpdated] = useState(null);
 
-    // 筛选条件
-    const [activeCategory, setActiveCategory] = useState('全部');
-    const [activeRegion, setActiveRegion] = useState('全部');
-    const [activeSchoolLevel, setActiveSchoolLevel] = useState('全部');
-    const [activeSchool, setActiveSchool] = useState('');
+    // 关键词搜索
     const [searchTerm, setSearchTerm] = useState('');
 
     // 分页
@@ -132,34 +128,9 @@ export default function ExamInfo() {
     const [totalElements, setTotalElements] = useState(0);
     const PAGE_SIZE = 20;
 
-    // 学校列表（从后端动态加载）
-    const [schoolList, setSchoolList] = useState([]);
-    const [hotSchools, setHotSchools] = useState([]);
-
-    const categories = ['全部', '竞赛', '招生', '升学', '考试', '资讯'];
-    const regions = ['全部', '合肥', '安徽', '全国'];
-    const schoolLevels = ['全部', '高中', '初中'];
-
-    // 加载学校列表（只需加载一次）
-    useEffect(() => {
-        fetch(`${API_BASE}/exam-info/schools`, { signal: AbortSignal.timeout(4000) })
-            .then(r => r.ok ? r.json() : [])
-            .then(list => setSchoolList(list))
-            .catch(() => { });
-
-        fetch(`${API_BASE}/exam-info/hot-schools?top=8`, { signal: AbortSignal.timeout(4000) })
-            .then(r => r.ok ? r.json() : [])
-            .then(list => setHotSchools(list))
-            .catch(() => { });
-    }, []);
-
     const fetchData = useCallback(async (page = currentPage) => {
         setLoading(true);
         const params = new URLSearchParams({ page, size: PAGE_SIZE });
-        if (activeCategory && activeCategory !== '全部') params.set('category', activeCategory);
-        if (activeRegion && activeRegion !== '全部') params.set('region', activeRegion);
-        if (activeSchoolLevel && activeSchoolLevel !== '全部') params.set('schoolLevel', activeSchoolLevel);
-        if (activeSchool) params.set('school', activeSchool);
         if (searchTerm) params.set('keyword', searchTerm);
 
         try {
@@ -188,14 +159,10 @@ export default function ExamInfo() {
             setBackendOnline(false);
             // 本地过滤 fallback 数据
             const filtered = FALLBACK_DATA.filter(item => {
-                const matchCat = activeCategory === '全部' || item.category === activeCategory;
-                const matchReg = activeRegion === '全部' || item.region === activeRegion;
-                const matchLevel = activeSchoolLevel === '全部' || item.schoolLevel === activeSchoolLevel;
-                const matchSchool = !activeSchool || item.school === activeSchool;
                 const matchSearch = !searchTerm
                     || item.title.includes(searchTerm)
                     || item.summary.includes(searchTerm);
-                return matchCat && matchReg && matchLevel && matchSchool && matchSearch;
+                return matchSearch;
             });
             setArticles(filtered.length ? filtered : FALLBACK_DATA);
             setTotalPages(1);
@@ -203,12 +170,12 @@ export default function ExamInfo() {
         } finally {
             setLoading(false);
         }
-    }, [activeCategory, activeRegion, activeSchoolLevel, activeSchool, searchTerm, currentPage]);
+    }, [searchTerm, currentPage]);
 
     // 筛选条件变化时重置到第 0 页
     useEffect(() => {
         setCurrentPage(0);
-    }, [activeCategory, activeRegion, activeSchoolLevel, activeSchool, searchTerm]);
+    }, [searchTerm]);
 
     useEffect(() => { fetchData(currentPage); }, [fetchData, currentPage]);
 
@@ -226,54 +193,50 @@ export default function ExamInfo() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    const handleSchoolClick = (school) => {
-        setActiveSchool(prev => prev === school ? '' : school);
-    };
-
     return (
         <div className="min-h-screen bg-gray-50">
             {/* ── 顶部导航 ── */}
             <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-6 py-4">
-                    <div className="flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-4 flex-1">
-                            <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white">
                                     <GraduationCap size={24} />
                                 </div>
                                 <h1 className="text-xl font-bold text-gray-900">升学政策咨询库</h1>
                             </div>
-                            <div className="relative flex-1 max-w-md">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                                <input
-                                    type="text"
-                                    placeholder="搜索竞赛、招生、升学资讯..."
-                                    className="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm outline-none"
-                                    value={searchTerm}
-                                    onChange={e => setSearchTerm(e.target.value)}
-                                />
+
+                            <div className="ml-8 flex bg-gray-100 p-1 rounded-xl">
+                                <div className="px-4 py-2 rounded-lg text-sm font-medium bg-white text-indigo-700 shadow-sm border border-gray-200 transition-all">
+                                    <div className="flex items-center gap-2">
+                                        <Search size={16} />信息查询
+                                    </div>
+                                </div>
+                                <Link to="/exam-analysis" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                                    <div className="flex items-center gap-2">
+                                        <TrendingUp size={16} />信息分析
+                                    </div>
+                                </Link>
+                                <Link to="/strong-base" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                                    <div className="flex items-center gap-2">
+                                        <Target size={16} />强基计划
+                                    </div>
+                                </Link>
+                                <Link to="/tech-specialty" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                                    <div className="flex items-center gap-2">
+                                        <Cpu size={16} />科技特长生
+                                    </div>
+                                </Link>
+                                <Link to="/whitelist-competitions" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                                    <div className="flex items-center gap-2">
+                                        <Award size={16} />白名单赛事
+                                    </div>
+                                </Link>
                             </div>
                         </div>
 
-                        <div className="flex bg-gray-100 p-1 rounded-xl shrink-0">
-                            <div className="px-3 py-2 rounded-lg text-sm font-medium bg-white text-indigo-700 shadow-sm border border-gray-200 flex items-center gap-1.5">
-                                <Search size={14} />信息查询
-                            </div>
-                            <Link to="/exam-analysis" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all flex items-center gap-1.5">
-                                <TrendingUp size={14} />信息分析
-                            </Link>
-                            <Link to="/strong-base" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all flex items-center gap-1.5">
-                                <Target size={14} />强基计划
-                            </Link>
-                            <Link to="/tech-specialty" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all flex items-center gap-1.5">
-                                <Cpu size={14} />科技特长生
-                            </Link>
-                            <Link to="/whitelist-competitions" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all flex items-center gap-1.5">
-                                <Award size={14} />白名单赛事
-                            </Link>
-                        </div>
-
-                        <Link to="/" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700 shrink-0">
+                        <Link to="/" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
                             <Home size={18} />
                             <span className="text-sm font-medium">返回首页</span>
                         </Link>
@@ -303,72 +266,24 @@ export default function ExamInfo() {
                 <div className="flex gap-8">
                     {/* ── 主内容区 ── */}
                     <div className="flex-1 min-w-0">
-                        {/* 筛选栏 */}
-                        <div className="bg-white rounded-2xl p-4 mb-6 border border-gray-100 shadow-sm space-y-3">
-                            {/* 第一行：类别 + 地区 */}
-                            <div className="flex flex-wrap gap-4">
-                                <div>
-                                    <p className="text-xs text-gray-400 mb-2 font-medium">类别</p>
-                                    <div className="flex gap-1.5 flex-wrap">
-                                        {categories.map(cat => (
-                                            <button key={cat} onClick={() => setActiveCategory(cat)}
-                                                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${activeCategory === cat ? 'bg-blue-600 text-white shadow' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}>
-                                                {cat}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="border-l border-gray-100 pl-4">
-                                    <p className="text-xs text-gray-400 mb-2 font-medium flex items-center gap-1"><MapPin size={11} />地区</p>
-                                    <div className="flex gap-1.5">
-                                        {regions.map(r => (
-                                            <button key={r} onClick={() => setActiveRegion(r)}
-                                                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${activeRegion === r ? 'bg-emerald-600 text-white shadow' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}>
-                                                {r}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="border-l border-gray-100 pl-4">
-                                    <p className="text-xs text-gray-400 mb-2 font-medium flex items-center gap-1"><School size={11} />学段</p>
-                                    <div className="flex gap-1.5">
-                                        {schoolLevels.map(lv => (
-                                            <button key={lv} onClick={() => setActiveSchoolLevel(lv)}
-                                                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${activeSchoolLevel === lv ? 'bg-orange-500 text-white shadow' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}>
-                                                {lv}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
+                        {/* 关键词搜索 */}
+                        <div className="bg-white rounded-2xl p-4 mb-6 border border-gray-100 shadow-sm">
+                            <div className="relative max-w-xl">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                <input
+                                    type="text"
+                                    placeholder="输入关键词搜索资讯..."
+                                    className="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm outline-none"
+                                    value={searchTerm}
+                                    onChange={e => setSearchTerm(e.target.value)}
+                                />
                             </div>
-                            {/* 第二行：学校筛选（动态） */}
-                            {schoolList.length > 0 && (
-                                <div className="border-t border-gray-50 pt-3">
-                                    <p className="text-xs text-gray-400 mb-2 font-medium">学校</p>
-                                    <div className="flex gap-1.5 flex-wrap">
-                                        <button onClick={() => setActiveSchool('')}
-                                            className={`px-3 py-1 rounded-lg text-xs transition-all ${activeSchool === '' ? 'bg-slate-600 text-white shadow' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}>
-                                            全部学校
-                                        </button>
-                                        {schoolList.slice(0, 16).map(s => (
-                                            <button key={s} onClick={() => handleSchoolClick(s)}
-                                                className={`px-3 py-1 rounded-lg text-xs transition-all ${activeSchool === s ? 'bg-slate-600 text-white shadow' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}>
-                                                {s}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
                         </div>
 
                         {/* 结果统计 */}
                         <div className="flex items-center justify-between mb-4">
                             <p className="text-sm text-gray-500">
                                 共 <span className="font-bold text-gray-900">{backendOnline ? totalElements : articles.length}</span> 条资讯
-                                {activeRegion !== '全部' && <span className="ml-1 text-emerald-600">（{activeRegion}地区）</span>}
-                                {activeCategory !== '全部' && <span className="ml-1 text-blue-600">（{activeCategory}类）</span>}
-                                {activeSchoolLevel !== '全部' && <span className="ml-1 text-orange-600">（{activeSchoolLevel}）</span>}
-                                {activeSchool && <span className="ml-1 text-slate-600">· {activeSchool}</span>}
                             </p>
                             <div className="flex items-center gap-2">
                                 {!backendOnline && (
@@ -553,49 +468,59 @@ export default function ExamInfo() {
                                 <h3 className="font-bold text-gray-900 text-sm">AI 智能推荐</h3>
                             </div>
                             <div className="space-y-2.5">
-                                {aiItems.map((item, i) => (
-                                    <div key={item.id || i} className="bg-white rounded-xl p-3 hover:shadow-sm transition-shadow cursor-pointer">
-                                        <div className="flex items-center gap-1.5 mb-1.5">
-                                            <span className={`px-2 py-0.5 rounded text-xs font-medium ${getCategoryColor(item.category)}`}>
-                                                {item.category}
-                                            </span>
-                                            {item.region && (
-                                                <span className={`px-1.5 py-0.5 rounded text-xs ${getRegionColor(item.region)}`}>
-                                                    {item.region}
+                                {aiItems.map((item, i) => {
+                                    const hasLink = item.link && item.link !== '#';
+                                    const cardClassName = 'block w-full text-left bg-white rounded-xl p-3 hover:shadow-sm transition-shadow cursor-pointer';
+
+                                    if (hasLink) {
+                                        return (
+                                            <a
+                                                key={item.id || i}
+                                                href={item.link}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className={cardClassName}
+                                            >
+                                                <div className="flex items-center gap-1.5 mb-1.5">
+                                                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${getCategoryColor(item.category)}`}>
+                                                        {item.category}
+                                                    </span>
+                                                    {item.region && (
+                                                        <span className={`px-1.5 py-0.5 rounded text-xs ${getRegionColor(item.region)}`}>
+                                                            {item.region}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <p className="text-xs font-semibold text-gray-900 line-clamp-2 mb-1">{item.title}</p>
+                                                <p className="text-xs text-gray-400">{item.date}</p>
+                                            </a>
+                                        );
+                                    }
+
+                                    return (
+                                        <button
+                                            key={item.id || i}
+                                            type="button"
+                                            onClick={() => setSearchTerm(item.title)}
+                                            className={cardClassName}
+                                        >
+                                            <div className="flex items-center gap-1.5 mb-1.5">
+                                                <span className={`px-2 py-0.5 rounded text-xs font-medium ${getCategoryColor(item.category)}`}>
+                                                    {item.category}
                                                 </span>
-                                            )}
-                                        </div>
-                                        <p className="text-xs font-semibold text-gray-900 line-clamp-2 mb-1">{item.title}</p>
-                                        <p className="text-xs text-gray-400">{item.date}</p>
-                                    </div>
-                                ))}
+                                                {item.region && (
+                                                    <span className={`px-1.5 py-0.5 rounded text-xs ${getRegionColor(item.region)}`}>
+                                                        {item.region}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <p className="text-xs font-semibold text-gray-900 line-clamp-2 mb-1">{item.title}</p>
+                                            <p className="text-xs text-gray-400">{item.date}</p>
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
-
-                        {/* 热门学校（动态） */}
-                        {hotSchools.length > 0 && (
-                            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <Building2 className="text-slate-600" size={18} />
-                                    <h3 className="font-bold text-gray-900 text-sm">热门学校</h3>
-                                </div>
-                                <div className="space-y-2">
-                                    {hotSchools.map((hs, i) => (
-                                        <button key={hs.school}
-                                            onClick={() => handleSchoolClick(hs.school)}
-                                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all ${activeSchool === hs.school
-                                                ? 'bg-slate-600 text-white'
-                                                : 'bg-gray-50 hover:bg-gray-100 text-gray-700'}`}>
-                                            <span className="flex items-center gap-2">
-                                                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${i < 3 ? 'bg-amber-400 text-white' : 'bg-gray-200 text-gray-500'}`}>{i + 1}</span>
-                                                {hs.school}
-                                            </span>
-                                            <span className={`${activeSchool === hs.school ? 'text-slate-300' : 'text-gray-400'}`}>{hs.matchCount} 条</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
 
                         {/* 即将截止 */}
                         {urgentItems.length > 0 && (
@@ -607,13 +532,34 @@ export default function ExamInfo() {
                                 <div className="space-y-3">
                                     {urgentItems.map((item, i) => {
                                         const d = daysUntil(item.deadline);
+                                        const hasLink = item.link && item.link !== '#';
                                         return (
-                                            <div key={item.id || i} className="border-l-4 border-red-500 pl-3 py-1.5">
-                                                <p className="text-xs font-semibold text-gray-900 line-clamp-2 mb-1">{item.title}</p>
-                                                <p className="text-xs text-red-600 font-bold">
-                                                    {d === 0 ? '今日截止' : `截止 ${item.deadline}（${d}天）`}
-                                                </p>
-                                            </div>
+                                            hasLink ? (
+                                                <a
+                                                    key={item.id || i}
+                                                    href={item.link}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="block border-l-4 border-red-500 pl-3 py-1.5 hover:bg-red-50/60 rounded-r-lg transition-colors"
+                                                >
+                                                    <p className="text-xs font-semibold text-gray-900 line-clamp-2 mb-1">{item.title}</p>
+                                                    <p className="text-xs text-red-600 font-bold">
+                                                        {d === 0 ? '今日截止' : `截止 ${item.deadline}（${d}天）`}
+                                                    </p>
+                                                </a>
+                                            ) : (
+                                                <button
+                                                    key={item.id || i}
+                                                    type="button"
+                                                    onClick={() => setSearchTerm(item.title)}
+                                                    className="block w-full text-left border-l-4 border-red-500 pl-3 py-1.5 hover:bg-red-50/60 rounded-r-lg transition-colors"
+                                                >
+                                                    <p className="text-xs font-semibold text-gray-900 line-clamp-2 mb-1">{item.title}</p>
+                                                    <p className="text-xs text-red-600 font-bold">
+                                                        {d === 0 ? '今日截止' : `截止 ${item.deadline}（${d}天）`}
+                                                    </p>
+                                                </button>
+                                            )
                                         );
                                     })}
                                 </div>
@@ -621,7 +567,7 @@ export default function ExamInfo() {
                         )}
 
                         {/* 强基计划专栏 */}
-                        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+                        <Link to="/strong-base" className="block bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                             <div className="bg-indigo-600 p-4 text-white">
                                 <h4 className="font-bold text-sm mb-0.5">强基计划专栏</h4>
                                 <p className="text-indigo-200 text-xs">39所顶尖大学基础学科试点</p>
@@ -645,10 +591,10 @@ export default function ExamInfo() {
                                     ))}
                                 </div>
                             </div>
-                        </div>
+                        </Link>
 
                         {/* 科技特长生专栏 */}
-                        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+                        <Link to="/tech-specialty" className="block bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                             <div className="bg-emerald-600 p-4 text-white">
                                 <h4 className="font-bold text-sm mb-0.5">科技特长生专栏</h4>
                                 <p className="text-emerald-200 text-xs">信奥/编程/创客专项计划</p>
@@ -664,7 +610,7 @@ export default function ExamInfo() {
                                     </div>
                                 ))}
                             </div>
-                        </div>
+                        </Link>
 
                         {/* 快速筛选标签 */}
                         <div className="bg-white rounded-2xl p-5 border border-gray-100">

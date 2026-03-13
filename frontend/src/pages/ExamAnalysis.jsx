@@ -1,454 +1,387 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
-    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell,
-    PieChart, Pie
+    ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+    PieChart, Pie, Cell
 } from 'recharts';
 import {
-    Info, Calendar, Award, BookOpen, School, TrendingUp, Users, Target, ChevronRight,
-    Search, Filter, MapPin, Star, ShieldCheck, Zap, AlertCircle, Home, Cpu
+    Search, TrendingUp, Target, Cpu, Award, Home,
+    Database, Sigma, Activity, BarChart3
 } from 'lucide-react';
 
-const App = () => {
-    const [activeTab, setActiveTab] = useState('overview');
+const SCHOOL_POLICY_DATA = [
+    {
+        school: '一中滨湖校区', short: '一中滨湖', quota: 30, generalScore: 706, techScore: 705, bonus: 1,
+        indexScores: [674, 693, 693, 697, 688, 686, 672, 678, 663, 669, 670, 658]
+    },
+    {
+        school: '一中瑶海校区', short: '一中瑶海', quota: 20, generalScore: 694, techScore: 688, bonus: 6,
+        indexScores: [690, 684, 685, 673, 681, 670, 671, 671, 651, 665, 662, 669]
+    },
+    {
+        school: '一中淝河校区', short: '一中淝河', quota: 20, generalScore: 682, techScore: 673, bonus: 9,
+        indexScores: [675, 664, 666, 667, 670, 662, 655, 665, 654, 660, 659, 660]
+    },
+    {
+        school: '一中长江路校区', short: '一中长江路', quota: 10, generalScore: 700, techScore: 700, bonus: 0,
+        indexScores: [680, 685, 694, 656, 679, 689, 691, 688, 642, 664, 659, 684]
+    },
+    {
+        school: '六中菱湖校区', short: '六中菱湖', quota: 35, generalScore: 680, techScore: 631, bonus: 49,
+        indexScores: [670, 666, 667, 653, 665, 663, 659, 663, 652, 657, 656, 667]
+    },
+    {
+        school: '六中新桥校区', short: '六中新桥', quota: 10, generalScore: 664, techScore: 648, bonus: 16,
+        indexScores: [660, 652, 659, 651, 658, 658, 655, 658, 644, 654, 654, 655]
+    },
+    {
+        school: '六中百花井校区', short: '六中百花井', quota: 15, generalScore: 691, techScore: 680, bonus: 11,
+        indexScores: [675, 685, 688, 646, 675, 672, 688, 670, 650, 636, 658, 672]
+    },
+    {
+        school: '八中匡河校区', short: '八中匡河', quota: 35, generalScore: 687, techScore: 586, bonus: 101,
+        indexScores: [666, 660, 665, 662, 666, 672, 666, 668, 676, 674, 678, 657]
+    },
+    {
+        school: '八中运河校区', short: '八中运河', quota: 20, generalScore: 668, techScore: 654, bonus: 14,
+        indexScores: [663, 658, 661, 656, 663, 660, 657, 661, 653, 659, 660, 658]
+    },
+    // {
+    //     school: '一六八中学', short: '一六八中学', quota: 15, generalScore: 669, techScore: 694, bonus: -25,
+    //     indexScores: []
+    // },
+    {
+        school: '合肥四中', short: '合肥四中', quota: 15, generalScore: 657, techScore: 632, bonus: 25,
+        indexScores: [651, 647, 652, 650, 651, 650, 647, 651, 639, 649, 647, 648]
+    },
+    {
+        school: '合肥七中', short: '合肥七中', quota: 8, generalScore: 654, techScore: 643, bonus: 11,
+        indexScores: [648, 646, 648, 645, 648, 649, 648, 649, 639, 648, 650, 647]
+    },
+    {
+        school: '九中新站校区', short: '九中新站', quota: 14, generalScore: 642, techScore: 605, bonus: 37,
+        indexScores: [635, 634, 635, 634, 635, 636, 633, 633, 629, 636, 634, 636]
+    },
+    {
+        school: '九中四牌楼校区', short: '九中四牌楼', quota: 8, generalScore: 648, techScore: 628, bonus: 20,
+        indexScores: [643, 645, 646, 640, 643, 644, 643, 646, 628, 641, 643, 639]
+    }
+];
 
-    // 模拟数据：近三年合肥市区中考录取分数线（2023-2025为实际，2026为新总分下的预测）
-    // 注意：2026年总分降为730，所以分数值会相应下降
-    const scoreData = [
-        { year: '2023', score: 585, total: 750, label: '750分制' },
-        { year: '2024', score: 602, total: 750, label: '750分制' },
-        { year: '2025', score: 618, total: 750, label: '750分制' },
-        { year: '2026 (预)', score: 595, total: 730, label: '730分新制' },
-    ];
+const ROBOT_QUOTA_BY_SCHOOL = [
+    { school: '合肥五中', quota: 5 },
+    { school: '九中新站校区', quota: 4 },
+    { school: '九中四牌楼校区', quota: 4 }
+];
 
-    // 2026合肥中考新分值结构 (总分730分)
-    const subjectData = [
-        { name: '语文', value: 120, color: '#f87171' },
-        { name: '数学', value: 120, color: '#60a5fa' },
-        { name: '英语', value: 120, color: '#fbbf24' }, // 120分（含听力口语30分）
-        { name: '物理', value: 70, color: '#34d399' },
-        { name: '化学', value: 40, color: '#a78bfa' },
-        { name: '道德与法治', value: 60, color: '#f472b6' },
-        { name: '历史', value: 60, color: '#fb923c' },
-        { name: '体育', value: 70, color: '#2dd4bf' }, // 提升至70分
-        { name: '实验/信息', value: 30, color: '#94a3b8' }, // 实验20分+信息10分
-        { name: '地生(8年级已考)', value: 40, color: '#64748b' } // 部分算法计入总分
-    ];
+function avg(list) {
+    if (!list || list.length === 0) return null;
+    return list.reduce((sum, n) => sum + n, 0) / list.length;
+}
 
-    // 特长生分类数据 - 2026最新政策
-    const specialtyTypes = [
-        {
-            type: '体育特长生',
-            icon: <Target className="w-5 h-5 text-blue-500" />,
-            items: ['田径', '三大球', '武术', '游泳', '霹雳舞'],
-            policy: '专业课须达标，中考文化课要求下调，录取比例约占招生计划3-5%',
-            schools: ['合肥一中(滨湖)', '合肥三中', '合肥七中', '庐阳高中']
-        },
-        {
-            type: '艺术特长生',
-            icon: <Star className="w-5 h-5 text-purple-500" />,
-            items: ['声乐', '器乐', '舞蹈', '美术', '数字艺术'],
-            policy: '综合分录取模式：(文化分×0.4 + 专业分×0.6) × 2',
-            schools: ['合肥六中', '合肥八中', '二中', '十一中']
-        },
-        {
-            type: '科技创新/强基',
-            icon: <Zap className="w-5 h-5 text-yellow-500" />,
-            items: ['信奥(C++)', '机器人', '创新大赛', '强基班'],
-            policy: '重点高中自主招生主战场，对省级赛事奖项有刚性需求',
-            schools: ['合肥一中(瑶海)', '合肥十中', '科大附中', '168中学']
-        }
-    ];
+function quantile(values, q) {
+    if (!values.length) return 0;
+    const sorted = [...values].sort((a, b) => a - b);
+    const pos = (sorted.length - 1) * q;
+    const base = Math.floor(pos);
+    const rest = pos - base;
+    if (sorted[base + 1] !== undefined) {
+        return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+    }
+    return sorted[base];
+}
 
-    // 2026 关键时间轴
-    const timeline = [
-        { month: '3月', event: '体育抽测项目公布 & 信息技术考试', status: '进行中' },
-        { month: '4月', event: '理科实验操作考试 & 体育正式考', status: '准备中' },
-        { month: '5月', event: '特长生/自主招生报名测试', status: '关键期' },
-        { month: '6月14-16日', event: '2026年全省统一文化课考试', status: '决战' },
-        { month: '7月初', event: '新分值制成绩发布', status: '待开启' },
-    ];
+function nameList(list) {
+    return list.map(item => item.short).join('、');
+}
+
+export default function ExamAnalysis() {
+    const analytics = useMemo(() => {
+        const totalQuota = SCHOOL_POLICY_DATA.reduce((sum, item) => sum + item.quota, 0);
+        const weightedGeneral = SCHOOL_POLICY_DATA.reduce((sum, item) => sum + item.generalScore * item.quota, 0) / totalQuota;
+        const weightedTech = SCHOOL_POLICY_DATA.reduce((sum, item) => sum + item.techScore * item.quota, 0) / totalQuota;
+        const avgBonus = SCHOOL_POLICY_DATA.reduce((sum, item) => sum + item.bonus, 0) / SCHOOL_POLICY_DATA.length;
+
+        const maxBonusSchool = SCHOOL_POLICY_DATA.reduce((best, item) => (item.bonus > best.bonus ? item : best), SCHOOL_POLICY_DATA[0]);
+        const minBonusSchool = SCHOOL_POLICY_DATA.reduce((best, item) => (item.bonus < best.bonus ? item : best), SCHOOL_POLICY_DATA[0]);
+
+        const allIndexScores = SCHOOL_POLICY_DATA.flatMap(item => item.indexScores);
+        const indexAvg = avg(allIndexScores);
+        const indexP25 = quantile(allIndexScores, 0.25);
+        const indexP75 = quantile(allIndexScores, 0.75);
+
+        const opportunityRanking = SCHOOL_POLICY_DATA
+            .map(item => {
+                const indexAvgBySchool = avg(item.indexScores);
+                const indexRange = item.indexScores.length > 0 ? Math.max(...item.indexScores) - Math.min(...item.indexScores) : null;
+                return {
+                    ...item,
+                    indexAvg: indexAvgBySchool,
+                    indexRange,
+                    opportunityIndex: Math.max(item.bonus, 0) * item.quota
+                };
+            })
+            .sort((a, b) => b.opportunityIndex - a.opportunityIndex);
+
+        const sprintLayer = SCHOOL_POLICY_DATA.filter(item => item.generalScore >= 690);
+        const leverageLayer = SCHOOL_POLICY_DATA.filter(item => item.bonus >= 30);
+        const stableLayer = opportunityRanking.filter(item => item.indexAvg !== null && item.indexAvg >= 645 && item.indexRange !== null && item.indexRange <= 20);
+
+        const robotQuota = ROBOT_QUOTA_BY_SCHOOL.reduce((sum, item) => sum + item.quota, 0);
+        const innovationQuota = totalQuota - robotQuota;
+        const trackPie = [
+            { name: '信息学/科技创新', value: innovationQuota, color: '#2563eb' },
+            { name: '电脑机器人', value: robotQuota, color: '#14b8a6' }
+        ];
+
+        return {
+            totalQuota,
+            weightedGeneral,
+            weightedTech,
+            avgBonus,
+            weightedBonus: weightedGeneral - weightedTech,
+            maxBonusSchool,
+            minBonusSchool,
+            allIndexCount: allIndexScores.length,
+            indexAvg,
+            indexP25,
+            indexP75,
+            opportunityRanking,
+            sprintLayer,
+            leverageLayer,
+            stableLayer,
+            trackPie
+        };
+    }, []);
+
+    const scoreCompareData = SCHOOL_POLICY_DATA.map(item => ({
+        school: item.short,
+        general: item.generalScore,
+        tech: item.techScore
+    }));
+
+    const leverageChartData = analytics.opportunityRanking.slice(0, 6).map(item => ({
+        school: item.short,
+        leverage: item.opportunityIndex
+    }));
 
     return (
-        <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
-            {/* 顶部导航 */}
+        <div className="min-h-screen bg-slate-50 pb-20 text-slate-800">
             <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-6 py-4">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-                            <div className="flex items-center gap-3 self-start md:self-auto">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl flex items-center justify-center text-white shadow-md">
                                     <TrendingUp size={24} />
                                 </div>
                                 <h1 className="text-xl font-bold text-gray-900 tracking-wide whitespace-nowrap">信息分析</h1>
                             </div>
 
-                            {/* 系统内导航切换 */}
-                            <div className="flex flex-wrap bg-gray-100 p-1 rounded-xl w-full md:w-auto justify-center md:justify-start">
-                                <Link to="/exam-info" className="px-3 md:px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all whitespace-nowrap">
+                            <div className="ml-8 flex bg-gray-100 p-1 rounded-xl">
+                                <Link to="/exam-info" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
                                     <div className="flex items-center gap-2">
                                         <Search size={16} />信息查询
                                     </div>
                                 </Link>
-                                <div className="px-3 md:px-4 py-2 rounded-lg text-sm font-medium bg-white text-red-600 shadow-sm border border-gray-200 transition-all flex items-center gap-2 whitespace-nowrap">
-                                    <TrendingUp size={16} />信息分析
+                                <div className="px-4 py-2 rounded-lg text-sm font-medium bg-white text-red-600 shadow-sm border border-gray-200 transition-all">
+                                    <div className="flex items-center gap-2">
+                                        <TrendingUp size={16} />信息分析
+                                    </div>
                                 </div>
-                                <Link to="/strong-base" className="px-3 md:px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all whitespace-nowrap">
+                                <Link to="/strong-base" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
                                     <div className="flex items-center gap-2">
                                         <Target size={16} />强基计划
                                     </div>
                                 </Link>
-                                <Link to="/tech-specialty" className="px-3 md:px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all whitespace-nowrap">
+                                <Link to="/tech-specialty" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
                                     <div className="flex items-center gap-2">
                                         <Cpu size={16} />科技特长生
                                     </div>
                                 </Link>
-                                <Link to="/whitelist-competitions" className="px-3 md:px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all whitespace-nowrap">
+                                <Link to="/whitelist-competitions" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
                                     <div className="flex items-center gap-2">
                                         <Award size={16} />白名单赛事
                                     </div>
                                 </Link>
                             </div>
                         </div>
-                        <Link to="/" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700 font-medium whitespace-nowrap self-end md:self-auto hidden md:flex">
+
+                        <Link to="/" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
                             <Home size={18} />
-                            <span className="text-sm">返回首页</span>
+                            <span className="text-sm font-medium">返回首页</span>
                         </Link>
                     </div>
                 </div>
             </nav>
 
-            {/* 页面专属子标题与模块切换 */}
-            <div className="bg-white border-b border-slate-200 mb-6">
-                <div className="max-w-7xl mx-auto px-6 h-16 flex flex-col sm:flex-row items-center justify-between gap-2 py-2 sm:py-0">
-                    <div className="flex items-center space-x-2">
-                        <h2 className="text-lg font-bold tracking-tight text-slate-800">2026合肥升学<span className="text-red-600">战略看板</span></h2>
-                    </div>
-                    <div className="flex space-x-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-hide">
-                        {['overview', 'policy', 'specialty', 'competitions', 'schools'].map((tab) => (
-                            <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab ? 'bg-red-50 text-red-600 shadow-sm border border-red-100' : 'text-slate-600 hover:bg-slate-50 border border-transparent'
-                                    }`}
-                            >
-                                {tab === 'overview' && '2026概览'}
-                                {tab === 'policy' && '730新政'}
-                                {tab === 'specialty' && '自主招生'}
-                                {tab === 'competitions' && '白名单赛事'}
-                                {tab === 'schools' && '高中竞争力'}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            <main className="max-w-7xl mx-auto p-4 lg:p-6 space-y-6">
-
-                {/* 顶部动态播报 - 2026实战状态 */}
-                <div className="bg-amber-500 text-white p-4 rounded-xl shadow-lg flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                        <AlertCircle className="w-5 h-5 animate-bounce" />
-                        <p className="font-medium text-sm lg:text-base">
-                            <strong>实时动态：</strong> 2026年合肥中考报名已结束，市区考生规模创历史新高，预计普高线较去年将有波动。
-                        </p>
-                    </div>
-                    <div className="hidden md:block text-xs font-mono bg-black/10 px-3 py-1 rounded">
-                        距文化课中考：105天
-                    </div>
-                </div>
-
-                {activeTab === 'overview' && (
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* 核心指标 */}
-                        <div className="lg:col-span-2 space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                                    <div className="flex items-center space-x-3 mb-2">
-                                        <div className="bg-red-100 p-2 rounded-lg"><Users className="w-5 h-5 text-red-600" /></div>
-                                        <span className="text-slate-500 text-sm">2026参考人数</span>
-                                    </div>
-                                    <div className="text-2xl font-bold">约 9.8 万</div>
-                                    <div className="text-red-500 text-xs mt-1 font-medium">↑ 压力值：极高</div>
-                                </div>
-                                <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                                    <div className="flex items-center space-x-3 mb-2">
-                                        <div className="bg-blue-100 p-2 rounded-lg"><School className="w-5 h-5 text-blue-600" /></div>
-                                        <span className="text-slate-500 text-sm">指标到校分配</span>
-                                    </div>
-                                    <div className="text-2xl font-bold">85%</div>
-                                    <div className="text-slate-400 text-xs mt-1">校内竞争成为主流</div>
-                                </div>
-                                <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                                    <div className="flex items-center space-x-3 mb-2">
-                                        <div className="bg-green-100 p-2 rounded-lg"><Zap className="w-5 h-5 text-green-600" /></div>
-                                        <span className="text-slate-500 text-sm">综合录取率</span>
-                                    </div>
-                                    <div className="text-2xl font-bold">约 84%</div>
-                                    <div className="text-slate-400 text-xs mt-1">含职教高考实验班</div>
-                                </div>
-                            </div>
-
-                            {/* 图表展示区 - 线条变化体现分值变革 */}
-                            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm h-[350px]">
-                                <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
-                                    <TrendingUp className="w-5 h-5 text-red-500" />
-                                    合肥中考投档线趋势图 (2023-2026)
-                                </h3>
-                                <p className="text-xs text-slate-400 mb-6">注：2026年因总分从750降至730，曲线呈现名义下降，实际竞争难度增加</p>
-                                <ResponsiveContainer width="100%" height="75%">
-                                    <LineChart data={scoreData}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                                        <XAxis dataKey="year" stroke="#94a3b8" />
-                                        <YAxis stroke="#94a3b8" domain={[550, 650]} />
-                                        <Tooltip
-                                            formatter={(value, name, props) => [`${value}分`, `录取线 (${props.payload.label})`]}
-                                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                                        />
-                                        <Line
-                                            type="monotone"
-                                            dataKey="score"
-                                            stroke="#ef4444"
-                                            strokeWidth={4}
-                                            dot={{ r: 6, fill: '#ef4444' }}
-                                            activeDot={{ r: 8 }}
-                                            name="市区普高最低线"
-                                        />
-                                    </LineChart>
-                                </ResponsiveContainer>
-                            </div>
+            <main className="max-w-7xl mx-auto px-6 py-6 space-y-6">
+                <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                        <div className="flex items-center gap-2 text-slate-800 font-semibold">
+                            <Database size={18} className="text-red-500" />
+                            数据基线
                         </div>
+                        <span className="text-xs px-2.5 py-1 rounded-lg bg-red-50 text-red-600 border border-red-100">
+                            大数据洞察模型已重算
+                        </span>
+                    </div>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                        样本由“2025合肥中考学校/校区科技类名额与分数表”和“科技类项目招生学校及人数分配表”构成。
+                        共覆盖 {SCHOOL_POLICY_DATA.length} 个校区、{analytics.totalQuota} 个科技类名额、{analytics.allIndexCount} 个指标到校分位点。
+                    </p>
+                </section>
 
-                        {/* 侧边2026实战历 */}
-                        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                            <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
-                                <Calendar className="w-5 h-5 text-red-500" /> 2026 考试进程
-                            </h3>
-                            <div className="space-y-6">
-                                {timeline.map((item, idx) => (
-                                    <div key={idx} className="relative pl-8 border-l-2 border-slate-100 pb-1 last:pb-0">
-                                        <div className={`absolute left-[-9px] top-0 w-4 h-4 rounded-full border-2 border-white shadow-sm ${item.status === '进行中' ? 'bg-red-600 animate-pulse scale-125' :
-                                            item.status === '决战' ? 'bg-black' : 'bg-slate-300'
-                                            }`}></div>
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <p className="text-xs font-bold text-red-600 uppercase tracking-wider">{item.month}</p>
-                                                <p className="font-semibold text-sm">{item.event}</p>
-                                            </div>
-                                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${item.status === '进行中' ? 'bg-red-100 text-red-600' :
-                                                item.status === '关键期' ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 text-slate-500'
-                                                }`}>
-                                                {item.status}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                    <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                        <div className="flex items-center gap-2 text-slate-500 text-sm mb-2">
+                            <Sigma size={16} />总科技类名额
+                        </div>
+                        <p className="text-2xl font-bold text-slate-900">{analytics.totalQuota}</p>
+                        <p className="text-xs text-slate-500 mt-1">覆盖信息学/科技创新与机器人方向</p>
+                    </div>
 
-                            <div className="mt-8 p-4 bg-red-50 rounded-lg border border-red-100">
-                                <h4 className="text-xs font-bold text-red-800 uppercase mb-3 flex items-center gap-1">
-                                    <Info className="w-3 h-3" /> 2026 备考警示
-                                </h4>
-                                <ul className="text-xs space-y-2 text-red-700">
-                                    <li>• 英语口语正式入分，需加强人机对话练习。</li>
-                                    <li>• 历史政治改为闭卷(拟)，分值各降至60分。</li>
-                                    <li>• 信息技术10分不可忽视，多为上机操作。</li>
-                                </ul>
-                            </div>
+                    <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                        <div className="flex items-center gap-2 text-slate-500 text-sm mb-2">
+                            <Activity size={16} />加权降分空间
+                        </div>
+                        <p className="text-2xl font-bold text-emerald-600">{analytics.weightedBonus.toFixed(1)} 分</p>
+                        <p className="text-xs text-slate-500 mt-1">加权统招 {analytics.weightedGeneral.toFixed(1)} vs 科技线 {analytics.weightedTech.toFixed(1)}</p>
+                    </div>
+
+                    <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                        <div className="flex items-center gap-2 text-slate-500 text-sm mb-2">
+                            <BarChart3 size={16} />最大政策杠杆
+                        </div>
+                        <p className="text-xl font-bold text-blue-600">{analytics.maxBonusSchool.short}</p>
+                        <p className="text-xs text-slate-500 mt-1">单校降分空间最高 +{analytics.maxBonusSchool.bonus}</p>
+                    </div>
+
+                    <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                        <div className="flex items-center gap-2 text-slate-500 text-sm mb-2">
+                            <TrendingUp size={16} />指标到校中位区间
+                        </div>
+                        <p className="text-xl font-bold text-slate-900">{analytics.indexP25.toFixed(0)} - {analytics.indexP75.toFixed(0)}</p>
+                        <p className="text-xs text-slate-500 mt-1">整体均值 {analytics.indexAvg.toFixed(1)}（样本分位稳定带）</p>
+                    </div>
+                </section>
+
+                <section className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                    <div className="xl:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                        <h3 className="text-base font-bold text-slate-900 mb-4">统招线 vs 科技线（校区对比）</h3>
+                        <div className="h-80">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={scoreCompareData} margin={{ top: 8, right: 12, left: -14, bottom: 34 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                                    <XAxis dataKey="school" angle={-30} textAnchor="end" interval={0} height={52} tick={{ fontSize: 11 }} />
+                                    <YAxis domain={[560, 720]} tick={{ fontSize: 11 }} />
+                                    <Tooltip />
+                                    <Legend />
+                                    <Bar dataKey="general" name="统招线" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                                    <Bar dataKey="tech" name="科技线" fill="#0ea5e9" radius={[4, 4, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
                         </div>
                     </div>
-                )}
 
-                {activeTab === 'policy' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                                <BookOpen className="w-5 h-5 text-blue-500" /> 730分制构成图 (2026版)
-                            </h3>
-                            <div className="h-[300px]">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <PieChart>
-                                        <Pie
-                                            data={subjectData}
-                                            innerRadius={70}
-                                            outerRadius={100}
-                                            paddingAngle={3}
-                                            dataKey="value"
-                                        >
-                                            {subjectData.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={entry.color} />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip />
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            </div>
-                            <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-4">
-                                {subjectData.map((item) => (
-                                    <div key={item.name} className="flex items-center justify-between text-xs border-b border-slate-50 pb-1">
-                                        <div className="flex items-center space-x-2">
-                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></div>
-                                            <span className="text-slate-600">{item.name}</span>
-                                        </div>
-                                        <span className="font-mono font-bold">{item.value}分</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
-                            <h3 className="text-lg font-bold flex items-center gap-2">
-                                <MapPin className="w-5 h-5 text-blue-500" /> 2026 录取机制深度分析
-                            </h3>
-                            <div className="space-y-4">
-                                <div className="p-4 bg-slate-50 rounded-lg">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <div className="w-2 h-6 bg-red-500 rounded-full"></div>
-                                        <h4 className="font-bold text-sm">一六八联招均衡派位</h4>
-                                    </div>
-                                    <p className="text-xs text-slate-500 leading-relaxed">
-                                        2026年依然保留一中、六中、八中联合招生机制。考生填报一个志愿代码，由电脑派位决定去向。分差缩小的背景下，进入联招线的博弈难度在提升。
-                                    </p>
-                                </div>
-                                <div className="p-4 bg-slate-50 rounded-lg">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <div className="w-2 h-6 bg-blue-500 rounded-full"></div>
-                                        <h4 className="font-bold text-sm">强基班与特色班</h4>
-                                    </div>
-                                    <p className="text-xs text-slate-500 leading-relaxed">
-                                        针对2026届学生，合肥多所高中开设了“强基实验班”。这些班级通常在提前批次或校内选拔产生，是冲刺顶尖大学的最佳路径。
-                                    </p>
-                                </div>
-                                <div className="p-4 bg-slate-50 rounded-lg">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <div className="w-2 h-6 bg-green-500 rounded-full"></div>
-                                        <h4 className="font-bold text-sm">职教高考直通车</h4>
-                                    </div>
-                                    <p className="text-xs text-slate-500 leading-relaxed">
-                                        新增“中本贯通”名额，550分以上学生可选择优质中专直升本科，是2026年升学的重要保底选项。
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {activeTab === 'specialty' && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {specialtyTypes.map((category) => (
-                            <div key={category.type} className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:border-red-200 transition-all">
-                                <div className="p-5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-                                    <h3 className="font-bold text-sm flex items-center gap-2">
-                                        {category.icon} {category.type}
-                                    </h3>
-                                </div>
-                                <div className="p-5 space-y-4">
-                                    <div className="flex flex-wrap gap-2">
-                                        {category.items.map(item => (
-                                            <span key={item} className="px-2 py-1 bg-red-50 text-red-600 rounded text-[10px] font-bold">
-                                                {item}
-                                            </span>
+                    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                        <h3 className="text-base font-bold text-slate-900 mb-4">科技类项目名额结构</h3>
+                        <div className="h-52">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie data={analytics.trackPie} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={76} label>
+                                        {analytics.trackPie.map(entry => (
+                                            <Cell key={entry.name} fill={entry.color} />
                                         ))}
-                                    </div>
-                                    <div className="p-3 bg-slate-50 rounded-lg text-xs leading-relaxed border-l-4 border-red-500">
-                                        <strong className="block text-slate-800 mb-1 italic text-[11px]">2026录取风向：</strong>
-                                        <span className="text-slate-600">{category.policy}</span>
-                                    </div>
-                                    <div className="pt-2">
-                                        <span className="text-[10px] font-bold text-slate-400 uppercase">目标院校推荐</span>
-                                        <div className="grid grid-cols-2 gap-2 mt-2">
-                                            {category.schools.map(s => (
-                                                <div key={s} className="text-[11px] text-slate-700 bg-slate-100 p-1 rounded text-center">
-                                                    {s}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                {activeTab === 'competitions' && (
-                    <div className="bg-white rounded-xl border border-slate-200 p-6">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                            <h3 className="text-xl font-bold flex items-center gap-2 text-slate-700">
-                                <Award className="w-6 h-6 text-red-500" /> 2026 赛事加分项与白名单
-                            </h3>
-                            <div className="flex gap-2">
-                                <span className="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full font-bold">已更新至26年版</span>
-                            </div>
+                                    </Pie>
+                                    <Tooltip />
+                                </PieChart>
+                            </ResponsiveContainer>
                         </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            {[
-                                { name: 'CSP-J/S 信息学认证', impact: '自主招生敲门砖', tag: '信奥', color: 'red' },
-                                { name: '全国青少年创客大赛', impact: '科技特长生核心', tag: '科创', color: 'blue' },
-                                { name: '合肥市青少年机器人赛', impact: '本市特长认同度高', tag: '机器人', color: 'amber' },
-                                { name: '“希望杯”数学建模', impact: '理科班选拔参考', tag: '数学', color: 'slate' },
-                                { name: '安徽省青少年航模赛', impact: '十中海航实验班利好', tag: '航空', color: 'sky' },
-                                { name: '“白名单”文学奖项', impact: '文科特色班参考', tag: '文学', color: 'green' },
-                                { name: '青少年人工智能创新', impact: '新兴热门特长', tag: 'AI', color: 'purple' },
-                                { name: '市长奖推荐项目', impact: '荣誉加持极大', tag: '综合', color: 'pink' },
-                            ].map((c, i) => (
-                                <div key={i} className="p-4 border border-slate-100 rounded-xl bg-slate-50 hover:bg-white hover:shadow-lg transition-all group border-t-4"
-                                    style={{ borderTopColor: `var(--tw-color-${c.color}-500)` }}>
-                                    <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{c.tag}</span>
-                                    <h4 className="font-bold text-sm my-1 group-hover:text-red-600">{c.name}</h4>
-                                    <p className="text-[10px] text-slate-500 mt-2">{c.impact}</p>
-                                </div>
+                        <div className="mt-4 space-y-2 text-sm">
+                            <p className="text-slate-600">
+                                机器人方向明确名额：<span className="font-semibold text-slate-900">{ROBOT_QUOTA_BY_SCHOOL.reduce((sum, item) => sum + item.quota, 0)}人</span>
+                            </p>
+                            {ROBOT_QUOTA_BY_SCHOOL.map(item => (
+                                <p key={item.school} className="text-xs text-slate-500">{item.school}：{item.quota}人</p>
                             ))}
                         </div>
                     </div>
-                )}
+                </section>
 
-                {activeTab === 'schools' && (
-                    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <h3 className="text-lg font-bold mb-4">2026 合肥高中“新总分”竞争力预测</h3>
-                        <div className="overflow-x-auto">
-                            <table className="w-100 min-w-[800px] text-sm text-left">
-                                <thead>
-                                    <tr className="border-b border-slate-200 text-slate-400">
-                                        <th className="pb-3 font-medium">学校</th>
-                                        <th className="pb-3 font-medium">预估分数线(730制)</th>
-                                        <th className="pb-3 font-medium">指标到校预测线</th>
-                                        <th className="pb-3 font-medium">2026 核心看点</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100">
-                                    {[
-                                        { name: '合一六八联招线', score: '675-685', target: '645-655', point: '电脑派位博弈期' },
-                                        { name: '合肥168中学(单招)', score: '682+', target: '660+', point: '极高学术压力/清北基地' },
-                                        { name: '合肥七中', score: '655+', target: '625+', point: '寄宿制管理标杆' },
-                                        { name: '合肥十中', score: '650+', target: '620+', point: '海航、科创特色持续走强' },
-                                        { name: '中科大附中', score: '670+', target: '不适用', point: '小班化/学术世家氛围' },
-                                        { name: '合肥九中(新老校区)', score: '645+', target: '615+', point: '新校区硬件升级红利' },
-                                    ].map((s, i) => (
-                                        <tr key={i} className="hover:bg-slate-50">
-                                            <td className="py-4 font-bold text-slate-800">{s.name}</td>
-                                            <td className="py-4 text-red-600 font-bold font-mono text-lg">{s.score}</td>
-                                            <td className="py-4 text-slate-500 font-mono">{s.target}</td>
-                                            <td className="py-4 text-xs text-slate-500">{s.point}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div className="mt-6 p-4 bg-slate-100 rounded text-[11px] text-slate-500 italic">
-                            * 预估分仅供参考。2026年为新分值第一年，由于总分下调20分，以往的“分数直觉”需重塑。
+                <section className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+                    <div className="xl:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                        <h3 className="text-base font-bold text-slate-900 mb-4">政策杠杆指数 Top6</h3>
+                        <div className="h-80">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={leverageChartData} layout="vertical" margin={{ top: 6, right: 10, left: 10, bottom: 6 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                                    <XAxis type="number" tick={{ fontSize: 11 }} />
+                                    <YAxis type="category" dataKey="school" width={76} tick={{ fontSize: 11 }} />
+                                    <Tooltip />
+                                    <Bar dataKey="leverage" name="杠杆指数(名额×降分)" fill="#2563eb" radius={[0, 4, 4, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
                         </div>
                     </div>
-                )}
-            </main>
 
-            {/* 页脚 */}
-            <footer className="max-w-7xl mx-auto px-4 py-8 text-center text-slate-400 text-xs border-t border-slate-200">
-                <p>2026 合肥中考升学大数据分析看板 | 当前状态：实战备考期</p>
-                <p className="mt-1">所有分值数据已根据2026年730分制改革方案重新校准</p>
-            </footer>
+                    <div className="xl:col-span-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                        <h3 className="text-base font-bold text-slate-900 mb-4">2026分层策略建议（由样本自动推导）</h3>
+                        <div className="space-y-3 text-sm">
+                            <div className="rounded-xl border border-red-100 bg-red-50/50 p-3">
+                                <p className="font-semibold text-red-700">冲顶层（统招线 690+）</p>
+                                <p className="text-slate-600 mt-1">{nameList(analytics.sprintLayer)}。建议把科技赛道当“保底增强”，文化分仍需保持在高位。</p>
+                            </div>
+                            <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-3">
+                                <p className="font-semibold text-emerald-700">高杠杆层（降分空间 30+）</p>
+                                <p className="text-slate-600 mt-1">{nameList(analytics.leverageLayer)}。建议优先配置高确定性的信息学/机器人项目，追求“分差换录取”。</p>
+                            </div>
+                            <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-3">
+                                <p className="font-semibold text-blue-700">稳态层（指标均值 ≥645 且波动≤20）</p>
+                                <p className="text-slate-600 mt-1">{analytics.stableLayer.length ? analytics.stableLayer.map(item => item.short).join('、') : '暂无满足条件校区'}。建议走“指标到校 + 科技线”双保险策略。</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                    <h3 className="text-base font-bold text-slate-900 mb-4">校区机会清单</h3>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm min-w-[860px]">
+                            <thead>
+                                <tr className="text-left text-slate-500 border-b border-slate-200">
+                                    <th className="py-2 pr-3">排名</th>
+                                    <th className="py-2 pr-3">学校/校区</th>
+                                    <th className="py-2 pr-3">名额</th>
+                                    <th className="py-2 pr-3">统招线</th>
+                                    <th className="py-2 pr-3">科技线</th>
+                                    <th className="py-2 pr-3">降分空间</th>
+                                    <th className="py-2 pr-3">杠杆指数</th>
+                                    <th className="py-2 pr-3">指标均值</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {analytics.opportunityRanking.map((item, idx) => (
+                                    <tr key={item.school} className="border-b border-slate-100 hover:bg-slate-50/70">
+                                        <td className="py-2 pr-3 font-medium text-slate-700">{idx + 1}</td>
+                                        <td className="py-2 pr-3 font-medium text-slate-900">{item.school}</td>
+                                        <td className="py-2 pr-3">{item.quota}</td>
+                                        <td className="py-2 pr-3">{item.generalScore}</td>
+                                        <td className="py-2 pr-3">{item.techScore}</td>
+                                        <td className={`py-2 pr-3 font-semibold ${item.bonus >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                            {item.bonus >= 0 ? `+${item.bonus}` : item.bonus}
+                                        </td>
+                                        <td className="py-2 pr-3 text-blue-600 font-semibold">{item.opportunityIndex}</td>
+                                        <td className="py-2 pr-3">
+                                            {item.indexAvg !== null ? item.indexAvg.toFixed(1) : '--'}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
         </div>
     );
-};
-
-export default App;
+}

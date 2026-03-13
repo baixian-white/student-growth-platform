@@ -1,13 +1,34 @@
 # Student Growth Platform
 
-# 前端忽略
+# Frontend build and dependencies
 frontend/node_modules/
 frontend/dist/
 frontend/.env.local
 
-# 后端忽略
+# Backend (legacy Java backend path, if present)
 backend/target/
 backend/*.iml
+
+# Python caches and environments
+**/__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Python tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local databases
+*.db
+*.sqlite3
+
+# Environment files
+.env
+.env.*
+!.env.example
 
 # IDE
 .idea/
@@ -16,16 +37,11 @@ backend/*.iml
 *.swo
 *~
 
-# 操作系统
+# OS
 .DS_Store
 Thumbs.db
 
-# 日志
+# Logs and temp files
 *.log
-
-# 临时文件
 *.tmp
 *.temp
-.env
-**/__pycache__/
-*.pyc

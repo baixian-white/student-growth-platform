@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
     RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip,
@@ -32,10 +32,103 @@ import {
     Cpu
 } from 'lucide-react';
 
+const EXAM_INFO_FALLBACK_DATA = [
+    {
+        id: 'f1',
+        title: 'NOIP 2025 安徽省获奖名单公布：安师大附中再登榜首',
+        category: '竞赛',
+        date: '2025-12-15',
+        source: 'NOI官网',
+        summary: '安师大附中共33名学生获奖，包括17名一等奖，连续第十七年蝉联省内信息学第一。',
+        region: '安徽',
+        link: 'https://www.noi.cn',
+        aiRecommended: true,
+        importance: 'high'
+    },
+    {
+        id: 'f2',
+        title: '合肥市2025年中考科技特长生录取分数线汇总',
+        category: '招生',
+        date: '2025-07-12',
+        source: '合肥市教育局',
+        summary: '合肥一中信息学方向降分约18-22分，合肥一六八NOIP三等奖即可报名审核。',
+        region: '合肥',
+        link: '#',
+        aiRecommended: true,
+        importance: 'high'
+    },
+    {
+        id: 'f3',
+        title: '强基计划2026年招生政策解读',
+        category: '升学',
+        date: '2026-02-05',
+        source: '阳光高考平台',
+        summary: '39所双一流高校继续实施强基计划，重点选拔基础学科拔尖且综合素质优秀的学生。',
+        region: '全国',
+        link: '#',
+        aiRecommended: true,
+        importance: 'high'
+    },
+    {
+        id: 'f4',
+        title: 'CSP-J/S 2025 安徽省第二轮认证考点公布',
+        category: '竞赛',
+        date: '2025-11-01',
+        source: 'NOI官网',
+        summary: '第二轮认证于11月1日举行，考点分布合肥一中、合肥八中、芜湖一中、蚌埠二中四处。',
+        region: '安徽',
+        link: 'https://www.noi.cn',
+        aiRecommended: true
+    },
+    {
+        id: 'f5',
+        title: '合肥一六八中学发布2025年信息学特长生招生简章',
+        category: '招生',
+        date: '2025-06-10',
+        source: '合肥一六八中学',
+        summary: '合肥一六八录取降分约12-18分，计划招收信息学特长生5名，门槛为省级二等奖。',
+        region: '合肥',
+        link: '#',
+        aiRecommended: true
+    },
+    {
+        id: 'f6',
+        title: '中考志愿填报时间节点提醒（合肥）',
+        category: '资讯',
+        date: '2026-03-01',
+        source: '合肥市招生考试院',
+        summary: '建议家长提前整理成绩单、学籍证明、奖项材料，避免在志愿填报前夕集中办理。',
+        region: '合肥',
+        link: '#'
+    }
+];
+
+const EXAM_INFO_CATEGORIES = ['全部', '竞赛', '招生', '升学', '考试', '资讯'];
+
+const getInfoCategoryColor = (category) => {
+    const colorMap = {
+        '竞赛': 'bg-purple-100 text-purple-700 border-purple-200',
+        '考试': 'bg-blue-100 text-blue-700 border-blue-200',
+        '升学': 'bg-green-100 text-green-700 border-green-200',
+        '招生': 'bg-red-100 text-red-700 border-red-200',
+        '资讯': 'bg-gray-100 text-gray-700 border-gray-200',
+    };
+    return colorMap[category] || 'bg-slate-100 text-slate-700 border-slate-200';
+};
+
+const getInfoRegionColor = (region) => {
+    const colorMap = {
+        '合肥': 'bg-emerald-100 text-emerald-700',
+        '安徽': 'bg-teal-100 text-teal-700',
+        '全国': 'bg-blue-100 text-blue-700',
+    };
+    return colorMap[region] || 'bg-slate-100 text-slate-600';
+};
+
 const App = () => {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState('mock'); // mock, policy, profile, preference
+    const [activeTab, setActiveTab] = useState('mock'); // mock, policy, award, info, preference
 
     // 适配“考前规划”视角的数据模型
     const [userData, setUserData] = useState({
@@ -93,6 +186,12 @@ const App = () => {
     });
 
     const [report, setReport] = useState(null);
+    const [infoItems, setInfoItems] = useState(EXAM_INFO_FALLBACK_DATA);
+    const [infoLoading, setInfoLoading] = useState(false);
+    const [infoBackendOnline, setInfoBackendOnline] = useState(false);
+    const [infoLastUpdated, setInfoLastUpdated] = useState(null);
+    const [infoKeyword, setInfoKeyword] = useState('');
+    const [infoCategory, setInfoCategory] = useState('全部');
 
     const generateReport = () => {
         setLoading(true);
@@ -141,6 +240,59 @@ const App = () => {
             setStep(3);
         }, 2000);
     };
+
+    const loadExamInfo = useCallback(async () => {
+        setInfoLoading(true);
+        const params = new URLSearchParams({ page: '0', size: '20' });
+        const keyword = infoKeyword.trim();
+
+        if (infoCategory !== '全部') params.set('category', infoCategory);
+        if (keyword) params.set('keyword', keyword);
+
+        try {
+            const resp = await fetch(`/api/exam-info/page?${params.toString()}`, {
+                signal: AbortSignal.timeout(5000)
+            });
+
+            if (!resp.ok) throw new Error('资讯接口请求失败');
+            const data = await resp.json();
+
+            if (Array.isArray(data?.content)) {
+                setInfoItems(data.content);
+            } else if (Array.isArray(data)) {
+                setInfoItems(data);
+            } else {
+                setInfoItems(EXAM_INFO_FALLBACK_DATA);
+            }
+
+            setInfoBackendOnline(true);
+            setInfoLastUpdated(new Date());
+        } catch {
+            const keywordLower = keyword.toLowerCase();
+            const filtered = EXAM_INFO_FALLBACK_DATA.filter(item => {
+                const matchCategory = infoCategory === '全部' || item.category === infoCategory;
+                const searchableText = `${item.title} ${item.summary} ${item.source}`.toLowerCase();
+                const matchKeyword = !keywordLower || searchableText.includes(keywordLower);
+                return matchCategory && matchKeyword;
+            });
+
+            setInfoItems(filtered);
+            setInfoBackendOnline(false);
+            setInfoLastUpdated(new Date());
+        } finally {
+            setInfoLoading(false);
+        }
+    }, [infoCategory, infoKeyword]);
+
+    useEffect(() => {
+        if (activeTab !== 'info') return;
+
+        const timer = setTimeout(() => {
+            loadExamInfo();
+        }, 250);
+
+        return () => clearTimeout(timer);
+    }, [activeTab, loadExamInfo]);
 
     const handleFileUpload = (sessionId, e) => {
         const uploadedFiles = Array.from(e.target.files).map(file => ({
@@ -222,6 +374,7 @@ const App = () => {
                                 { id: 'mock', label: '模考成绩/排名', icon: <TrendingUp size={18} /> },
                                 { id: 'policy', label: '升学资格与政策优势', icon: <ShieldCheck size={18} /> },
                                 { id: 'award', label: '获奖与特长证明', icon: <Award size={18} /> },
+                                { id: 'info', label: '升学资讯库', icon: <BookOpen size={18} /> },
                                 { id: 'preference', label: '预期目标校', icon: <Target size={18} /> },
                             ].map(tab => (
                                 <button
@@ -518,6 +671,119 @@ const App = () => {
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'info' && (
+                                <div className="space-y-6 animate-in fade-in duration-300">
+                                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                                        <div>
+                                            <h3 className="text-2xl font-black text-slate-800">升学资讯库</h3>
+                                            <p className="text-sm text-slate-500 mt-2">已整合到规划页，可直接检索竞赛、招生和升学政策动态。</p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={loadExamInfo}
+                                                className="px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition-colors flex items-center gap-2"
+                                            >
+                                                {infoLoading ? <Loader2 size={14} className="animate-spin" /> : <BookOpen size={14} />}
+                                                刷新资讯
+                                            </button>
+                                            <Link
+                                                to="/exam-info"
+                                                className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 text-sm font-bold hover:bg-slate-50 transition-colors"
+                                            >
+                                                打开完整资讯库
+                                            </Link>
+                                        </div>
+                                    </div>
+
+                                    <div className={`px-4 py-3 rounded-2xl border text-xs flex flex-col md:flex-row md:items-center md:justify-between gap-2 ${infoBackendOnline ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-amber-50 border-amber-200 text-amber-700'}`}>
+                                        <span>{infoBackendOnline ? '已连接后端实时资讯（/api/exam-info/page）' : '当前展示本地缓存资讯（后端不可用或超时）'}</span>
+                                        <span className="text-slate-500">{infoLastUpdated ? `最后刷新：${infoLastUpdated.toLocaleTimeString('zh-CN')}` : '尚未刷新'}</span>
+                                    </div>
+
+                                    <div className="p-5 bg-slate-50 rounded-3xl border border-slate-200 space-y-4">
+                                        <div className="relative">
+                                            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                                            <input
+                                                type="text"
+                                                value={infoKeyword}
+                                                onChange={(e) => setInfoKeyword(e.target.value)}
+                                                placeholder="搜索竞赛、招生、政策关键词..."
+                                                className="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-red-400 bg-white"
+                                            />
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {EXAM_INFO_CATEGORIES.map(category => (
+                                                <button
+                                                    key={category}
+                                                    onClick={() => setInfoCategory(category)}
+                                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${infoCategory === category
+                                                        ? 'bg-red-600 text-white'
+                                                        : 'bg-white border border-slate-200 text-slate-600 hover:border-red-300'}`}
+                                                >
+                                                    {category}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {infoLoading ? (
+                                        <div className="py-14 text-center text-slate-500">
+                                            <Loader2 size={26} className="mx-auto animate-spin mb-3 text-red-500" />
+                                            正在加载升学资讯...
+                                        </div>
+                                    ) : infoItems.length === 0 ? (
+                                        <div className="p-10 rounded-3xl bg-slate-50 border border-slate-200 text-center text-slate-500">
+                                            暂无匹配资讯，请调整关键词或分类后重试。
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-4 max-h-[620px] overflow-y-auto pr-1">
+                                            {infoItems.slice(0, 20).map((item, index) => {
+                                                const key = item.id || `${item.title}-${index}`;
+                                                const targetUrl = item.link && item.link !== '#' ? item.link : '/exam-info';
+                                                const openInNewTab = Boolean(item.link && item.link !== '#');
+
+                                                return (
+                                                    <a
+                                                        key={key}
+                                                        href={targetUrl}
+                                                        target={openInNewTab ? '_blank' : undefined}
+                                                        rel={openInNewTab ? 'noopener noreferrer' : undefined}
+                                                        className="block p-5 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-md hover:border-red-200 transition-all"
+                                                    >
+                                                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                                                            <span className={`px-2.5 py-0.5 rounded-lg text-xs font-semibold border ${getInfoCategoryColor(item.category)}`}>
+                                                                {item.category || '资讯'}
+                                                            </span>
+                                                            {item.region && (
+                                                                <span className={`px-2 py-0.5 rounded-lg text-xs font-medium ${getInfoRegionColor(item.region)}`}>
+                                                                    {item.region}
+                                                                </span>
+                                                            )}
+                                                            {item.aiRecommended && (
+                                                                <span className="px-2 py-0.5 rounded-lg text-xs font-medium bg-red-50 text-red-600">
+                                                                    AI推荐
+                                                                </span>
+                                                            )}
+                                                            {item.importance === 'high' && (
+                                                                <AlertCircle size={14} className="text-red-500" />
+                                                            )}
+                                                        </div>
+                                                        <h4 className="text-base font-black text-slate-800 mb-2 line-clamp-2">{item.title}</h4>
+                                                        <p className="text-sm text-slate-500 leading-relaxed line-clamp-2">
+                                                            {item.summary || item.contentSummary || '暂无摘要'}
+                                                        </p>
+                                                        <div className="mt-3 text-xs text-slate-400 flex items-center gap-3">
+                                                            <span>{item.date || '--'}</span>
+                                                            <span>{item.source || '资讯来源'}</span>
+                                                        </div>
+                                                    </a>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                 </div>
                             )}
 

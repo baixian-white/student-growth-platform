@@ -462,55 +462,55 @@ export default function WhitelistCompetitions() {
     });
 
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-800 pb-20 selection:bg-blue-500/30 font-sans">
-            {/* 顶部导航栏 */}
-            <nav className="bg-white/90 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-                <div className="max-w-7xl mx-auto px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-500 rounded-xl flex items-center justify-center text-white shadow-md">
+            <div className="min-h-screen bg-gray-50 text-gray-800 pb-20 selection:bg-blue-500/30 font-sans">
+                {/* 顶部导航栏 */}
+                <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+                    <div className="max-w-7xl mx-auto px-6 py-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-500 rounded-xl flex items-center justify-center text-white shadow-md">
                                     <Award size={24} />
                                 </div>
                                 <h1 className="text-xl font-bold text-gray-900 tracking-wide">白名单赛事</h1>
-                            </div>
+                                </div>
 
-                            {/* 系统内导航切换 */}
-                            <div className="ml-8 flex flex-wrap bg-gray-100/80 p-1.5 rounded-xl border border-gray-200/50">
-                                <Link to="/exam-info" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-white transition-all">
-                                    <div className="flex items-center gap-2">
-                                        <Search size={16} />信息查询
-                                    </div>
-                                </Link>
-                                <Link to="/exam-analysis" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-white transition-all">
-                                    <div className="flex items-center gap-2">
-                                        <TrendingUp size={16} />信息分析
-                                    </div>
-                                </Link>
-                                <Link to="/strong-base" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-white transition-all">
-                                    <div className="flex items-center gap-2">
-                                        <Target size={16} />强基计划
-                                    </div>
-                                </Link>
-                                <Link to="/tech-specialty" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-white transition-all">
-                                    <div className="flex items-center gap-2">
-                                        <Cpu size={16} />科技特长生
-                                    </div>
-                                </Link>
-                                <div className="px-4 py-2 rounded-lg text-sm font-bold bg-white text-blue-600 shadow-sm border border-gray-200 transition-all">
-                                    <div className="flex items-center gap-2">
-                                        <Award size={16} />白名单赛事
+                                {/* 系统内导航切换 */}
+                                <div className="ml-8 flex bg-gray-100 p-1 rounded-xl">
+                                    <Link to="/exam-info" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                                        <div className="flex items-center gap-2">
+                                            <Search size={16} />信息查询
+                                        </div>
+                                    </Link>
+                                    <Link to="/exam-analysis" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                                        <div className="flex items-center gap-2">
+                                            <TrendingUp size={16} />信息分析
+                                        </div>
+                                    </Link>
+                                    <Link to="/strong-base" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                                        <div className="flex items-center gap-2">
+                                            <Target size={16} />强基计划
+                                        </div>
+                                    </Link>
+                                    <Link to="/tech-specialty" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                                        <div className="flex items-center gap-2">
+                                            <Cpu size={16} />科技特长生
+                                        </div>
+                                    </Link>
+                                    <div className="px-4 py-2 rounded-lg text-sm font-medium bg-white text-blue-600 shadow-sm border border-gray-200 transition-all">
+                                        <div className="flex items-center gap-2">
+                                            <Award size={16} />白名单赛事
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <Link to="/" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
+                                <Home size={18} />
+                                <span className="text-sm font-medium">返回首页</span>
+                            </Link>
                         </div>
-                        <Link to="/" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 border border-transparent rounded-xl transition-all text-gray-600 hover:text-gray-900 flex-shrink-0 group">
-                            <Home size={18} className="group-hover:text-blue-600 transition-colors" />
-                            <span className="text-sm font-medium">返回首页</span>
-                        </Link>
                     </div>
-                </div>
-            </nav>
+                </nav>
 
             <div className="max-w-4xl mx-auto px-6 py-12 space-y-12">
                 {/* Header 简介区 */}
