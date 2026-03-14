@@ -1,6 +1,6 @@
 ﻿import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { School, Award, ShieldCheck, BookOpen, Users, Compass, ChevronRight, Star, GraduationCap, Zap, Target, Rocket, Lightbulb, TrendingUp, Trophy, Atom, Layers, Crown, FlaskConical, Sigma, ScrollText, Binary, MapPin, ArrowLeft } from 'lucide-react';
+import { Home, Search, School, Award, ShieldCheck, BookOpen, Users, Compass, ChevronRight, Star, GraduationCap, Zap, Target, Rocket, Lightbulb, TrendingUp, Trophy, Atom, Layers, Crown, FlaskConical, Sigma, ScrollText, Binary, MapPin, Cpu } from 'lucide-react';
 import classTypeDetails from '../data/classTypeDetails/index.json';
 
 const App = () => {
@@ -460,22 +460,67 @@ const App = () => {
   };
 
   return (
-    <div className={`min-h-screen transition-all duration-700 bg-gradient-to-br ${activeTierStyle.pageBg} p-4 md:p-12 font-sans relative overflow-hidden`}>
+    <>
+      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white">
+                  <School size={24} />
+                </div>
+                <h1 className="text-xl font-bold text-gray-900">班型分析</h1>
+              </div>
+
+              <div className="ml-8 flex bg-gray-100 p-1 rounded-xl">
+                <Link to="/exam-info" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                  <div className="flex items-center gap-2">
+                    <Search size={16} />信息查询
+                  </div>
+                </Link>
+                <Link to="/exam-analysis" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp size={16} />信息分析
+                  </div>
+                </Link>
+                <div className="px-4 py-2 rounded-lg text-sm font-medium bg-white text-indigo-700 shadow-sm border border-gray-200 transition-all">
+                  <div className="flex items-center gap-2">
+                    <School size={16} />班型分析
+                  </div>
+                </div>
+                <Link to="/strong-base" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                  <div className="flex items-center gap-2">
+                    <Target size={16} />强基计划
+                  </div>
+                </Link>
+                <Link to="/tech-specialty" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                  <div className="flex items-center gap-2">
+                    <Cpu size={16} />科技特长生
+                  </div>
+                </Link>
+                <Link to="/whitelist-competitions" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                  <div className="flex items-center gap-2">
+                    <Award size={16} />白名单赛事
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+            <Link to="/platform" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
+              <Home size={18} />
+              <span className="text-sm font-medium">返回平台</span>
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      <div className={`min-h-screen transition-all duration-700 bg-gradient-to-br ${activeTierStyle.pageBg} p-4 md:p-12 font-sans relative overflow-hidden`}>
       {/* Background Decor */}
       <div className={`absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-10 blur-3xl transition-colors duration-700 ${activeTierStyle.glowColor}`}></div>
       <div className={`absolute top-1/2 -left-24 w-64 h-64 rounded-full opacity-10 blur-3xl transition-colors duration-700 ${activeTierStyle.glowColor}`}></div>
 
       {/* Hero Header */}
       <div className="max-w-6xl mx-auto mb-16 relative z-20">
-        <div className="mb-8 flex justify-center lg:justify-start">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/70 backdrop-blur-sm border border-white/60 text-slate-700 hover:text-slate-900 hover:bg-white shadow-sm transition-all duration-300"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="font-semibold">返回主页</span>
-          </Link>
-        </div>
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
             <div className="text-center lg:text-left flex-1">
                 <span className={`inline-block px-4 py-1 rounded-full text-xs font-black tracking-widest uppercase mb-6 shadow-sm bg-white/80 border border-white/50 ${activeTierStyle.accentText}`}>
@@ -653,7 +698,8 @@ const App = () => {
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    </>
   );
 };
 

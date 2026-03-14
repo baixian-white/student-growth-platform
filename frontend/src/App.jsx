@@ -13,11 +13,13 @@ import InformaticsArticle from './pages/InformaticsArticle'
 import Guihua from './pages/guihua'
 import TypeOfClass from './pages/TypeOfClass'
 import ClassTypeDetail from './pages/ClassTypeDetail'
+import PlatformHub from './pages/PlatformHub'
 function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={<PlatformHub />} />
+                <Route path="/home" element={<Home />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/exam-info" element={<ExamInfo />} />
                 <Route path="/exam-analysis" element={<ExamAnalysis />} />
@@ -28,6 +30,7 @@ function App() {
                 <Route path="/competition/:id" element={<CompetitionDetail />} />
                 <Route path="/informatics-olympiad" element={<InformaticsOlympiad />} />
                 <Route path="/informatics-article/:type/:id" element={<InformaticsArticle />} />
+                <Route path="/platform" element={<PlatformHub />} />
                 <Route path="/guihua" element={<Guihua />} />
                 <Route path="/type-of-class" element={<TypeOfClass />} />
                 <Route path="/type-of-class/detail/:slug" element={<ClassTypeDetail />} />

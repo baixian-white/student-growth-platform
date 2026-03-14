@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, ExternalLink, CalendarClock, School, Users, Sparkles, AlertCircle } from 'lucide-react'
+import { ArrowLeft, ExternalLink, CalendarClock, School, Users, Sparkles, AlertCircle, FileText, Target } from 'lucide-react'
 import classTypeDetailsIndex from '../data/classTypeDetails/index.json'
 
 const iconByField = {
@@ -10,6 +10,67 @@ const iconByField = {
     合作高校: School,
     招生人数: Users,
     培养模式: Sparkles,
+}
+
+const admissionHighlightIconByField = {
+    招生人数: Users,
+    招生对象: Users,
+    招生定位: Target,
+    录取方式: FileText,
+    选拔方式: Sparkles,
+    '2025录取参考': AlertCircle,
+}
+
+const admissionFieldPriority = [
+    '2025录取参考',
+    '录取方式',
+    '选拔方式',
+    '招生人数',
+    '招生对象',
+    '招生定位',
+]
+
+const admissionTextMatcher = /(招生|录取|选拔|面试|推荐|中考|统招|提前批|分数)/
+
+function isAdmissionField(key) {
+    return admissionFieldPriority.includes(key) || admissionTextMatcher.test(key)
+}
+
+function getAdmissionFieldPriority(key) {
+    const index = admissionFieldPriority.indexOf(key)
+    return index === -1 ? admissionFieldPriority.length : index
+}
+
+function trimNote(text, maxLength = 68) {
+    if (text.length <= maxLength) return text
+    return `${text.slice(0, maxLength).trim()}...`
+}
+
+function extractAdmissionNotes(item, highlightedValues) {
+    const sourceTexts = [
+        item?.subtitle,
+        item?.summary,
+        ...((item?.policySections || []).flatMap((section) => section.paragraphs || [])),
+    ]
+
+    const notes = []
+    const seen = new Set()
+
+    sourceTexts.forEach((source) => {
+        if (!source) return
+
+        source
+            .split(/[。；]/)
+            .map((sentence) => sentence.trim())
+            .filter((sentence) => sentence && admissionTextMatcher.test(sentence))
+            .forEach((sentence) => {
+                if (highlightedValues.has(sentence) || seen.has(sentence)) return
+                seen.add(sentence)
+                notes.push(trimNote(sentence))
+            })
+    })
+
+    return notes.slice(0, 3)
 }
 
 const detailModules = import.meta.glob('../data/classTypeDetails/*/*.json')
@@ -109,6 +170,14 @@ export default function ClassTypeDetail() {
     }
 
     const baseInfoEntries = Object.entries(item.baseInfo || {})
+    const admissionEntries = baseInfoEntries
+        .filter(([key]) => isAdmissionField(key))
+        .sort(([keyA], [keyB]) => getAdmissionFieldPriority(keyA) - getAdmissionFieldPriority(keyB))
+    const otherBaseInfoEntries = baseInfoEntries.filter(([key]) => !isAdmissionField(key))
+    const admissionNotes = extractAdmissionNotes(
+        item,
+        new Set(admissionEntries.map(([, value]) => String(value).trim()))
+    )
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -144,22 +213,106 @@ export default function ClassTypeDetail() {
 
                 <section className="bg-white border border-slate-100 rounded-3xl p-8 md:p-10 shadow-sm mb-8">
                     <h2 className="text-2xl font-black text-slate-900 mb-6">基础信息</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {baseInfoEntries.map(([key, value]) => {
-                            const Icon = iconByField[key]
-                            return (
-                                <div key={key} className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
-                                    <div className="flex items-center gap-2 text-slate-500 text-sm mb-2">
-                                        {Icon ? <Icon size={15} /> : null}
-                                        <span>{key}</span>
+                    {(admissionEntries.length > 0 || admissionNotes.length > 0) && (
+                        <div className="mb-8 rounded-3xl border border-amber-100 bg-gradient-to-br from-amber-50 via-white to-orange-50 p-6">
+                            <div className="flex items-start gap-4 mb-5">
+                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white flex items-center justify-center shadow-sm shrink-0">
+                                    <Target size={22} />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-black text-slate-900 mb-1">招生重点速览</h3>
+                                    <p className="text-sm text-slate-600 leading-7">
+                                        优先看录取参考、招生对象、人数和选拔方式，能更快判断这个班型的进入门槛与适配人群。
+                                    </p>
+                                </div>
+                            </div>
+
+                            {admissionEntries.length > 0 && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-5">
+                                    {admissionEntries.map(([key, value]) => {
+                                        const Icon = admissionHighlightIconByField[key] || AlertCircle
+                                        return (
+                                            <div key={key} className="rounded-2xl border border-amber-100 bg-white/85 p-5 shadow-sm">
+                                                <div className="flex items-center justify-between gap-3 mb-3">
+                                                    <div className="flex items-center gap-2 text-amber-700 text-sm font-semibold">
+                                                        <Icon size={16} />
+                                                        <span>{key}</span>
+                                                    </div>
+                                                    <span className="px-2 py-1 rounded-full bg-amber-100 text-amber-700 text-[10px] font-black tracking-[0.18em] uppercase">
+                                                        招生重点
+                                                    </span>
+                                                </div>
+                                                <div className="text-slate-900 font-black text-lg leading-8">
+                                                    {value}
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            )}
+
+                            {admissionNotes.length > 0 && (
+                                <div className="rounded-2xl border border-amber-100 bg-white/80 p-5">
+                                    <div className="flex items-center gap-2 text-slate-800 text-sm font-semibold mb-3">
+                                        <AlertCircle size={16} className="text-amber-500" />
+                                        <span>招生提醒</span>
                                     </div>
-                                    <div className="text-slate-900 font-semibold leading-7">
-                                        {value}
+                                    <div className="space-y-3">
+                                        {admissionNotes.map((note) => (
+                                            <div key={note} className="flex items-start gap-3">
+                                                <div className="w-2 h-2 rounded-full bg-amber-500 mt-2 shrink-0" />
+                                                <p className="text-sm text-slate-700 leading-7">{note}</p>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
-                            )
-                        })}
-                    </div>
+                            )}
+                        </div>
+                    )}
+
+                    {otherBaseInfoEntries.length > 0 ? (
+                        <>
+                            {(admissionEntries.length > 0 || admissionNotes.length > 0) && (
+                                <div className="flex items-center gap-2 text-slate-500 text-sm font-semibold mb-4">
+                                    <FileText size={16} />
+                                    <span>其他基础信息</span>
+                                </div>
+                            )}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {otherBaseInfoEntries.map(([key, value]) => {
+                                    const Icon = iconByField[key]
+                                    return (
+                                        <div key={key} className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
+                                            <div className="flex items-center gap-2 text-slate-500 text-sm mb-2">
+                                                {Icon ? <Icon size={15} /> : null}
+                                                <span>{key}</span>
+                                            </div>
+                                            <div className="text-slate-900 font-semibold leading-7">
+                                                {value}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </>
+                    ) : admissionEntries.length === 0 && admissionNotes.length === 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {baseInfoEntries.map(([key, value]) => {
+                                const Icon = iconByField[key]
+                                return (
+                                    <div key={key} className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
+                                        <div className="flex items-center gap-2 text-slate-500 text-sm mb-2">
+                                            {Icon ? <Icon size={15} /> : null}
+                                            <span>{key}</span>
+                                        </div>
+                                        <div className="text-slate-900 font-semibold leading-7">
+                                            {value}
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    ) : null}
                 </section>
 
                 {Array.isArray(item.policySections) && item.policySections.length > 0 && (

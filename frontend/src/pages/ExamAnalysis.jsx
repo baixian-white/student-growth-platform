@@ -5,7 +5,7 @@ import {
     PieChart, Pie, Cell
 } from 'recharts';
 import {
-    Search, TrendingUp, Target, Cpu, Award, Home,
+    Search, TrendingUp, Grid, Target, Cpu, Award, Home,
     Database, Sigma, Activity, BarChart3
 } from 'lucide-react';
 
@@ -189,6 +189,11 @@ export default function ExamAnalysis() {
                                         <TrendingUp size={16} />信息分析
                                     </div>
                                 </div>
+                                <Link to="/type-of-class" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
+                                    <div className="flex items-center gap-2">
+                                        <Grid size={16} />班型分析
+                                    </div>
+                                </Link>
                                 <Link to="/strong-base" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
                                     <div className="flex items-center gap-2">
                                         <Target size={16} />强基计划
@@ -207,9 +212,9 @@ export default function ExamAnalysis() {
                             </div>
                         </div>
 
-                        <Link to="/" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
+                        <Link to="/platform" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
                             <Home size={18} />
-                            <span className="text-sm font-medium">返回首页</span>
+                            <span className="text-sm font-medium">返回平台</span>
                         </Link>
                     </div>
                 </div>

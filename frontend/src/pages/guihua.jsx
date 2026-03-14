@@ -346,9 +346,9 @@ const App = () => {
                                 ))}
                             </div>
                         </div>
-                        <Link to="/" className="flex items-center gap-2 px-5 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full transition-colors text-gray-600 font-medium whitespace-nowrap self-end md:self-auto hidden md:flex">
+                        <Link to="/platform" className="flex items-center gap-2 px-5 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full transition-colors text-gray-600 font-medium whitespace-nowrap self-end md:self-auto hidden md:flex">
                             <Home size={16} />
-                            <span className="text-sm">返回首页</span>
+                            <span className="text-sm">返回平台</span>
                         </Link>
                     </div>
                 </div>
