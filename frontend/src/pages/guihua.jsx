@@ -31,77 +31,7 @@ import {
     Edit3,
     Cpu
 } from 'lucide-react';
-
-const EXAM_INFO_FALLBACK_DATA = [
-    {
-        id: 'f1',
-        title: 'NOIP 2025 安徽省获奖名单公布：安师大附中再登榜首',
-        category: '竞赛',
-        date: '2025-12-15',
-        source: 'NOI官网',
-        summary: '安师大附中共33名学生获奖，包括17名一等奖，连续第十七年蝉联省内信息学第一。',
-        region: '安徽',
-        link: 'https://www.noi.cn',
-        aiRecommended: true,
-        importance: 'high'
-    },
-    {
-        id: 'f2',
-        title: '合肥市2025年中考科技特长生录取分数线汇总',
-        category: '招生',
-        date: '2025-07-12',
-        source: '合肥市教育局',
-        summary: '合肥一中信息学方向降分约18-22分，合肥一六八NOIP三等奖即可报名审核。',
-        region: '合肥',
-        link: '#',
-        aiRecommended: true,
-        importance: 'high'
-    },
-    {
-        id: 'f3',
-        title: '强基计划2026年招生政策解读',
-        category: '升学',
-        date: '2026-02-05',
-        source: '阳光高考平台',
-        summary: '39所双一流高校继续实施强基计划，重点选拔基础学科拔尖且综合素质优秀的学生。',
-        region: '全国',
-        link: '#',
-        aiRecommended: true,
-        importance: 'high'
-    },
-    {
-        id: 'f4',
-        title: 'CSP-J/S 2025 安徽省第二轮认证考点公布',
-        category: '竞赛',
-        date: '2025-11-01',
-        source: 'NOI官网',
-        summary: '第二轮认证于11月1日举行，考点分布合肥一中、合肥八中、芜湖一中、蚌埠二中四处。',
-        region: '安徽',
-        link: 'https://www.noi.cn',
-        aiRecommended: true
-    },
-    {
-        id: 'f5',
-        title: '合肥一六八中学发布2025年信息学特长生招生简章',
-        category: '招生',
-        date: '2025-06-10',
-        source: '合肥一六八中学',
-        summary: '合肥一六八录取降分约12-18分，计划招收信息学特长生5名，门槛为省级二等奖。',
-        region: '合肥',
-        link: '#',
-        aiRecommended: true
-    },
-    {
-        id: 'f6',
-        title: '中考志愿填报时间节点提醒（合肥）',
-        category: '资讯',
-        date: '2026-03-01',
-        source: '合肥市招生考试院',
-        summary: '建议家长提前整理成绩单、学籍证明、奖项材料，避免在志愿填报前夕集中办理。',
-        region: '合肥',
-        link: '#'
-    }
-];
+import { filterExamInfoItems, readExamInfoCache, writeExamInfoCache } from '../utils/examInfoCache';
 
 const EXAM_INFO_CATEGORIES = ['全部', '竞赛', '招生', '升学', '考试', '资讯'];
 
@@ -126,6 +56,7 @@ const getInfoRegionColor = (region) => {
 };
 
 const App = () => {
+    const initialInfoCache = readExamInfoCache();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('mock'); // mock, policy, award, info, preference
@@ -186,12 +117,13 @@ const App = () => {
     });
 
     const [report, setReport] = useState(null);
-    const [infoItems, setInfoItems] = useState(EXAM_INFO_FALLBACK_DATA);
+    const [infoItems, setInfoItems] = useState(initialInfoCache.items);
     const [infoLoading, setInfoLoading] = useState(false);
     const [infoBackendOnline, setInfoBackendOnline] = useState(false);
-    const [infoLastUpdated, setInfoLastUpdated] = useState(null);
+    const [infoLastUpdated, setInfoLastUpdated] = useState(initialInfoCache.updatedAt ? new Date(initialInfoCache.updatedAt) : null);
     const [infoKeyword, setInfoKeyword] = useState('');
     const [infoCategory, setInfoCategory] = useState('全部');
+    const [infoHasCachedSnapshot, setInfoHasCachedSnapshot] = useState(initialInfoCache.items.length > 0);
 
     const generateReport = () => {
         setLoading(true);
@@ -256,29 +188,29 @@ const App = () => {
 
             if (!resp.ok) throw new Error('资讯接口请求失败');
             const data = await resp.json();
+            const fetchedAt = new Date();
 
             if (Array.isArray(data?.content)) {
                 setInfoItems(data.content);
             } else if (Array.isArray(data)) {
                 setInfoItems(data);
             } else {
-                setInfoItems(EXAM_INFO_FALLBACK_DATA);
+                throw new Error('资讯接口返回格式异常');
             }
 
             setInfoBackendOnline(true);
-            setInfoLastUpdated(new Date());
+            setInfoLastUpdated(fetchedAt);
+            if (!keyword && infoCategory === '全部') {
+                writeExamInfoCache(Array.isArray(data?.content) ? data.content : data, fetchedAt);
+                setInfoHasCachedSnapshot((Array.isArray(data?.content) ? data.content : data).length > 0);
+            }
         } catch {
-            const keywordLower = keyword.toLowerCase();
-            const filtered = EXAM_INFO_FALLBACK_DATA.filter(item => {
-                const matchCategory = infoCategory === '全部' || item.category === infoCategory;
-                const searchableText = `${item.title} ${item.summary} ${item.source}`.toLowerCase();
-                const matchKeyword = !keywordLower || searchableText.includes(keywordLower);
-                return matchCategory && matchKeyword;
-            });
-
+            const cached = readExamInfoCache();
+            const filtered = filterExamInfoItems(cached.items, keyword, infoCategory);
             setInfoItems(filtered);
             setInfoBackendOnline(false);
-            setInfoLastUpdated(new Date());
+            setInfoHasCachedSnapshot(cached.items.length > 0);
+            setInfoLastUpdated(cached.updatedAt ? new Date(cached.updatedAt) : null);
         } finally {
             setInfoLoading(false);
         }
@@ -699,7 +631,7 @@ const App = () => {
                                     </div>
 
                                     <div className={`px-4 py-3 rounded-2xl border text-xs flex flex-col md:flex-row md:items-center md:justify-between gap-2 ${infoBackendOnline ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-amber-50 border-amber-200 text-amber-700'}`}>
-                                        <span>{infoBackendOnline ? '已连接后端实时资讯（/api/exam-info/page）' : '当前展示本地缓存资讯（后端不可用或超时）'}</span>
+                                        <span>{infoBackendOnline ? '已连接后端实时资讯（/api/exam-info/page）' : infoHasCachedSnapshot ? '当前展示最近一次连接后缓存的前 20 条资讯' : '后端暂不可用，且暂无已缓存资讯'}</span>
                                         <span className="text-slate-500">{infoLastUpdated ? `最后刷新：${infoLastUpdated.toLocaleTimeString('zh-CN')}` : '尚未刷新'}</span>
                                     </div>
 
@@ -736,7 +668,7 @@ const App = () => {
                                         </div>
                                     ) : infoItems.length === 0 ? (
                                         <div className="p-10 rounded-3xl bg-slate-50 border border-slate-200 text-center text-slate-500">
-                                            暂无匹配资讯，请调整关键词或分类后重试。
+                                            {infoBackendOnline || infoHasCachedSnapshot ? '暂无匹配资讯，请调整关键词或分类后重试。' : '后端暂不可用，且当前没有已缓存的资讯数据。'}
                                         </div>
                                     ) : (
                                         <div className="space-y-4 max-h-[620px] overflow-y-auto pr-1">

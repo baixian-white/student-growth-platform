@@ -7,54 +7,9 @@ import {
     Presentation, Grid, Target, Cpu, Award, RefreshCw, MapPin, Wifi, WifiOff,
     ChevronLeft
 } from 'lucide-react';
+import { filterExamInfoItems, readExamInfoCache, writeExamInfoCache } from '../utils/examInfoCache';
 
 const API_BASE = '/api';
-
-// ──── Fallback data while backend is loading or unavailable ─────────
-const FALLBACK_DATA = [
-    {
-        id: 'f1', title: 'NOIP 2025 安徽省获奖名单公布：安师大附中再登榜首',
-        category: '竞赛', date: '2025-12-15', source: 'NOI官网',
-        summary: '安师大附中共33名学生获奖，包括17名一等奖，连续第十七年蝉联省内信息学第一。',
-        tags: '[\"NOI\",\"信息学\",\"安徽\"]', importance: 'high', aiRecommended: true,
-        link: 'https://www.noi.cn', region: '安徽', school: '安师大附中', schoolLevel: '高中'
-    },
-    {
-        id: 'f2', title: 'CSP-J/S 2025 安徽省第二轮认证考点公布',
-        category: '竞赛', date: '2025-11-01', source: 'NOI官网',
-        summary: '第二轮认证于11月1日举行，考点分布合肥一中、合肥八中、芜湖一中、蚌埠二中四处。',
-        tags: '[\"CSP\",\"信息学\",\"安徽\"]', importance: 'high', aiRecommended: true,
-        link: 'https://www.noi.cn', region: '安徽', school: '', schoolLevel: ''
-    },
-    {
-        id: 'f3', title: '合肥市2025年中考科技特长生录取分数线汇总',
-        category: '招生', date: '2025-07-12', source: '合肥市教育局',
-        summary: '合肥一中信息学方向降分约18-22分，合肥一六八NOIP三等奖即可报名审核。',
-        tags: '[\"科技特长生\",\"合肥\",\"招生\"]', importance: 'high', aiRecommended: true,
-        link: '#', region: '合肥', school: '合肥一中', schoolLevel: '高中'
-    },
-    {
-        id: 'f4', title: '强基计划2026年招生政策解读',
-        category: '升学', date: '2026-02-05', source: '阳光高考平台',
-        summary: '39所双一流高校继续实施强基计划，重点选拔培养基础学科拔尖且综合素质优秀的学生。',
-        tags: '[\"强基计划\",\"招生政策\",\"双一流\"]', importance: 'high', aiRecommended: true,
-        link: '#', region: '全国', school: '', schoolLevel: ''
-    },
-    {
-        id: 'f5', title: 'NOI 2025 安徽省队选拔：3月在芜湖安师大附中举行',
-        category: '竞赛', date: '2025-03-02', source: '安师大附中',
-        summary: '省队选拔为两场各4.5小时笔试，综合得分=NOIP2024×30%+省选×70%，前5名入省队A队。',
-        tags: '[\"NOI\",\"省队\",\"安徽\"]', importance: 'high', aiRecommended: true,
-        link: '#', region: '安徽', school: '安师大附中', schoolLevel: '高中'
-    },
-    {
-        id: 'f6', title: '合肥一六八中学发布2025年信息学特长生招生简章',
-        category: '招生', date: '2025-06-10', source: '合肥一六八中学',
-        summary: '合肥一六八录取降分约12-18分，计划招收信息学特长生5名，门槛为省级二等奖。',
-        tags: '[\"科技特长生\",\"合肥\",\"招生简章\"]', importance: 'high', aiRecommended: true,
-        link: '#', region: '合肥', school: '合肥一六八中学', schoolLevel: '高中'
-    },
-];
 
 const pathwayData = {
     strongBase: {
@@ -114,10 +69,12 @@ function daysUntil(dateStr) {
 
 // ──── Main Component ───────────────────────────────────────────────
 export default function ExamInfo() {
-    const [articles, setArticles] = useState(FALLBACK_DATA);
+    const initialCache = readExamInfoCache();
+    const [articles, setArticles] = useState(initialCache.items);
     const [loading, setLoading] = useState(true);
     const [backendOnline, setBackendOnline] = useState(false);
-    const [lastUpdated, setLastUpdated] = useState(null);
+    const [lastUpdated, setLastUpdated] = useState(initialCache.updatedAt ? new Date(initialCache.updatedAt) : null);
+    const [hasCachedArticles, setHasCachedArticles] = useState(initialCache.items.length > 0);
 
     // 关键词搜索
     const [searchTerm, setSearchTerm] = useState('');
@@ -128,6 +85,16 @@ export default function ExamInfo() {
     const [totalElements, setTotalElements] = useState(0);
     const PAGE_SIZE = 20;
 
+    const applyCachedArticles = useCallback((keyword = searchTerm) => {
+        const cached = readExamInfoCache();
+        const filtered = filterExamInfoItems(cached.items, keyword);
+        setArticles(filtered);
+        setTotalPages(1);
+        setTotalElements(filtered.length);
+        setHasCachedArticles(cached.items.length > 0);
+        setLastUpdated(cached.updatedAt ? new Date(cached.updatedAt) : null);
+    }, [searchTerm]);
+
     const fetchData = useCallback(async (page = currentPage) => {
         setLoading(true);
         const params = new URLSearchParams({ page, size: PAGE_SIZE });
@@ -136,41 +103,31 @@ export default function ExamInfo() {
         try {
             const resp = await fetch(`${API_BASE}/exam-info/page?${params}`,
                 { signal: AbortSignal.timeout(5000) });
-            if (resp.ok) {
-                const data = await resp.json();
-                if (data.content && data.content.length > 0) {
-                    setArticles(data.content);
-                    setTotalPages(data.totalPages || 1);
-                    setTotalElements(data.totalElements || 0);
-                    setBackendOnline(true);
-                    setLastUpdated(new Date());
-                } else if (data.content && data.content.length === 0) {
-                    setArticles([]);
-                    setTotalPages(1);
-                    setTotalElements(0);
-                    setBackendOnline(true);
-                } else {
-                    // 后端有数据但 content 为空，降级
-                    setArticles(FALLBACK_DATA);
-                    setBackendOnline(true);
-                }
+            if (!resp.ok) throw new Error('资讯接口请求失败');
+
+            const data = await resp.json();
+            if (!Array.isArray(data?.content)) {
+                throw new Error('资讯接口返回格式异常');
+            }
+
+            const fetchedAt = new Date();
+            setArticles(data.content);
+            setTotalPages(data.totalPages || 1);
+            setTotalElements(data.totalElements || 0);
+            setBackendOnline(true);
+            setLastUpdated(fetchedAt);
+
+            if (page === 0 && !searchTerm) {
+                writeExamInfoCache(data.content, fetchedAt);
+                setHasCachedArticles(data.content.length > 0);
             }
         } catch {
             setBackendOnline(false);
-            // 本地过滤 fallback 数据
-            const filtered = FALLBACK_DATA.filter(item => {
-                const matchSearch = !searchTerm
-                    || item.title.includes(searchTerm)
-                    || item.summary.includes(searchTerm);
-                return matchSearch;
-            });
-            setArticles(filtered.length ? filtered : FALLBACK_DATA);
-            setTotalPages(1);
-            setTotalElements(filtered.length);
+            applyCachedArticles(searchTerm);
         } finally {
             setLoading(false);
         }
-    }, [searchTerm, currentPage]);
+    }, [applyCachedArticles, currentPage, searchTerm]);
 
     // 筛选条件变化时重置到第 0 页
     useEffect(() => {
@@ -254,8 +211,8 @@ export default function ExamInfo() {
                 <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         {backendOnline
-                            ? <><Wifi size={12} className="text-emerald-600" /><span className="text-emerald-700">数据实时加载自后端 · 定时爬虫每日凌晨 02:00 自动更新</span></>
-                            : <><WifiOff size={12} className="text-amber-600" /><span className="text-amber-700">后端离线，显示本地缓存数据。请启动 Spring Boot 后端（端口 8080）</span></>
+                            ? <><Wifi size={12} className="text-emerald-600" /><span className="text-emerald-700">数据实时加载自后端 · 自动更新</span></>
+                            : <><WifiOff size={12} className="text-amber-600" /><span className="text-amber-700">{hasCachedArticles ? '后端离线' : '后端离线，暂无可用缓存，请先连接后端加载资讯数据'}</span></>
                         }
                     </div>
                     <div className="flex items-center gap-3">
@@ -292,7 +249,7 @@ export default function ExamInfo() {
                             </p>
                             <div className="flex items-center gap-2">
                                 {!backendOnline && (
-                                    <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">显示本地数据</span>
+                                    <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">{hasCachedArticles ? '缓存显示' : '暂无缓存数据'}</span>
                                 )}
                                 {backendOnline && totalPages > 1 && (
                                     <span className="text-xs text-gray-400">第 {currentPage + 1} / {totalPages} 页</span>
@@ -315,7 +272,7 @@ export default function ExamInfo() {
                         ) : articles.length === 0 ? (
                             <div className="text-center py-16 text-gray-400">
                                 <FileText size={48} className="mx-auto mb-4 opacity-20" />
-                                <p>暂无相关资讯</p>
+                                <p>{backendOnline ? '暂无相关资讯' : '暂无已缓存资讯，请先连接后端加载数据'}</p>
                             </div>
                         ) : (
                             <div className="space-y-4">
