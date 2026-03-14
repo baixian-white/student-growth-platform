@@ -1,38 +1,89 @@
-# 阿里云 CentOS 部署指南
+# 阿里云部署文档
 
-> 本文档基于实际部署过程沉淀。技术栈：Python FastAPI + React + PostgreSQL，容器化方案：Podman + podman-compose。
+适用场景：
 
----
+- 阿里云 ECS
+- CentOS / Alibaba Cloud Linux 一类的 `yum` 系系统
+- 使用 `Podman + podman-compose` 部署当前仓库
 
-## 一、服务器环境准备
+本文按两种场景拆分：
 
-### 1.1 基本工具安装
+1. 初始部署：服务器上第一次把项目跑起来
+2. 代码更新后的部署：本地代码已经推到 Git，服务器只做拉取和发布
+
+说明：
+
+- 仓库里的编排文件是 `docker-compose.yml`
+- 本文默认在服务器上用 `podman-compose` 读取它
+- 如果你使用 Docker，也可以把文中的 `podman` / `podman-compose` 替换成 `docker` / `docker compose`
+
+## 部署架构
+
+当前服务由 3 个容器组成：
+
+| 容器名 | 作用 |
+| --- | --- |
+| `sgp_postgres` | PostgreSQL 数据库 |
+| `sgp_backend` | FastAPI 后端 |
+| `sgp_frontend` | React 构建产物 + Nginx 反向代理 |
+
+访问关系：
+
+- 用户访问 `80` 端口进入前端
+- Nginx 将 `/api/` 请求转发到 `sgp_backend:8080`
+- 后端通过内网连接 PostgreSQL
+
+当前关键配置：
+
+- `docker-compose.yml`
+- `frontend/nginx.conf`
+- `python_backend/Dockerfile`
+
+## 一、初始部署
+
+### 1. 服务器准备
+
+建议机器至少满足：
+
+- 2 核 CPU
+- 2 GB 内存
+- 20 GB 可用磁盘
+
+阿里云安全组至少放通：
+
+| 端口 | 协议 | 说明 |
+| --- | --- | --- |
+| `22` | TCP | SSH 登录 |
+| `80` | TCP | 站点访问 |
+| `443` | TCP | 可选，后续接 HTTPS 用 |
+
+### 2. 安装基础工具
 
 ```bash
-# 更新系统包
 sudo yum update -y
-
-# 安装 git 和 epel 源
-sudo yum install -y git epel-release
-
-# 安装 podman 和 podman-compose
-sudo yum install -y podman
+sudo yum install -y git podman python3-pip
 sudo pip3 install podman-compose
-
-# 验证安装版本
-podman --version
-podman-compose --version
 ```
 
-### 1.2 配置 Podman 国内镜像加速（关键步骤）
+校验安装结果：
 
-> ⚠️ **强烈建议**：国内服务器直连 docker.io 极易超时，务必配置镜像加速器。
+```bash
+podman --version
+podman-compose --version
+git --version
+```
+
+### 3. 配置镜像加速
+
+如果服务器在国内，强烈建议给 Podman 配镜像加速，否则首次构建很容易卡在拉镜像阶段。
+
+编辑：
 
 ```bash
 sudo vi /etc/containers/registries.conf
 ```
 
-在文件末尾追加以下内容：
+可参考追加：
 
 ```ini
 unqualified-search-registries = ["docker.io"]
@@ -48,406 +99,371 @@ location = "registry.cn-hangzhou.aliyuncs.com"
 location = "dockerpull.com"
 ```
 
-保存后无需重启，Podman 立即生效。
+### 4. 拉取代码
 
----
-
-## 二、拉取项目代码
+建议统一放在 `/opt`：
 
 ```bash
-# 进入部署目录
 cd /opt
-
-# 克隆仓库（若 github.com 超时，先用代理或手动上传 zip）
 git clone https://github.com/baixian-white/student-growth-platform.git
-
 cd student-growth-platform
 ```
 
-> ⚠️ **注意**：若 `git clone` 一直显示 `Connection timed out`，是因为国内服务器无法直连 GitHub。可以选择：
-> - 在本地打包 `git archive --format=zip HEAD > deploy.zip`，再通过 `scp` 上传到服务器解压
-> - 或者在服务器上配置 HTTP 代理
+如果服务器无法直接访问 GitHub，可在本地打包后上传，再在服务器解压。
 
----
+### 5. 配置环境变量
 
-## 三、配置环境变量
+复制模板：
 
 ```bash
-# 复制样例配置文件
 cp .env.example .env
-
-# 编辑配置
-nano .env
 ```
 
-`.env` 文件内容参考：
+编辑：
+
+```bash
+vi .env
+```
+
+最少需要配置：
 
 ```dotenv
-# 数据库配置
 POSTGRES_USER=sgp_user
-POSTGRES_PASSWORD=your_strong_password_here
-POSTGRES_DB=sgp_db
-
-# DeepSeek API Key（爬虫必须）
-DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxx
-
-# 后端地址（前端 build 时用）
-VITE_API_BASE_URL=/api
+POSTGRES_PASSWORD=请替换成强密码
+POSTGRES_DB=education_db
+DEEPSEEK_API_KEY=你的真实密钥
 ```
 
-> 💡 **注意**：`DEEPSEEK_API_KEY` 是智能体爬虫的核心，必须填写有效 KEY。建议前往 [DeepSeek 开放平台](https://platform.deepseek.com/) 注册获取。
+说明：
 
----
+- `POSTGRES_*` 会被 `docker-compose.yml` 用来生成数据库连接
+- `DEEPSEEK_API_KEY` 用于资讯抓取，不填也能启动页面，但抓取任务会失败
+- 当前 Compose 会自动给后端注入 `DATABASE_URL`，不需要你手动再写一遍
 
-## 四、关键配置文件说明
+### 6. 首次构建并启动
 
-### 4.1 docker-compose.yml（重要修改）
-
-`podman-compose` 存在一个已知 Bug：无法识别本地构建的镜像，会错误地尝试从远程拉取。  
-项目已在 `docker-compose.yml` 中显式添加 `image: localhost/...` 标签来规避此问题：
-
-```yaml
-services:
-  backend:
-    build: ./python_backend
-    image: localhost/sgp_backend:latest   # ← 这行是关键，不能删
-    container_name: sgp_backend
-    ...
-
-  frontend:
-    build: ./frontend
-    image: localhost/sgp_frontend:latest  # ← 同上
-    container_name: sgp_frontend
-    ...
-```
-
-### 4.2 frontend/nginx.conf（Podman DNS 兼容修复）
-
-Nginx 反向代理必须使用 **容器名**（`sgp_backend`）而不是 service 名（`backend`），否则 Podman 内部 DNS 无法解析：
-
-```nginx
-location /api/ {
-    # 使用 container_name，兼容 Podman 内部 DNS
-    proxy_pass http://sgp_backend:8080;
-    proxy_read_timeout 300s;
-}
-```
-
-### 4.3 python_backend/Dockerfile（Alpine 替换 Slim）
-
-国内服务器上 Debian 的 `apt` 镜像源经常不稳定，项目已将后端基础镜像从 `python:3.10-slim` 改为 `python:3.10-alpine`，使用 `apk` 安装系统依赖：
-
-```dockerfile
-FROM python:3.10-alpine
-RUN apk add --no-cache gcc musl-dev postgresql-dev tzdata
-```
-
----
-
-## 五、构建并启动服务
-
-### 5.1 首次部署（全量构建）
+在项目根目录执行：
 
 ```bash
-# 构建所有容器并后台启动
 sudo podman-compose up -d --build
 ```
 
-构建完成后会启动三个容器：
-| 容器名 | 说明 |
-|---|---|
-| `sgp_postgres` | PostgreSQL 15 数据库 |
-| `sgp_backend` | Python FastAPI 后端 (端口 8080) |
-| `sgp_frontend` | React + Nginx 前端 (端口 80) |
+首次启动会完成：
 
-### 5.2 查看容器状态
+- 拉取基础镜像
+- 构建前端镜像
+- 构建后端镜像
+- 创建数据库卷
+- 启动 3 个容器
+
+### 7. 检查容器状态
 
 ```bash
 sudo podman ps -a
 ```
 
-所有容器的 STATUS 应该显示 `Up X minutes`，若有 `Exited`，用以下命令查日志排查：
+正常情况下你应该看到：
+
+- `sgp_postgres` 为 `Up` 或 `healthy`
+- `sgp_backend` 为 `Up`
+- `sgp_frontend` 为 `Up`
+
+如果某个容器退出，先看日志：
 
 ```bash
-sudo podman logs sgp_backend  # 查看后端日志
-sudo podman logs sgp_frontend # 查看前端日志
+sudo podman logs sgp_postgres
+sudo podman logs sgp_backend
+sudo podman logs sgp_frontend
 ```
 
-### 5.3 重启单个服务（代码更新后）
+### 8. 初始化数据
+
+如果是空库，第一次建议手动触发一次抓取：
 
 ```bash
-# 仅重新构建并重启后端（推荐用于更新后端代码）
-sudo podman-compose up -d --force-recreate --build backend
-
-# 仅重启前端
-sudo podman-compose up -d --force-recreate --build frontend
+curl -X POST http://127.0.0.1/api/exam-info/trigger-crawl
 ```
 
-> ⚠️ **注意**：使用 `--force-recreate` 会先停止依赖容器（包括 postgres），若数据库也在 compose 管理之内，请确认数据已持久化到 volume。
-
----
-
-## 六、手动运行爬虫（初始化数据）
-
-首次部署时数据库为空，需手动运行智能体爬虫采集数据：
+然后观察后端日志：
 
 ```bash
-# 直接运行，从 .env 读取 API Key
-sudo podman exec -it sgp_backend python /app/crawler/crawl_agent.py
-
-# 若 .env 的 API Key 未被容器识别，可直接通过命令行传入
-sudo podman exec -it sgp_backend python /app/crawler/crawl_agent.py --llm-key "sk-你的密钥"
-```
-
-爬虫运行结束后，终端会输出：
-```
-✅ 所有主题采集完成，本次全量任务共新增入库 XX 条。
-```
-
-此后，每天凌晨 **02:00** 系统会自动触发爬虫更新。
-
----
-
-## 七、阿里云安全组配置
-
-在阿里云控制台 → 实例 → 安全组 → 入方向规则中，开放以下端口：
-
-| 端口 | 协议 | 用途 |
-|---|---|---|
-| 80 | TCP | 前端 HTTP 访问（必须） |
-| 443 | TCP | HTTPS（若配置 SSL） |
-| 22 | TCP | SSH 远程登录 |
-
----
-
-## 八、常见问题排查
-
-### Q1：构建时 `pip install` 卡死、超时
-
-**原因**：PyPI 官方源国内访问慢。
-
-**解决**：在 `Dockerfile` 的 `pip install` 命令加上清华镜像参数：
-```dockerfile
-RUN pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple --no-cache-dir
-```
-
----
-
-### Q2：前端显示"后端离线，显示本地缓存数据"
-
-**原因**：前端无法请求到 `/api/exam-info/page` 接口。
-
-**排查步骤**：
-
-1. 确认后端容器正在运行：  
-   `sudo podman ps | grep sgp_backend`
-
-2. 在 Nginx 容器内部测试连通性：  
-   `sudo podman exec -it sgp_frontend sh -c "wget -qO- http://sgp_backend:8080/docs"`  
-   若有 HTML 输出，说明内网 DNS 正常。
-
-3. 若无输出，确认 `nginx.conf` 配置是否使用了 `container_name`（即 `sgp_backend`）而非 service 名（`backend`）。
-
-4. 修改配置后重新创建前端容器：  
-   `sudo podman-compose up -d --force-recreate --build frontend`
-
----
-
-### Q3：后端报错 `ModuleNotFoundError: No module named 'requests'`
-
-**原因**：爬虫依赖没有在 `requirements.txt` 中声明，导致构建时未安装。
-
-**解决**：确认 `python_backend/requirements.txt` 包含以下条目：
-```
-requests
-beautifulsoup4
-openai
-```
-然后重新构建并重启后端：
-```bash
-sudo podman-compose up -d --force-recreate --build backend
-```
-
----
-
-### Q4：API Key 更新后旧 Key 仍在生效（401 错误）
-
-**原因**：`.env` 文件被修改后，旧容器内的环境变量不会自动刷新。
-
-**解决**：必须用 `--force-recreate` 让容器从新的 `.env` 重新读取：
-```bash
-sudo podman-compose up -d --force-recreate backend
-```
-
-或者直接用命令行参数传入 Key：
-```bash
-sudo podman exec -it sgp_backend python /app/crawler/crawl_agent.py --llm-key "sk-新密钥"
-```
-
----
-
-### Q5：HTTPS 证书警告（InsecureRequestWarning）
-
-爬虫在抓取部分政府/学校网站（如 `ahzsks.cn`）时会输出：
-```
-InsecureRequestWarning: Unverified HTTPS request...
-```
-
-**这是正常现象**，因为这类网站的 SSL 证书配置不规范，我们主动关闭了证书验证（`verify=False`）以确保能成功抓取数据。此警告不影响数据采集，不需要处理。
-
----
-
-## 九、快速命令速查
-
-```bash
-# 查看所有容器状态
-sudo podman ps -a
-
-# 查看后端实时日志
 sudo podman logs -f sgp_backend
-
-# 重启所有服务
-sudo podman-compose restart
-
-# 停止所有服务
-sudo podman-compose down
-
-# 完全重建（通常在拉取新代码后使用）
-sudo podman-compose up -d --build --force-recreate
-
-# 手动触发一次爬虫
-sudo podman exec -it sgp_backend python /app/crawler/crawl_agent.py --llm-key "sk-你的密钥"
-
-# 进入后端容器的 shell 进行调试
-sudo podman exec -it sgp_backend sh
 ```
 
----
+补充说明：
 
-## 10. Git 更新与推送规范（2026-03-11 实战补充）
+- 后端本身也会注册定时任务，每天 `02:00` 自动抓取
+- 因为后端没有直接映射宿主机端口，所以从服务器本机触发时走的是前端 Nginx 的 `/api/` 代理
 
-目标：后续固定为“本地 push -> 服务器 pull -> 重启服务”，避免服务器本地脏改动导致拉取失败。
+### 9. 部署完成后的自检
 
-### 10.1 推荐标准流程
+建议至少检查这 4 项：
 
-本地：
+```bash
+curl -I http://127.0.0.1
+curl "http://127.0.0.1/api/exam-info/page?page=0&size=1"
+sudo podman-compose ps
+git status -sb
+```
+
+预期结果：
+
+- 首页返回 `200`
+- `exam-info/page` 能返回 JSON
+- 3 个容器都在运行
+- 工作区是干净的，没有额外改动
+
+## 二、代码更新后的部署
+
+这部分适用于：
+
+- 你已经完成过一次初始部署
+- 本地代码已经提交并推送到 GitHub
+- 服务器只需要拉取新代码并重启对应服务
+
+推荐固定流程：
+
+1. 本地提交并推送
+2. 服务器 `git pull --ff-only`
+3. 按变更类型重启对应容器
+4. 做发布后自检
+
+### 1. 本地先推送代码
+
+在你的开发机上：
 
 ```bash
 git add .
-git commit -m "feat/fix/chore: ..."
+git commit -m "你的提交说明"
 git push origin main
 ```
 
-服务器：
+### 2. 服务器拉取最新代码
+
+登录服务器后执行：
 
 ```bash
 cd /opt/student-growth-platform
 git pull --ff-only origin main
-sudo podman-compose up -d --build
 ```
 
-### 10.2 `git pull` 被本地改动拦截时
-
-典型报错：
-
-```text
-error: Your local changes to the following files would be overwritten by merge
-```
-
-方式 A（临时保留服务器本地改动）：
+如果这里失败，优先检查是否有服务器本地脏改动：
 
 ```bash
-git stash push -m "server-local-changes" docker-compose.yml python_backend/Dockerfile
-git pull origin main
+git status -sb
+```
+
+如果服务器上不应该保留本地修改，先恢复再拉取：
+
+```bash
+git restore .
+git pull --ff-only origin main
+```
+
+如果服务器上确实保留了临时改动，先暂存：
+
+```bash
+git stash push -m "server-local-changes"
+git pull --ff-only origin main
 git stash pop
 ```
 
-方式 B（不需要本地改动，直接对齐远端）：
+### 3. 按变更类型执行更新
 
-```bash
-git restore docker-compose.yml python_backend/Dockerfile
-git pull --ff-only origin main
-```
+#### 3.1 只改了前端页面或样式
 
-### 10.3 服务器本地文件忽略规则
+例如改动了：
 
-这些文件只应留在服务器本地，不推送远端：
+- `frontend/src/**`
+- `frontend/nginx.conf`
 
-- `.env`
-- `**/__pycache__/`
-- `*.pyc`
-
-建议 `.gitignore` 包含：
-
-```gitignore
-.env
-**/__pycache__/
-*.pyc
-```
-
-清理缓存：
-
-```bash
-rm -rf crawler/__pycache__
-```
-
-### 10.4 服务器首次提交前配置 Git 身份
-
-出现 `Author identity unknown` 时执行：
-
-```bash
-git config --global user.name "your-github-name"
-git config --global user.email "your-github-email"
-```
-
-### 10.5 服务器 `git push` 认证说明（GitHub）
-
-GitHub 已不支持账号密码推送。
-
-- `https` 方式：使用 PAT
-- 推荐：SSH key
-
-SSH 方式示例：
-
-```bash
-ssh-keygen -t ed25519 -C "server-deploy" -f ~/.ssh/id_ed25519 -N ""
-cat ~/.ssh/id_ed25519.pub
-# 把公钥加到 GitHub -> Settings -> SSH and GPG keys
-
-git remote set-url origin git@github.com:baixian-white/student-growth-platform.git
-ssh -T git@github.com
-git push origin main
-```
-
-### 10.6 `podman-compose --force-recreate` 出现 `exit code: 125`
-
-实战里可能出现依赖容器删除顺序问题，中途报 `125`，但最终容器仍可能成功启动。
-
-因此要看最终状态：
-
-```bash
-sudo podman-compose ps
-sudo podman-compose logs --tail=100 backend
-```
-
-如需干净重建：
-
-```bash
-sudo podman-compose down
-sudo podman-compose up -d --build
-```
-
-### 10.7 部署后快速自检
+执行：
 
 ```bash
 cd /opt/student-growth-platform
-git status -sb
-sudo podman-compose ps
-curl -I http://127.0.0.1
+sudo podman-compose up -d --build frontend
 ```
 
-预期：
+#### 3.2 改了后端代码或抓取逻辑
 
-- `git status -sb` 无 `M/D/??`
-- `sgp_postgres` 为 `healthy`
-- `sgp_backend`、`sgp_frontend` 为 `Up`
+例如改动了：
+
+- `python_backend/**`
+- `crawler/**`
+
+执行：
+
+```bash
+cd /opt/student-growth-platform
+sudo podman-compose up -d --build backend
+```
+
+#### 3.3 改了依赖、镜像、环境变量或编排文件
+
+例如改动了：
+
+- `.env`
+- `docker-compose.yml`
+- `python_backend/Dockerfile`
+- `frontend/Dockerfile`
+- `package.json`
+- `requirements.txt`
+
+执行完整重建：
+
+```bash
+cd /opt/student-growth-platform
+sudo podman-compose up -d --build --force-recreate
+```
+
+说明：
+
+- `.env` 改了以后，旧容器不会自动读取新值
+- `--force-recreate` 可以确保容器重新创建并加载新的环境变量
+
+### 4. 发布后检查
+
+每次更新完成后建议执行：
+
+```bash
+cd /opt/student-growth-platform
+sudo podman-compose ps
+curl -I http://127.0.0.1
+curl "http://127.0.0.1/api/exam-info/page?page=0&size=1"
+sudo podman logs --tail=100 sgp_backend
+```
+
+如果改的是前端页面，也建议实际浏览器访问一遍首页和目标页面。
+
+### 5. 数据库结构变更的特别说明
+
+当前后端没有接入 Alembic 一类的迁移工具。
+
+这意味着：
+
+- 新增表：通常可以随着后端启动自动创建
+- 修改已有字段、字段类型、约束：不要假设重启就能自动迁移
+
+如果你修改了 `python_backend/models.py` 里的已存在表结构，发布前请先准备手工 SQL 或迁移脚本，再执行服务更新。
+
+### 6. 回滚建议
+
+如果更新后服务异常，优先回滚到上一个稳定提交：
+
+```bash
+cd /opt/student-growth-platform
+git log --oneline -n 5
+git checkout <稳定提交号>
+sudo podman-compose up -d --build --force-recreate
+```
+
+确认稳定后，再决定是否切回 `main`。
+
+如果你不希望进入 detached HEAD，也可以单独创建回滚分支。
+
+## 常用命令速查
+
+```bash
+# 查看容器状态
+sudo podman ps -a
+
+# 查看 compose 状态
+sudo podman-compose ps
+
+# 查看后端日志
+sudo podman logs -f sgp_backend
+
+# 查看前端日志
+sudo podman logs -f sgp_frontend
+
+# 查看数据库日志
+sudo podman logs -f sgp_postgres
+
+# 重启全部服务
+sudo podman-compose restart
+
+# 停止全部服务
+sudo podman-compose down
+
+# 全量重建
+sudo podman-compose up -d --build --force-recreate
+
+# 进入后端容器
+sudo podman exec -it sgp_backend sh
+```
+
+## 常见问题
+
+### 1. 前端页面能打开，但接口一直报“后端离线”
+
+先检查：
+
+```bash
+sudo podman-compose ps
+sudo podman logs --tail=100 sgp_backend
+sudo podman logs --tail=100 sgp_frontend
+```
+
+然后在前端容器里验证 Nginx 到后端的连通性：
+
+```bash
+sudo podman exec -it sgp_frontend sh -c "wget -qO- http://sgp_backend:8080/docs"
+```
+
+如果这里不通，优先检查 `frontend/nginx.conf` 中的 `proxy_pass` 是否仍然是：
+
+```nginx
+proxy_pass http://sgp_backend:8080;
+```
+
+### 2. 改了 `.env`，但服务还是用旧配置
+
+这是因为容器不会自动重读环境变量。
+
+请使用：
+
+```bash
+sudo podman-compose up -d --build --force-recreate
+```
+
+### 3. `git pull` 提示会覆盖本地修改
+
+先看服务器上到底改了什么：
+
+```bash
+git status -sb
+```
+
+如果本地改动不需要保留：
+
+```bash
+git restore .
+git pull --ff-only origin main
+```
+
+如果需要暂存：
+
+```bash
+git stash push -m "server-local-changes"
+git pull --ff-only origin main
+git stash pop
+```
+
+### 4. 更新后数据库没按预期变化
+
+请先确认这是不是“已有表结构修改”。
+
+当前项目没有自动迁移能力，字段变更需要你手动做数据库迁移，不能只靠重启服务。
+
+### 5. 完全重建后数据库数据是否会丢
+
+正常不会。
+
+因为数据库使用了 compose volume：
+
+```yaml
+volumes:
+  pgdata:
+```
+
+只要你没有主动删除 volume，重建容器不会清空数据库。
