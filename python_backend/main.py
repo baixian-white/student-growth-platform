@@ -6,6 +6,7 @@ from sqlalchemy import func, desc, nullslast, case, and_, or_
 from typing import List, Optional
 from urllib.parse import urlparse
 import json
+import requests
 
 from database import get_db, engine, Base
 import models
@@ -51,6 +52,56 @@ log = logging.getLogger("backend")
 
 # 用于控制不要同时跑多个爬虫实例
 is_crawling = False
+
+URL_RESOLVE_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+}
+_URL_RESOLVE_CACHE: dict[str, str] = {}
+
+
+def _is_tracking_url(url: Optional[str]) -> bool:
+    if not url:
+        return False
+    parsed = urlparse(str(url))
+    domain = (parsed.netloc or "").lower()
+    path = parsed.path or ""
+    if "baidu.com" in domain and path == "/link":
+        return True
+    if domain.endswith("bing.com") and path.startswith("/ck/a"):
+        return True
+    return False
+
+
+def _resolve_tracking_url(url: Optional[str], timeout: int = 10) -> str:
+    value = str(url or "").strip()
+    if not value or not _is_tracking_url(value):
+        return value
+
+    cached = _URL_RESOLVE_CACHE.get(value)
+    if cached:
+        return cached
+
+    resolved = value
+    try:
+        resp = requests.get(
+            value,
+            headers=URL_RESOLVE_HEADERS,
+            timeout=timeout,
+            allow_redirects=True,
+        )
+        final_url = str(resp.url or "").strip()
+        if final_url and not _is_tracking_url(final_url):
+            resolved = final_url
+    except Exception as e:
+        log.debug(f"tracking URL resolve failed: {value} ({e.__class__.__name__})")
+
+    _URL_RESOLVE_CACHE[value] = resolved
+    return resolved
 
 
 def _looks_broken_text(value: Optional[str]) -> bool:
@@ -129,7 +180,8 @@ def _infer_tags(title: str, category: str, region: str) -> str:
 def normalize_item_data(item_data: dict) -> dict:
     item = dict(item_data or {})
     title = str(item.get("title") or "").strip()
-    source_url = str(item.get("sourceUrl") or item.get("link") or "").strip()
+    source_url_raw = str(item.get("sourceUrl") or item.get("link") or "").strip()
+    source_url = _resolve_tracking_url(source_url_raw)
 
     if _looks_broken_text(item.get("category")):
         item["category"] = _infer_category(title)
@@ -148,8 +200,11 @@ def normalize_item_data(item_data: dict) -> dict:
     if not item.get("importance"):
         item["importance"] = "high" if item.get("category") in ("招生", "考试", "竞赛") else "medium"
 
-    if not item.get("sourceUrl") and source_url:
+    if source_url:
         item["sourceUrl"] = source_url
+    link = str(item.get("link") or "").strip()
+    if source_url and (_looks_broken_text(link) or _is_tracking_url(link)):
+        item["link"] = source_url
 
     return item
 
@@ -400,6 +455,10 @@ async def get_exam_info_page(
     # convert to response format
     content_list = []
     for it in items:
+        resolved_source_url = _resolve_tracking_url(it.source_url) if it.source_url else it.source_url
+        resolved_link = _resolve_tracking_url(it.link) if it.link else it.link
+        if not resolved_link and resolved_source_url:
+            resolved_link = resolved_source_url
         content_list.append(schemas.ExamInfoResponse(
             id=it.id,
             title=it.title,
@@ -407,8 +466,8 @@ async def get_exam_info_page(
             date=it.date,
             source=it.source,
             summary=it.summary,
-            link=it.link,
-            sourceUrl=it.source_url,
+            link=resolved_link,
+            sourceUrl=resolved_source_url,
             region=it.region,
             importance=it.importance,
             aiRecommended=it.ai_recommended,
