@@ -154,9 +154,9 @@ export default function ExamInfo() {
         <div className="min-h-screen bg-gray-50">
             {/* ── 顶部导航 ── */}
             <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white">
                                     <GraduationCap size={24} />
@@ -164,7 +164,7 @@ export default function ExamInfo() {
                                 <h1 className="text-xl font-bold text-gray-900">升学政策咨询库</h1>
                             </div>
 
-                            <div className="ml-8 flex bg-gray-100 p-1 rounded-xl">
+                            <div className="flex w-full lg:w-auto overflow-x-auto scrollbar-hide bg-gray-100 p-1 rounded-xl lg:ml-8 [&>*]:shrink-0">
                                 <div className="px-4 py-2 rounded-lg text-sm font-medium bg-white text-indigo-700 shadow-sm border border-gray-200 transition-all">
                                     <div className="flex items-center gap-2">
                                         <Search size={16} />信息查询
@@ -198,7 +198,7 @@ export default function ExamInfo() {
                             </div>
                         </div>
 
-                        <Link to="/platform" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
+                        <Link to="/platform" className="flex w-full sm:w-auto items-center justify-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
                             <Home size={18} />
                             <span className="text-sm font-medium">返回平台</span>
                         </Link>
@@ -207,15 +207,15 @@ export default function ExamInfo() {
             </nav>
 
             {/* ── 状态栏 ── */}
-            <div className={`px-6 py-2 flex items-center justify-between text-xs ${backendOnline ? 'bg-emerald-50 border-b border-emerald-100' : 'bg-amber-50 border-b border-amber-100'}`}>
-                <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+            <div className={`px-4 sm:px-6 py-2 text-xs ${backendOnline ? 'bg-emerald-50 border-b border-emerald-100' : 'bg-amber-50 border-b border-amber-100'}`}>
+                <div className="max-w-7xl mx-auto w-full flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-start gap-2 sm:items-center">
                         {backendOnline
                             ? <><Wifi size={12} className="text-emerald-600" /><span className="text-emerald-700">数据实时加载自后端 · 自动更新</span></>
                             : <><WifiOff size={12} className="text-amber-600" /><span className="text-amber-700">{hasCachedArticles ? '后端离线' : '后端离线，暂无可用缓存，请先连接后端加载资讯数据'}</span></>
                         }
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                         {lastUpdated && <span className="text-gray-400">最后更新: {lastUpdated.toLocaleTimeString('zh-CN')}</span>}
                         <button onClick={() => fetchData(currentPage)} className="flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium">
                             <RefreshCw size={11} className={loading ? 'animate-spin' : ''} />刷新
@@ -224,8 +224,8 @@ export default function ExamInfo() {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 py-8">
-                <div className="flex gap-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+                <div className="flex flex-col xl:flex-row gap-6 lg:gap-8">
                     {/* ── 主内容区 ── */}
                     <div className="flex-1 min-w-0">
                         {/* 关键词搜索 */}
@@ -243,7 +243,7 @@ export default function ExamInfo() {
                         </div>
 
                         {/* 结果统计 */}
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
                             <p className="text-sm text-gray-500">
                                 共 <span className="font-bold text-gray-900">{backendOnline ? totalElements : articles.length}</span> 条资讯
                             </p>
@@ -284,8 +284,8 @@ export default function ExamInfo() {
                                             href={item.link && item.link !== '#' ? item.link : undefined}
                                             target={item.link && item.link !== '#' ? "_blank" : undefined}
                                             rel="noreferrer"
-                                            className="block bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <div className="flex items-start gap-4">
+                                            className="block bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <div className="flex flex-col sm:flex-row items-start gap-4">
                                                 {/* 序号 */}
                                                 <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-sm font-bold text-gray-400 shrink-0 mt-0.5 group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
                                                     {currentPage * PAGE_SIZE + idx + 1}
@@ -339,8 +339,8 @@ export default function ExamInfo() {
                                                     )}
 
                                                     {/* 底部元数据 */}
-                                                    <div className="flex items-center justify-between text-xs text-gray-400">
-                                                        <div className="flex items-center gap-3">
+                                                    <div className="flex flex-col gap-3 text-xs text-gray-400 sm:flex-row sm:items-center sm:justify-between">
+                                                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                                                             <span className="flex items-center gap-1">
                                                                 <Calendar size={12} />{item.date}
                                                             </span>
@@ -373,7 +373,7 @@ export default function ExamInfo() {
 
                         {/* ── 分页导航 ── */}
                         {backendOnline && totalPages > 1 && !loading && (
-                            <div className="flex items-center justify-center gap-2 mt-8">
+                            <div className="flex flex-wrap items-center justify-center gap-2 mt-8">
                                 <button
                                     onClick={() => handlePageChange(currentPage - 1)}
                                     disabled={currentPage === 0}
@@ -422,7 +422,7 @@ export default function ExamInfo() {
                     </div>
 
                     {/* ── 右侧边栏 ── */}
-                    <div className="w-72 shrink-0 space-y-5">
+                    <div className="w-full xl:w-72 xl:shrink-0 space-y-5">
                         {/* AI 推荐 */}
                         <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-5 border border-purple-100">
                             <div className="flex items-center gap-2 mb-4">

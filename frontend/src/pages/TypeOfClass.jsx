@@ -313,7 +313,7 @@ const App = () => {
     );
 
     return (
-      <div className="relative w-[18rem] h-[18rem] md:w-[20rem] md:h-[20rem] rounded-[2.6rem] overflow-hidden border border-white/70 shadow-[0_20px_55px_rgba(15,23,42,0.2)] bg-white/35 backdrop-blur-xl">
+      <div className="relative w-[15.5rem] h-[15.5rem] sm:w-[18rem] sm:h-[18rem] md:w-[20rem] md:h-[20rem] rounded-[2.6rem] overflow-hidden border border-white/70 shadow-[0_20px_55px_rgba(15,23,42,0.2)] bg-white/35 backdrop-blur-xl">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_18%_14%,rgba(255,255,255,0.86),rgba(255,255,255,0.16)_60%,transparent_86%)] z-20"></div>
         <div className="absolute inset-0 pointer-events-none opacity-30 [background-image:linear-gradient(rgba(148,163,184,0.16)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.16)_1px,transparent_1px)] [background-size:16px_16px] z-20"></div>
         <div
@@ -462,9 +462,9 @@ const App = () => {
   return (
     <>
       <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white">
                   <School size={24} />
@@ -472,7 +472,7 @@ const App = () => {
                 <h1 className="text-xl font-bold text-gray-900">班型分析</h1>
               </div>
 
-              <div className="ml-8 flex bg-gray-100 p-1 rounded-xl">
+              <div className="flex w-full lg:w-auto overflow-x-auto scrollbar-hide bg-gray-100 p-1 rounded-xl lg:ml-8 [&>*]:shrink-0">
                 <Link to="/exam-info" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
                   <div className="flex items-center gap-2">
                     <Search size={16} />信息查询
@@ -506,7 +506,7 @@ const App = () => {
               </div>
             </div>
 
-            <Link to="/platform" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
+            <Link to="/platform" className="flex w-full sm:w-auto items-center justify-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
               <Home size={18} />
               <span className="text-sm font-medium">返回平台</span>
             </Link>
@@ -520,13 +520,13 @@ const App = () => {
       <div className={`absolute top-1/2 -left-24 w-64 h-64 rounded-full opacity-10 blur-3xl transition-colors duration-700 ${activeTierStyle.glowColor}`}></div>
 
       {/* Hero Header */}
-      <div className="max-w-6xl mx-auto mb-16 relative z-20">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+      <div className="max-w-6xl mx-auto mb-12 sm:mb-16 relative z-20">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 sm:gap-12">
             <div className="text-center lg:text-left flex-1">
                 <span className={`inline-block px-4 py-1 rounded-full text-xs font-black tracking-widest uppercase mb-6 shadow-sm bg-white/80 border border-white/50 ${activeTierStyle.accentText}`}>
                 权威发布 · 合肥名校深度盘点
                 </span>
-                <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter mb-6 leading-tight">
+                <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-slate-900 tracking-tighter mb-6 leading-tight">
                 合肥头部示范高中<br className="hidden md:block" />
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-slate-700 to-slate-500">
                     班型设置全景图
@@ -543,13 +543,13 @@ const App = () => {
 
       {/* School Navigation Card */}
       <header className="max-w-6xl mx-auto mb-10 relative z-10">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 bg-white/30 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/40 shadow-xl overflow-hidden">
-          <div className="flex items-center gap-4 group cursor-default justify-center lg:justify-start">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-8 bg-white/30 backdrop-blur-md p-5 sm:p-6 rounded-[2.5rem] border border-white/40 shadow-xl overflow-hidden">
+          <div className="flex items-center gap-4 group cursor-default justify-center lg:justify-start text-center lg:text-left">
             <div className={`p-4 rounded-2xl shadow-xl transition-all duration-500 group-hover:rotate-12 ${activeTierStyle.accentBg}`}>
               <School className="text-white w-10 h-10" />
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-800 tracking-tight">
                 {schools.find(s => s.id === activeSchool)?.name}
                 <span className={`transition-colors duration-500 text-sm md:text-lg block mt-1 font-bold ${activeTierStyle.accentText}`}>
                   当前所选院校
@@ -582,12 +582,12 @@ const App = () => {
       {/* Campus Navigation */}
       {!isNoCampusSchool && (
         <div className="max-w-6xl mx-auto mb-12 relative z-10">
-          <div className="bg-white/40 backdrop-blur-md p-1.5 rounded-2xl border border-white/60 shadow-lg flex flex-wrap gap-2 w-full sm:w-fit justify-center sm:justify-start">
+          <div className="bg-white/40 backdrop-blur-md p-1.5 rounded-2xl border border-white/60 shadow-lg flex flex-wrap gap-2 w-full justify-center sm:justify-start">
             {currentCampusList.map((campus) => (
               <button
                 key={campus.id}
                 onClick={() => setActiveCampus(campus.id)}
-                className={`px-8 py-3 rounded-xl transition-all duration-500 font-bold flex items-center justify-center gap-2 flex-1 sm:flex-none ${
+                className={`px-4 sm:px-8 py-3 rounded-xl transition-all duration-500 font-bold flex items-center justify-center gap-2 flex-1 sm:flex-none ${
                   activeCampus === campus.id
                     ? `${campus.color} text-white shadow-lg scale-105 z-10`
                     : 'text-slate-600 hover:bg-white/60'
@@ -602,11 +602,11 @@ const App = () => {
       )}
 
       {/* Class Cards Grid */}
-      <main className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+      <main className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 relative z-10">
         {activeCampusData.map((cls, index) => (
           <div 
             key={`${activeCampus}-${index}`} 
-            className={`group relative bg-white/70 backdrop-blur-sm border-2 border-transparent rounded-3xl p-8 shadow-sm hover:shadow-2xl ${activeTierStyle.cardHoverBorder} hover:bg-white transition-all duration-500 transform hover:-translate-y-2 flex flex-col min-h-[340px]`}
+            className={`group relative bg-white/70 backdrop-blur-sm border-2 border-transparent rounded-3xl p-6 sm:p-8 shadow-sm hover:shadow-2xl ${activeTierStyle.cardHoverBorder} hover:bg-white transition-all duration-500 transform hover:-translate-y-2 flex flex-col min-h-[340px]`}
           >
             <div className={`self-start mb-6 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] ${
               cls.level === 'Elite' ? 'bg-amber-100 text-amber-700' :

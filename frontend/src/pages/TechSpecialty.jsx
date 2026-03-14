@@ -290,9 +290,9 @@ export default function TechSpecialty() {
         <div className="min-h-screen bg-gray-50 pb-20">
             {/* 顶部导航栏 */}
             <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center text-white">
                                     <Cpu size={24} />
@@ -301,7 +301,7 @@ export default function TechSpecialty() {
                             </div>
 
                             {/* 系统内导航切换 */}
-                            <div className="ml-8 flex bg-gray-100 p-1 rounded-xl">
+                            <div className="flex w-full lg:w-auto overflow-x-auto scrollbar-hide bg-gray-100 p-1 rounded-xl lg:ml-8 [&>*]:shrink-0">
                                 <Link to="/exam-info" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
                                     <div className="flex items-center gap-2">
                                         <Search size={16} />信息查询
@@ -334,7 +334,7 @@ export default function TechSpecialty() {
                                 </Link>
                             </div>
                         </div>
-                        <Link to="/platform" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
+                        <Link to="/platform" className="flex w-full sm:w-auto items-center justify-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
                             <Home size={18} />
                             <span className="text-sm font-medium">返回平台</span>
                         </Link>
@@ -342,9 +342,9 @@ export default function TechSpecialty() {
                 </div>
             </nav>
 
-            <div className="max-w-4xl mx-auto px-6 py-12 space-y-12">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 sm:space-y-12">
                 {/* Header 简介区 */}
-                <div className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-10 text-white shadow-lg relative overflow-hidden">
+                <div className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-6 sm:p-10 text-white shadow-lg relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
                     <div className="relative z-10 max-w-2xl text-left">
                         <span className="inline-block px-3 py-1 bg-white bg-opacity-20 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-white/30">
@@ -388,7 +388,7 @@ export default function TechSpecialty() {
                 {/* 录取方式与报考提醒 */}
                 <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden text-left">
                     <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
-                        <div className="p-8">
+                        <div className="p-6 sm:p-8">
                             <div className="flex items-center gap-3 mb-6">
                                 <HelpCircle className="text-emerald-600" size={24} />
                                 <h3 className="text-xl font-bold text-gray-900">特长优势能怎么用？</h3>
@@ -409,7 +409,7 @@ export default function TechSpecialty() {
                             </ul>
                         </div>
 
-                        <div className="p-8 bg-amber-50">
+                        <div className="p-6 sm:p-8 bg-amber-50">
                             <div className="flex items-center gap-3 mb-6">
                                 <AlertTriangle className="text-amber-600" size={24} />
                                 <h3 className="text-xl font-bold text-gray-900">重要报考提醒与避雷</h3>

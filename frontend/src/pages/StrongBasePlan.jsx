@@ -90,9 +90,9 @@ export default function StrongBasePlan() {
         <div className="min-h-screen bg-gray-50 pb-20">
             {/* 顶部导航栏 */}
             <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white">
                                     <Target size={24} />
@@ -101,7 +101,7 @@ export default function StrongBasePlan() {
                             </div>
 
                             {/* 系统内导航切换 */}
-                            <div className="ml-8 flex bg-gray-100 p-1 rounded-xl">
+                            <div className="flex w-full lg:w-auto overflow-x-auto scrollbar-hide bg-gray-100 p-1 rounded-xl lg:ml-8 [&>*]:shrink-0">
                                 <Link to="/exam-info" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
                                     <div className="flex items-center gap-2">
                                         <Search size={16} />信息查询
@@ -134,7 +134,7 @@ export default function StrongBasePlan() {
                                 </Link>
                             </div>
                         </div>
-                        <Link to="/platform" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
+                        <Link to="/platform" className="flex w-full sm:w-auto items-center justify-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
                             <Home size={18} />
                             <span className="text-sm font-medium">返回平台</span>
                         </Link>
@@ -142,9 +142,9 @@ export default function StrongBasePlan() {
                 </div>
             </nav>
 
-            <div className="max-w-4xl mx-auto px-6 mt-12 space-y-12">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-8 sm:mt-12 space-y-8 sm:space-y-12">
                 {/* 1. Header 简介区 */}
-                <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-10 text-white shadow-lg relative overflow-hidden">
+                <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-6 sm:p-10 text-white shadow-lg relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
                     <div className="relative z-10 text-left">
                         <span className="inline-block px-3 py-1 bg-white bg-opacity-20 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-white/30">
@@ -175,7 +175,7 @@ export default function StrongBasePlan() {
                 </div>
 
                 {/* 1.5 聚焦国家重大战略领域的专业群 */}
-                <div className="bg-white rounded-3xl p-10 border border-gray-100 shadow-sm text-left">
+                <div className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-100 shadow-sm text-left">
                     <div className="flex items-center gap-3 mb-8">
                         <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><Microscope size={24} /></div>
                         <h3 className="text-2xl font-bold text-gray-900">官方锁定的核心招生专业版图</h3>
@@ -309,7 +309,7 @@ export default function StrongBasePlan() {
                 </div>
 
                 {/* 3. 备考时间轴规划 */}
-                <div className="bg-white rounded-3xl p-10 border border-gray-100 shadow-sm text-left">
+                <div className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-100 shadow-sm text-left">
                     <div className="flex items-center gap-3 mb-8">
                         <div className="p-2 bg-amber-50 text-amber-600 rounded-lg"><Clock size={24} /></div>
                         <h3 className="text-2xl font-bold text-gray-900">高中三年备战时间轴</h3>
@@ -335,7 +335,7 @@ export default function StrongBasePlan() {
                 </div>
 
                 {/* 4. 高频 Q&A 手风琴 */}
-                <div className="bg-white rounded-3xl p-10 border border-gray-100 shadow-sm text-left">
+                <div className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-100 shadow-sm text-left">
                     <div className="flex items-center gap-3 mb-8">
                         <div className="p-2 bg-cyan-50 text-cyan-600 rounded-lg"><MessageCircle size={24} /></div>
                         <h3 className="text-2xl font-bold text-gray-900">家长必读：高频 Q&A</h3>
@@ -365,7 +365,7 @@ export default function StrongBasePlan() {
                 </div>
 
                 {/* 5. 阳光高考官方新闻动态 */}
-                <div className="bg-white rounded-3xl p-10 border border-gray-100 shadow-sm text-left">
+                <div className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-100 shadow-sm text-left">
                     <div className="flex items-center justify-between mb-8 border-b border-gray-50 pb-4">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-rose-50 text-rose-600 rounded-lg"><Globe size={24} /></div>

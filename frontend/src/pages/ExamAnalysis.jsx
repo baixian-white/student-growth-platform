@@ -168,9 +168,9 @@ export default function ExamAnalysis() {
     return (
         <div className="min-h-screen bg-slate-50 pb-20 text-slate-800">
             <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl flex items-center justify-center text-white shadow-md">
                                     <TrendingUp size={24} />
@@ -178,7 +178,7 @@ export default function ExamAnalysis() {
                                 <h1 className="text-xl font-bold text-gray-900 tracking-wide whitespace-nowrap">信息分析</h1>
                             </div>
 
-                            <div className="ml-8 flex bg-gray-100 p-1 rounded-xl">
+                            <div className="flex w-full lg:w-auto overflow-x-auto scrollbar-hide bg-gray-100 p-1 rounded-xl lg:ml-8 [&>*]:shrink-0">
                                 <Link to="/exam-info" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white transition-all">
                                     <div className="flex items-center gap-2">
                                         <Search size={16} />信息查询
@@ -212,7 +212,7 @@ export default function ExamAnalysis() {
                             </div>
                         </div>
 
-                        <Link to="/platform" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
+                        <Link to="/platform" className="flex w-full sm:w-auto items-center justify-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
                             <Home size={18} />
                             <span className="text-sm font-medium">返回平台</span>
                         </Link>
@@ -220,7 +220,7 @@ export default function ExamAnalysis() {
                 </div>
             </nav>
 
-            <main className="max-w-7xl mx-auto px-6 py-6 space-y-6">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
                 <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                         <div className="flex items-center gap-2 text-slate-800 font-semibold">
@@ -274,7 +274,7 @@ export default function ExamAnalysis() {
                 <section className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                     <div className="xl:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
                         <h3 className="text-base font-bold text-slate-900 mb-4">统招线 vs 科技线（校区对比）</h3>
-                        <div className="h-80">
+                        <div className="h-64 sm:h-80">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={scoreCompareData} margin={{ top: 8, right: 12, left: -14, bottom: 34 }}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -317,7 +317,7 @@ export default function ExamAnalysis() {
                 <section className="grid grid-cols-1 xl:grid-cols-5 gap-6">
                     <div className="xl:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
                         <h3 className="text-base font-bold text-slate-900 mb-4">政策杠杆指数 Top6</h3>
-                        <div className="h-80">
+                        <div className="h-64 sm:h-80">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={leverageChartData} layout="vertical" margin={{ top: 6, right: 10, left: 10, bottom: 6 }}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />

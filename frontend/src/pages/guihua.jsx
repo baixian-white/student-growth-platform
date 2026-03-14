@@ -252,7 +252,7 @@ const App = () => {
         <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-10">
             {/* 顶部导航 */}
             <nav className="bg-white border-b border-red-100 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-6 py-4">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         <div className="flex flex-col md:flex-row items-center gap-6 w-full md:w-auto">
                             <div className="flex items-center gap-3 self-start md:self-auto min-w-max">
@@ -268,7 +268,7 @@ const App = () => {
                                     <button
                                         key={s}
                                         onClick={() => setStep(s)}
-                                        className={`px-6 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2 ${step === s ? 'bg-gradient-to-r from-red-600 to-red-500 text-white shadow-md shadow-red-500/20' : 'text-slate-500 hover:text-red-500 hover:bg-red-50'}`}
+                                        className={`px-4 sm:px-6 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2 ${step === s ? 'bg-gradient-to-r from-red-600 to-red-500 text-white shadow-md shadow-red-500/20' : 'text-slate-500 hover:text-red-500 hover:bg-red-50'}`}
                                         disabled={loading || (s === 3 && !report)}
                                     >
                                         {s === 1 && <><Search size={16} />模考数据录入</>}
@@ -278,7 +278,7 @@ const App = () => {
                                 ))}
                             </div>
                         </div>
-                        <Link to="/platform" className="flex items-center gap-2 px-5 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full transition-colors text-gray-600 font-medium whitespace-nowrap self-end md:self-auto hidden md:flex">
+                        <Link to="/platform" className="flex w-full md:w-auto items-center justify-center gap-2 px-5 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full transition-colors text-gray-600 font-medium whitespace-nowrap self-end md:self-auto">
                             <Home size={16} />
                             <span className="text-sm">返回平台</span>
                         </Link>
@@ -327,7 +327,7 @@ const App = () => {
                         </div>
 
                         {/* Content Area */}
-                        <div className="lg:col-span-9 bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8 md:p-12 min-h-[550px]">
+                        <div className="lg:col-span-9 bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-6 md:p-12 min-h-[550px]">
                             {activeTab === 'mock' && (
                                 <div className="space-y-8 animate-in fade-in duration-300">
                                     <div className="flex justify-between items-end">
@@ -796,7 +796,7 @@ const App = () => {
                 )}
 
                 {step === 2 && (
-                    <div className="bg-white p-20 rounded-[3rem] shadow-sm text-center animate-in zoom-in-95">
+                    <div className="bg-white p-10 sm:p-20 rounded-[3rem] shadow-sm text-center animate-in zoom-in-95">
                         <Loader2 className="mx-auto text-red-600 animate-spin mb-6" size={60} />
                         <h2 className="text-3xl font-black mb-2">正在测算考前最优路径...</h2>
                         <div className="mt-10 max-w-md mx-auto h-2 bg-slate-100 rounded-full overflow-hidden">
@@ -810,7 +810,7 @@ const App = () => {
                 {step === 3 && report && (
                     <div className="space-y-8 animate-in slide-in-from-bottom-8 duration-700">
                         {/* Range Banner */}
-                        <div className={`bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden ${report.type === 'talent' ? 'ring-4 ring-amber-500/30' : ''}`}>
+                        <div className={`bg-slate-900 rounded-[3rem] p-6 sm:p-10 text-white shadow-2xl relative overflow-hidden ${report.type === 'talent' ? 'ring-4 ring-amber-500/30' : ''}`}>
                             <div className="absolute top-0 right-0 p-10 opacity-5">
                                 <Target size={240} />
                             </div>
@@ -825,12 +825,12 @@ const App = () => {
                                             <span className="bg-white/10 px-3 py-1 rounded-lg text-[10px] font-black">{userData.district}区 · {userData.schoolRank}考生</span>
                                         </div>
                                     </div>
-                                    <div className="flex gap-4">
-                                        <div className="text-center bg-white/5 p-4 rounded-2xl border border-white/10 min-w-[120px]">
+                                    <div className="flex w-full flex-col sm:w-auto sm:flex-row gap-4">
+                                        <div className="text-center bg-white/5 p-4 rounded-2xl border border-white/10 min-w-0 sm:min-w-[120px]">
                                             <div className="text-[10px] text-slate-400 font-bold mb-1">中考保底线预估</div>
                                             <div className="text-3xl font-black">{report.range.min}</div>
                                         </div>
-                                        <div className={`text-center p-4 rounded-2xl min-w-[120px] shadow-lg ${report.type === 'talent' ? 'bg-amber-600 shadow-amber-900/40' : 'bg-red-600 shadow-red-900/40'}`}>
+                                        <div className={`text-center p-4 rounded-2xl min-w-0 sm:min-w-[120px] shadow-lg ${report.type === 'talent' ? 'bg-amber-600 shadow-amber-900/40' : 'bg-red-600 shadow-red-900/40'}`}>
                                             <div className={`text-[10px] font-bold mb-1 ${report.type === 'talent' ? 'text-amber-200' : 'text-red-200'}`}>超常发挥最高分</div>
                                             <div className="text-3xl font-black">{report.range.max}</div>
                                         </div>
@@ -845,7 +845,7 @@ const App = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                             <div className="lg:col-span-2 space-y-8">
                                 {/* Historical Trend */}
-                                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                                <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
                                     <h3 className="text-xl font-black mb-8 flex items-center text-slate-800">
                                         <Activity className="mr-3 text-red-600" /> 历次大考成绩轨迹
                                     </h3>
@@ -863,7 +863,7 @@ const App = () => {
                                 </div>
 
                                 {/* Milestones */}
-                                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                                <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
                                     <h3 className="text-xl font-black mb-8 flex items-center text-slate-800">
                                         <Calendar className="mr-3 text-red-600" /> 考前关键时间轴提醒
                                     </h3>
@@ -884,7 +884,7 @@ const App = () => {
                                 </div>
 
                                 {/* Subject Radar */}
-                                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                                <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
                                     <h3 className="text-xl font-black mb-8 flex items-center text-slate-800">
                                         <TrendingUp className="mr-3 text-red-600" /> 备考能力模型
                                     </h3>
@@ -912,7 +912,7 @@ const App = () => {
                             {/* Sidebar Advice */}
                             <div className="space-y-6">
                                 {/* Score Potential Bar Chart */}
-                                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                                <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
                                     <h3 className="text-xl font-black mb-6 text-slate-800">
                                         <Target className={`mr-3 inline ${report.type === 'talent' ? 'text-amber-500' : 'text-red-600'}`} /> 抢分空间诊断
                                     </h3>
@@ -949,7 +949,7 @@ const App = () => {
                                     </div>
                                 </div>
 
-                                <div className={`${report.type === 'talent' ? 'bg-amber-600 shadow-amber-200' : 'bg-red-600 shadow-red-200'} p-10 rounded-[2.5rem] text-white shadow-xl`}>
+                                <div className={`${report.type === 'talent' ? 'bg-amber-600 shadow-amber-200' : 'bg-red-600 shadow-red-200'} p-6 sm:p-10 rounded-[2.5rem] text-white shadow-xl`}>
                                     <h4 className="font-black text-xl mb-4">{report.type === 'talent' ? '自招备考提示' : '特别提醒'}</h4>
                                     <p className="text-sm opacity-90 leading-relaxed mb-6">
                                         {report.type === 'talent'

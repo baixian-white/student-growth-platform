@@ -133,31 +133,31 @@ export default function PlatformHub() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50/80 to-indigo-50/80">
             <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur-sm">
-                <div className="mx-auto flex max-w-7xl items-center px-6 py-4">
+                <div className="mx-auto flex max-w-7xl items-center px-4 sm:px-6 py-4">
                     <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-600 to-indigo-600 text-white shadow-sm">
                             <GraduationCap size={22} />
                         </div>
-                        <span className="bg-gradient-to-r from-rose-600 to-indigo-600 bg-clip-text text-xl font-bold text-transparent">
+                        <span className="bg-gradient-to-r from-rose-600 to-indigo-600 bg-clip-text text-lg sm:text-xl font-bold text-transparent">
                             AI升学规划平台
                         </span>
                     </div>
                 </div>
             </nav>
 
-            <main className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-12 md:py-14">
-                <section className="relative overflow-hidden rounded-[32px] border border-white/70 bg-white/75 px-8 py-12 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl md:px-12">
+            <main className="mx-auto flex max-w-6xl flex-col gap-6 sm:gap-8 px-4 sm:px-6 py-8 sm:py-12 md:py-14">
+                <section className="relative overflow-hidden rounded-[28px] sm:rounded-[32px] border border-white/70 bg-white/75 px-5 py-8 sm:px-8 sm:py-12 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl md:px-12">
                     <div className="absolute -left-10 top-10 h-40 w-40 rounded-full bg-rose-200/35 blur-3xl" />
                     <div className="absolute bottom-0 right-0 h-56 w-56 rounded-full bg-indigo-200/30 blur-3xl" />
                     <div className="relative z-10 text-center">
-                        <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-rose-100 bg-white/80 px-4 py-2 text-sm font-medium text-rose-600 shadow-sm">
+                        <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-rose-100 bg-white/80 px-4 py-2 text-xs sm:text-sm font-medium text-rose-600 shadow-sm">
                             <Sparkles size={16} />
                             信息查询与AI规划双入口协同
                         </div>
-                        <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 md:text-5xl">
+                        <h1 className="mb-4 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900 md:text-5xl">
                             AI升学规划平台
                         </h1>
-                        <p className="mx-auto max-w-4xl text-lg leading-relaxed text-gray-600 md:text-xl">
+                        <p className="mx-auto max-w-4xl text-base sm:text-lg leading-relaxed text-gray-600 md:text-xl">
                             打通政策资讯与智能规划两大能力，从“获取信息”到“制定方案”一站式完成，让家长和学生先看清规则，再形成路径，减少信息分散带来的判断成本。
                         </p>
                         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -184,7 +184,7 @@ export default function PlatformHub() {
                         return (
                             <div
                                 key={item.title}
-                                className={`rounded-3xl border border-white/70 bg-gradient-to-br ${item.panel} p-6 shadow-[0_12px_32px_rgba(15,23,42,0.06)]`}
+                                className={`rounded-3xl border border-white/70 bg-gradient-to-br ${item.panel} p-5 sm:p-6 shadow-[0_12px_32px_rgba(15,23,42,0.06)]`}
                             >
                                 <div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${item.iconWrap} text-white shadow-sm`}>
                                     <Icon size={22} />
@@ -203,11 +203,11 @@ export default function PlatformHub() {
                         return (
                             <section
                                 key={item.title}
-                                className={`relative overflow-hidden rounded-[28px] border border-white/80 bg-gradient-to-br ${item.panel} p-8 shadow-[0_18px_50px_rgba(15,23,42,0.08)]`}
+                                className={`relative overflow-hidden rounded-[28px] border border-white/80 bg-gradient-to-br ${item.panel} p-6 sm:p-8 shadow-[0_18px_50px_rgba(15,23,42,0.08)]`}
                             >
                                 <div className="absolute right-0 top-0 h-24 w-24 rounded-full bg-white/40 blur-2xl" />
                                 <div className="relative z-10 flex h-full flex-col">
-                                    <div className="mb-6 flex items-start justify-between gap-4">
+                                    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                                         <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${item.iconWrap} text-white shadow-md`}>
                                             <Icon size={28} />
                                         </div>
@@ -219,7 +219,7 @@ export default function PlatformHub() {
                                     <p className="mb-2 text-sm font-semibold uppercase tracking-[0.22em] text-gray-400">
                                         {item.subtitle}
                                     </p>
-                                    <h2 className="mb-3 text-3xl font-bold text-gray-900">{item.title}</h2>
+                                    <h2 className="mb-3 text-2xl sm:text-3xl font-bold text-gray-900">{item.title}</h2>
                                     <p className="mb-6 text-base leading-8 text-gray-600">{item.description}</p>
 
                                     <div className="mb-6 grid gap-3">
@@ -264,7 +264,7 @@ export default function PlatformHub() {
                 </section>
 
                 <section className="grid grid-cols-1 gap-6 lg:grid-cols-[1.3fr_0.7fr]">
-                    <div className="rounded-[28px] border border-white/80 bg-white/80 p-8 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm">
+                    <div className="rounded-[28px] border border-white/80 bg-white/80 p-6 sm:p-8 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm">
                         <div className="mb-6 flex items-center gap-3">
                             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-slate-700 text-white">
                                 <BarChart3 size={22} />
@@ -300,7 +300,7 @@ export default function PlatformHub() {
                         </div>
                     </div>
 
-                    <div className="rounded-[28px] border border-white/80 bg-white/80 p-8 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm">
+                    <div className="rounded-[28px] border border-white/80 bg-white/80 p-6 sm:p-8 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm">
                         <div className="mb-6">
                             <h2 className="text-2xl font-bold text-gray-900">适用场景</h2>
                             <p className="mt-2 text-sm leading-7 text-gray-500">
@@ -329,7 +329,7 @@ export default function PlatformHub() {
                     </div>
                 </section>
 
-                <section className="relative overflow-hidden rounded-[30px] border border-white/80 bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-900 px-8 py-9 text-white shadow-[0_24px_70px_rgba(15,23,42,0.18)]">
+                <section className="relative overflow-hidden rounded-[30px] border border-white/80 bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-900 px-5 py-7 sm:px-8 sm:py-9 text-white shadow-[0_24px_70px_rgba(15,23,42,0.18)]">
                     <div className="absolute -right-8 top-0 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
                     <div className="absolute bottom-0 left-0 h-32 w-32 rounded-full bg-rose-400/15 blur-3xl" />
                     <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">

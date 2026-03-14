@@ -79,23 +79,23 @@ export default function TeamInfo() {
             {/* 导航栏 */}
             <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16 items-center">
+                    <div className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-center gap-2">
                             <div className="bg-blue-600 p-1.5 rounded-lg">
                                 <Zap className="text-white w-6 h-6" />
                             </div>
-                            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                            <span className="text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
                                 智考 AI 实验室
                             </span>
                         </div>
-                        <div className="flex items-center gap-6">
+                        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-6">
                             <div className="hidden md:flex space-x-8 text-sm font-medium">
                                 <a href="#home" className="hover:text-blue-600 transition-colors">首页</a>
                                 <a href="#features" className="hover:text-blue-600 transition-colors">核心技术</a>
                                 <a href="#team" className="hover:text-blue-600 transition-colors">专家团队</a>
                                 <a href="#contact" className="hover:text-blue-600 transition-colors text-blue-600 border border-blue-600 px-4 py-1.5 rounded-full">联系我们</a>
                             </div>
-                            <Link to="/" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700">
+                            <Link to="/" className="flex w-full items-center justify-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700 sm:w-auto">
                                 <Home size={18} />
                                 <span className="text-sm font-medium">返回首页</span>
                             </Link>
@@ -105,14 +105,14 @@ export default function TeamInfo() {
             </nav>
 
             {/* 英雄展示区 */}
-            <header id="home" className="relative overflow-hidden pt-20 pb-16 lg:pt-32 lg:pb-24">
+            <header id="home" className="relative overflow-hidden pt-14 pb-12 sm:pt-20 sm:pb-16 lg:pt-32 lg:pb-24">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center">
-                        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
+                        <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
                             用 <span className="text-blue-600">AI</span> 的智慧,<br />
                             开启 <span className="bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">中高考</span> 的升学新篇章
                         </h1>
-                        <p className="mt-4 text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                        <p className="mt-4 text-base sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
                             我们是致力于教育信息化的科技团队,通过机器学习与大数据分析,为每一位学子量身定制升学最优解。
                         </p>
                         <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
@@ -133,15 +133,15 @@ export default function TeamInfo() {
             </header>
 
             {/* 核心优势 */}
-            <section id="features" className="py-20 bg-white">
+            <section id="features" className="py-16 sm:py-20 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
+                    <div className="text-center mb-12 sm:mb-16">
                         <h2 className="text-3xl font-bold mb-4">为什么选择我们</h2>
                         <div className="h-1 w-20 bg-blue-600 mx-auto rounded-full"></div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {features.map((feature, index) => (
-                            <div key={index} className="p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:shadow-xl transition-all hover:-translate-y-1">
+                            <div key={index} className="p-6 sm:p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:shadow-xl transition-all hover:-translate-y-1">
                                 <div className="mb-4">{feature.icon}</div>
                                 <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
                                 <p className="text-slate-600 leading-relaxed text-sm">
@@ -154,9 +154,9 @@ export default function TeamInfo() {
             </section>
 
             {/* 团队成员 */}
-            <section id="team" className="py-20 bg-slate-50">
+            <section id="team" className="py-16 sm:py-20 bg-slate-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4 text-center md:text-left">
+                    <div className="flex flex-col md:flex-row justify-between md:items-end mb-12 sm:mb-16 gap-4 text-center md:text-left">
                         <div>
                             <h2 className="text-3xl font-bold mb-4">集结行业顶尖专家</h2>
                             <p className="text-slate-600 max-w-xl">
@@ -204,7 +204,7 @@ export default function TeamInfo() {
             </section>
 
             {/* 底部联系 */}
-            <footer id="contact" className="bg-slate-900 text-white py-20">
+            <footer id="contact" className="bg-slate-900 text-white py-16 sm:py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div>
